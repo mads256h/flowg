@@ -1,3 +1,4 @@
+import java.math.BigDecimal;
 %%
 
 %public
@@ -12,13 +13,19 @@
 Identifier = [:jletter:][:jletterdigit:]*
 Number = [0-9]+(\.[0-9]+)?
 Whitespace = [\ \n]
+NewLine = \n
+Comment = \/\/[^\n]*
 
 %%
 
 
-{Whitespace} { /*Ignore */ }
+{Identifier} { return new Yytoken(TokenType.IDENTIFIER, yytext()); }
 
-{Identifier} { System.out.println("Identifier: " + yytext()); }
+{Number} { return new Yytoken(TokenType.NUMBER, new BigDecimal(yytext())); }
 
-{Number} { System.out.println("Number: " + yytext()); }
+{Whitespace} { /* Ignore */ }
+
+{Comment} { /* Ignore */ }
+
+
 
