@@ -1,0 +1,21 @@
+package org.flowsoft.flowg;
+
+import java_cup.runtime.*;
+
+terminal java.lang.String IDENTIFIER;
+
+terminal java.lang.Number INTEGER_LITERAL;
+
+
+non terminal goal;
+non terminal thing;
+non terminal thing_list;
+
+start with goal;
+
+goal ::= thing_list;
+
+thing_list ::= thing thing_list | thing;
+
+thing ::= IDENTIFIER | INTEGER_LITERAL;
+
