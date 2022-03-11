@@ -10,7 +10,7 @@
 %debug
 
 Identifier = [:jletter:][:jletterdigit:]*
-Number = [0-9]
+Number = [0-9]+(\.[0-9]+)?
 Whitespace = [\ \n]
 
 %%
