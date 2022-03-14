@@ -14,12 +14,22 @@ public class LexerTests {
     private Yylex _lexer;
 
     @Test
-    public void ScanVariableDeclaration() throws IOException {
+    public void ScanNumberVariableDeclaration() throws IOException {
         Scan("number x = 2;");
         assertThat(NextToken()).isEqualTo(sym.TYPE);
         assertThat(NextToken()).isEqualTo(sym.IDENTIFIER);
         assertThat(NextToken()).isEqualTo(sym.ASSIGNMENT);
         assertThat(NextToken()).isEqualTo(sym.NUMBER_LITERAL);
+        assertThat(NextToken()).isEqualTo(sym.SEMICOLON);
+    }
+
+    @Test
+    public void ScanBooleanVariableDeclaration() throws IOException {
+        Scan("bool y = true;");
+        assertThat(NextToken()).isEqualTo(sym.TYPE);
+        assertThat(NextToken()).isEqualTo(sym.IDENTIFIER);
+        assertThat(NextToken()).isEqualTo(sym.ASSIGNMENT);
+        assertThat(NextToken()).isEqualTo(sym.BOOLEAN_LITERAL);
         assertThat(NextToken()).isEqualTo(sym.SEMICOLON);
     }
 

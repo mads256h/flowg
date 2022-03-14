@@ -36,6 +36,9 @@ Comment = \/\/[^\n]*
 
 {Type} { return symbol(sym.TYPE, yytext()); }
 
+"true" { return symbol(sym.BOOLEAN_LITERAL, true); }
+"false" { return symbol(sym.BOOLEAN_LITERAL, false); }
+
 {Identifier} { return symbol(sym.IDENTIFIER, yytext()); }
 
 {Number} { return symbol(sym.NUMBER_LITERAL, new BigDecimal(yytext())); }

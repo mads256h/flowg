@@ -10,8 +10,13 @@ import java.io.StringReader;
 public class ParserTests {
 
     @Test
-    public void ParseStatement() throws Exception {
+    public void ParseNumberVariableDeclaration() throws Exception {
         Parse("number hello = 2;");
+    }
+
+    @Test
+    public void ParseBooleanVariableDeclaration() throws Exception {
+        Parse("bool world = true;");
     }
 
     private Symbol Parse(String input) throws Exception {
