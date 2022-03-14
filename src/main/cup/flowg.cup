@@ -1,42 +1,44 @@
 package org.flowsoft.flowg;
 
 import java_cup.runtime.*;
+import org.flowsoft.flowg.nodes.*;
 
-terminal java.lang.String TYPE;
+terminal TypeNode TYPE;
 
-terminal java.lang.String IDENTIFIER;
+terminal IdentifierNode IDENTIFIER;
 
-terminal java.math.BigDecimal NUMBER_LITERAL;
-terminal java.lang.Boolean BOOLEAN_LITERAL;
+terminal NumberLiteralNode NUMBER_LITERAL;
+terminal BooleanLiteralNode BOOLEAN_LITERAL;
 
 terminal ASSIGNMENT;
 terminal SEMICOLON;
 
 
-non terminal goal;
-non terminal stmt_list;
-non terminal stmt;
-non terminal expr;
-non terminal java.math.BigDecimal arith_expr;
-non terminal java.lang.Boolean bool_expr;
+non terminal ProgramNode program;
+non terminal StatementListNode stmt_list;
+non terminal StatementNode stmt;
+non terminal DeclarationNode decl;
+non terminal ExpressionNode expr;
 
-start with goal;
+start with program;
 
-goal ::= stmt_list;
+program ::= stmt_list:l
+            {: RESULT = new ProgramNode(l); :};
 
-stmt_list ::= stmt SEMICOLON stmt_list | stmt SEMICOLON;
+stmt_list ::= stmt:s SEMICOLON stmt_list:l
+            {: RESULT = new StatementListNode(s, l); :}
+            |
+            stmt:s SEMICOLON
+            {: RESULT = new StatementListNode(s); :};
 
-stmt ::= TYPE:t IDENTIFIER:i ASSIGNMENT expr:e
-        {: System.out.println(t + " " + i + " = " + e); :};
+stmt ::= decl:d
+        {: RESULT = new StatementNode(d); :};
 
-expr ::= arith_expr:e
-        {: RESULT = e; :}
-        | bool_expr:e
-        {: RESULT = e; :}
+decl ::= TYPE:t IDENTIFIER:i ASSIGNMENT expr:e
+        {: RESULT = new DeclarationNode(t, i, e); :};
+
+expr ::= NUMBER_LITERAL:n
+        {: RESULT = new ExpressionNode(n); :}
+        | BOOLEAN_LITERAL:b
+        {: RESULT = new ExpressionNode(b); :}
         ;
-
-arith_expr ::= NUMBER_LITERAL:n
-        {: RESULT = n; System.out.println(RESULT); :};
-
-bool_expr ::= BOOLEAN_LITERAL:b
-                {: RESULT = b; :};

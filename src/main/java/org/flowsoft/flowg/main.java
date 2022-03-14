@@ -1,7 +1,7 @@
 package org.flowsoft.flowg;
 
-import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.Symbol;
+import org.flowsoft.flowg.nodes.Node;
 
 import java.io.FileReader;
 
@@ -24,6 +24,7 @@ public class main {
         try {
             var symbol = parser.debug_parse();
             PrintSymbol(symbol);
+            ((Node)symbol.value).Print();
         }
         catch (Exception e) {
             System.out.println("Could not parse");
