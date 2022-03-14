@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 
 
 
+Type = "number"|"bool"|"point"|"void"
 Identifier = [:jletter:][:jletterdigit:]*
 Number = [0-9]+(\.[0-9]+)?
 Whitespace = [\ \n]
@@ -33,14 +34,18 @@ Comment = \/\/[^\n]*
 
 %%
 
+{Type} { return symbol(sym.TYPE, yytext()); }
 
-{Identifier} { return symbol(sym.IDENTIFIER); }
+{Identifier} { return symbol(sym.IDENTIFIER, yytext()); }
 
-{Number} { return symbol(sym.INTEGER_LITERAL); }
+{Number} { return symbol(sym.NUMBER_LITERAL, new BigDecimal(yytext())); }
 
 {Whitespace} { /* Ignore */ }
 
 {Comment} { /* Ignore */ }
+
+"=" { return symbol(sym.ASSIGNMENT); }
+";" { return symbol(sym.SEMICOLON); }
 
 
 

@@ -1,5 +1,6 @@
 package org.flowsoft.flowg;
 
+import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.Symbol;
 
 import java.io.FileReader;
@@ -21,12 +22,24 @@ public class main {
 
         parser parser = new parser(scanner);
         try {
-            parser.debug_parse();
+            var symbol = parser.debug_parse();
+            PrintSymbol(symbol);
         }
         catch (Exception e) {
             System.out.println("Could not parse");
             e.printStackTrace();
             return;
         }
+    }
+
+    private static void PrintSymbol(Symbol symbol) {
+        System.out.print("Symbol: ");
+        System.out.print(symbol.sym);
+        System.out.print(" value: ");
+        System.out.print(symbol.value);
+        System.out.print(" left: ");
+        System.out.print(symbol.left);
+        System.out.print(" right: ");
+        System.out.println(symbol.right);
     }
 }
