@@ -2,20 +2,30 @@ package org.flowsoft.flowg;
 
 import java_cup.runtime.*;
 
+terminal java.lang.String TYPE;
+
 terminal java.lang.String IDENTIFIER;
 
-terminal java.lang.Number INTEGER_LITERAL;
+terminal java.math.BigDecimal NUMBER_LITERAL;
+
+terminal ASSIGNMENT;
+terminal SEMICOLON;
 
 
 non terminal goal;
-non terminal thing;
-non terminal thing_list;
+non terminal stmt_list;
+non terminal stmt;
+non terminal java.math.BigDecimal expr;
 
 start with goal;
 
-goal ::= thing_list;
+goal ::= stmt_list;
 
-thing_list ::= thing thing_list | thing;
+stmt_list ::= stmt SEMICOLON stmt_list | stmt SEMICOLON;
 
-thing ::= IDENTIFIER | INTEGER_LITERAL;
+stmt ::= TYPE:t IDENTIFIER:i ASSIGNMENT expr:e
+        {: System.out.println(t + " " + i + " = " + e); :};
 
+
+expr ::= NUMBER_LITERAL:n
+        {: RESULT = n; System.out.println(RESULT); :};
