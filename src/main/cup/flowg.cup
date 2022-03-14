@@ -7,6 +7,7 @@ terminal java.lang.String TYPE;
 terminal java.lang.String IDENTIFIER;
 
 terminal java.math.BigDecimal NUMBER_LITERAL;
+terminal java.lang.Boolean BOOLEAN_LITERAL;
 
 terminal ASSIGNMENT;
 terminal SEMICOLON;
@@ -15,7 +16,9 @@ terminal SEMICOLON;
 non terminal goal;
 non terminal stmt_list;
 non terminal stmt;
-non terminal java.math.BigDecimal expr;
+non terminal expr;
+non terminal java.math.BigDecimal arith_expr;
+non terminal java.lang.Boolean bool_expr;
 
 start with goal;
 
@@ -26,6 +29,14 @@ stmt_list ::= stmt SEMICOLON stmt_list | stmt SEMICOLON;
 stmt ::= TYPE:t IDENTIFIER:i ASSIGNMENT expr:e
         {: System.out.println(t + " " + i + " = " + e); :};
 
+expr ::= arith_expr:e
+        {: RESULT = e; :}
+        | bool_expr:e
+        {: RESULT = e; :}
+        ;
 
-expr ::= NUMBER_LITERAL:n
+arith_expr ::= NUMBER_LITERAL:n
         {: RESULT = n; System.out.println(RESULT); :};
+
+bool_expr ::= BOOLEAN_LITERAL:b
+                {: RESULT = b; :};
