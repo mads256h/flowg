@@ -1,6 +1,7 @@
 package org.flowsoft.flowg;
 
 import java_cup.runtime.Symbol;
+import org.flowsoft.flowg.nodes.*;
 import java.math.BigDecimal;
 %%
 
@@ -34,14 +35,14 @@ Comment = \/\/[^\n]*
 
 %%
 
-{Type} { return symbol(sym.TYPE, yytext()); }
+{Type} { return symbol(sym.TYPE, new TypeNode(yytext())); }
 
-"true" { return symbol(sym.BOOLEAN_LITERAL, true); }
-"false" { return symbol(sym.BOOLEAN_LITERAL, false); }
+"true" { return symbol(sym.BOOLEAN_LITERAL, new BooleanLiteralNode(true)); }
+"false" { return symbol(sym.BOOLEAN_LITERAL, new BooleanLiteralNode(false)); }
 
-{Identifier} { return symbol(sym.IDENTIFIER, yytext()); }
+{Identifier} { return symbol(sym.IDENTIFIER, new IdentifierNode(yytext())); }
 
-{Number} { return symbol(sym.NUMBER_LITERAL, new BigDecimal(yytext())); }
+{Number} { return symbol(sym.NUMBER_LITERAL, new NumberLiteralNode(new BigDecimal(yytext()))); }
 
 {Whitespace} { /* Ignore */ }
 

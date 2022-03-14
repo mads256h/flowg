@@ -1,27 +1,56 @@
 package org.flowsoft.flowg.tests;
 
-import java_cup.runtime.Symbol;
+import static com.google.common.truth.Truth.assertThat;
+
 import org.flowsoft.flowg.Yylex;
+import org.flowsoft.flowg.nodes.ProgramNode;
 import org.flowsoft.flowg.parser;
 import org.junit.Test;
 
 import java.io.StringReader;
+import java.math.BigDecimal;
 
 public class ParserTests {
 
     @Test
     public void ParseNumberVariableDeclaration() throws Exception {
-        Parse("number hello = 2;");
+        var programNode = Parse("number hello = 2;");
+        var statementList = programNode.GetChild();
+        assertThat(statementList.GetRightChild()).isNull();
+
+        var statement = statementList.GetLeftChild();
+        var declaration = statement.GetChild();
+        var type = declaration.GetTypeChild();
+        var identifier = declaration.GetIdentifierChild();
+        assertThat(type.GetValue()).isEqualTo("number");
+        assertThat(identifier.GetValue()).isEqualTo("hello");
+
+        var expression = declaration.GetExpressionChild();
+        var numberLiteral = expression.GetNumberLiteralChild();
+        assertThat(numberLiteral.GetValue()).isEqualTo(new BigDecimal("2"));
     }
 
     @Test
     public void ParseBooleanVariableDeclaration() throws Exception {
-        Parse("bool world = true;");
+        var programNode = Parse("bool world = true;");
+        var statementList = programNode.GetChild();
+        assertThat(statementList.GetRightChild()).isNull();
+
+        var statement = statementList.GetLeftChild();
+        var declaration = statement.GetChild();
+        var type = declaration.GetTypeChild();
+        var identifier = declaration.GetIdentifierChild();
+        assertThat(type.GetValue()).isEqualTo("bool");
+        assertThat(identifier.GetValue()).isEqualTo("world");
+
+        var expression = declaration.GetExpressionChild();
+        var booleanLiteralNode = expression.GetBooleanLiteralChild();
+        assertThat(booleanLiteralNode.GetValue()).isEqualTo(true);
     }
 
-    private Symbol Parse(String input) throws Exception {
+    private ProgramNode Parse(String input) throws Exception {
         Yylex lexer = new Yylex(new StringReader(input));
         parser parser = new parser(lexer);
-        return parser.debug_parse();
+        return (ProgramNode) parser.debug_parse().value;
     }
 }
