@@ -2,15 +2,9 @@ package org.flowsoft.flowg.nodes;
 
 import org.flowsoft.flowg.IVisitor;
 
-public class IdentifierNode extends Node {
-    private final String _value;
-
+public class IdentifierNode extends NullaryNode<String> {
     public IdentifierNode(String value) {
-        _value = value;
-    }
-
-    public String GetValue() {
-        return _value;
+        super(value);
     }
 
     @Override

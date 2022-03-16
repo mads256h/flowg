@@ -4,15 +4,10 @@ import org.flowsoft.flowg.IVisitor;
 
 import java.math.BigDecimal;
 
-public class NumberLiteralNode extends Node implements ExpressionNode {
-    private final BigDecimal _value;
+public class NumberLiteralNode extends NullaryNode<BigDecimal> implements ExpressionNode {
 
     public NumberLiteralNode(BigDecimal value) {
-        _value = value;
-    }
-
-    public BigDecimal GetValue() {
-        return _value;
+        super(value);
     }
 
     @Override

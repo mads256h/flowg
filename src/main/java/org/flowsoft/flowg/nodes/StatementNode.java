@@ -2,14 +2,9 @@ package org.flowsoft.flowg.nodes;
 
 import org.flowsoft.flowg.IVisitor;
 
-public class StatementNode extends Node {
-    private final DeclarationNode _declaration;
+public class StatementNode extends UnaryNode<DeclarationNode> {
     public StatementNode(DeclarationNode child) {
-        _declaration = child;
-    }
-
-    public DeclarationNode GetChild() {
-        return _declaration;
+        super(child);
     }
 
     @Override

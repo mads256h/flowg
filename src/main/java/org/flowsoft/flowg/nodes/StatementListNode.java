@@ -2,25 +2,14 @@ package org.flowsoft.flowg.nodes;
 
 import org.flowsoft.flowg.IVisitor;
 
-public class StatementListNode extends Node {
-    private final StatementNode _statement;
-    private final StatementListNode _statementList;
+public class StatementListNode extends BinaryNode<StatementNode, StatementListNode> {
 
     public StatementListNode(StatementNode child) {
         this(child, null);
     }
 
     public StatementListNode(StatementNode leftChild, StatementListNode rightChild) {
-        _statement = leftChild;
-        _statementList = rightChild;
-    }
-
-    public StatementNode GetStatementChild() {
-        return _statement;
-    }
-
-    public StatementListNode GetStatementListChild() {
-        return _statementList;
+        super(leftChild, rightChild);
     }
 
     @Override
