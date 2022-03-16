@@ -29,11 +29,11 @@ public class TreePrintingVisitor implements IVisitor<String> {
 
     @Override
     public String Visit(StatementListNode statementListNode) {
-        if (statementListNode.GetStatementListChild() == null){
-            return PrintNode(statementListNode, statementListNode.GetStatementChild());
+        if (statementListNode.GetRightChild() == null){
+            return PrintNode(statementListNode, statementListNode.GetLeftChild());
         }
         else {
-            return PrintNode(statementListNode, statementListNode.GetStatementChild(), statementListNode.GetStatementListChild());
+            return PrintNode(statementListNode, statementListNode.GetLeftChild(), statementListNode.GetRightChild());
         }
     }
 

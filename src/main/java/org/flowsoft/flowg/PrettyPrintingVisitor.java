@@ -10,8 +10,8 @@ public class PrettyPrintingVisitor implements IVisitor<String> {
 
     @Override
     public String Visit(StatementListNode statementListNode) {
-        var statement = statementListNode.GetStatementChild();
-        var statementList = statementListNode.GetStatementListChild();
+        var statement = statementListNode.GetLeftChild();
+        var statementList = statementListNode.GetRightChild();
 
         return statement.Accept(this) + ";\n"
                 + (statementList == null ? "" : statementList.Accept(this));

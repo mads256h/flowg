@@ -2,15 +2,10 @@ package org.flowsoft.flowg.nodes;
 
 import org.flowsoft.flowg.IVisitor;
 
-public class BooleanLiteralNode extends Node implements ExpressionNode {
-    private final Boolean _value;
+public class BooleanLiteralNode extends NullaryNode<Boolean> implements ExpressionNode {
 
     public BooleanLiteralNode(Boolean value) {
-        _value = value;
-    }
-
-    public Boolean GetValue() {
-        return _value;
+        super(value);
     }
 
     @Override

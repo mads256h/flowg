@@ -2,14 +2,9 @@ package org.flowsoft.flowg.nodes;
 
 import org.flowsoft.flowg.IVisitor;
 
-public class TypeNode extends Node {
-    private final String _type;
+public class TypeNode extends NullaryNode<String> {
     public TypeNode(String type) {
-        _type = type;
-    }
-
-    public String GetValue() {
-        return _type;
+        super(type);
     }
 
     @Override

@@ -16,9 +16,9 @@ public class ParserTests {
     public void ParseNumberVariableDeclaration() throws Exception {
         var programNode = Parse("number hello = 2;");
         var statementList = programNode.GetChild();
-        assertThat(statementList.GetStatementListChild()).isNull();
+        assertThat(statementList.GetRightChild()).isNull();
 
-        var statement = statementList.GetStatementChild();
+        var statement = statementList.GetLeftChild();
         var declaration = statement.GetChild();
         var type = declaration.GetTypeChild();
         var identifier = declaration.GetIdentifierChild();
@@ -33,9 +33,9 @@ public class ParserTests {
     public void ParseBooleanVariableDeclaration() throws Exception {
         var programNode = Parse("bool world = true;");
         var statementList = programNode.GetChild();
-        assertThat(statementList.GetStatementListChild()).isNull();
+        assertThat(statementList.GetRightChild()).isNull();
 
-        var statement = statementList.GetStatementChild();
+        var statement = statementList.GetLeftChild();
         var declaration = statement.GetChild();
         var type = declaration.GetTypeChild();
         var identifier = declaration.GetIdentifierChild();
