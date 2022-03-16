@@ -14,7 +14,7 @@ terminal ASSIGNMENT;
 terminal SEMICOLON;
 
 
-non terminal ProgramNode program;
+non terminal StatementListNode program;
 non terminal StatementListNode stmt_list;
 non terminal StatementNode stmt;
 non terminal DeclarationNode decl;
@@ -23,7 +23,7 @@ non terminal ExpressionNode expr;
 start with program;
 
 program ::= stmt_list:l
-            {: RESULT = new ProgramNode(l); :};
+            {: RESULT = l; :};
 
 stmt_list ::= stmt:s SEMICOLON stmt_list:l
             {: RESULT = new StatementListNode(s, l); :}
@@ -32,7 +32,7 @@ stmt_list ::= stmt:s SEMICOLON stmt_list:l
             {: RESULT = new StatementListNode(s); :};
 
 stmt ::= decl:d
-        {: RESULT = new StatementNode(d); :};
+        {: RESULT = d; :};
 
 decl ::= TYPE:t IDENTIFIER:i ASSIGNMENT expr:e
         {: RESULT = new DeclarationNode(t, i, e); :};
