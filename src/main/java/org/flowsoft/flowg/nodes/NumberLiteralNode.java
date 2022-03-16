@@ -1,13 +1,22 @@
 package org.flowsoft.flowg.nodes;
 
+import org.flowsoft.flowg.IVisitor;
+
 import java.math.BigDecimal;
 
-public class NumberLiteralNode extends Node {
+public class NumberLiteralNode extends Node implements ExpressionNode {
+    private final BigDecimal _value;
+
     public NumberLiteralNode(BigDecimal value) {
-        super(value);
+        _value = value;
     }
 
     public BigDecimal GetValue() {
-        return (BigDecimal) value;
+        return _value;
+    }
+
+    @Override
+    public <T> T Accept(IVisitor<T> visitor) {
+        return visitor.Visit(this);
     }
 }

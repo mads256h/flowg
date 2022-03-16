@@ -1,19 +1,32 @@
 package org.flowsoft.flowg.nodes;
 
+import org.flowsoft.flowg.IVisitor;
+
 public class DeclarationNode extends Node {
+    private final TypeNode _type;
+    private final IdentifierNode _identifier;
+    private final ExpressionNode _expression;
+
     public DeclarationNode(TypeNode type, IdentifierNode identifier, ExpressionNode expression) {
-        super(new Node[] {type, identifier, expression});
+        _type = type;
+        _identifier = identifier;
+        _expression = expression;
     }
 
     public TypeNode GetTypeChild() {
-        return (TypeNode) children[0];
+        return _type;
     }
 
     public IdentifierNode GetIdentifierChild() {
-        return (IdentifierNode) children[1];
+        return _identifier;
     }
 
     public ExpressionNode GetExpressionChild() {
-        return (ExpressionNode) children[2];
+        return _expression;
+    }
+
+    @Override
+    public <T> T Accept(IVisitor<T> visitor) {
+        return visitor.Visit(this);
     }
 }

@@ -1,11 +1,20 @@
 package org.flowsoft.flowg.nodes;
 
+import org.flowsoft.flowg.IVisitor;
+
 public class IdentifierNode extends Node {
-    public IdentifierNode(String identifier) {
-        super(identifier);
+    private final String _value;
+
+    public IdentifierNode(String value) {
+        _value = value;
     }
 
     public String GetValue() {
-        return (String) value;
+        return _value;
+    }
+
+    @Override
+    public <T> T Accept(IVisitor<T> visitor) {
+        return visitor.Visit(this);
     }
 }
