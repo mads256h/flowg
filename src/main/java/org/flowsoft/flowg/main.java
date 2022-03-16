@@ -24,7 +24,9 @@ public class main {
         try {
             var symbol = parser.debug_parse();
             PrintSymbol(symbol);
-            ((Node)symbol.value).Print();
+            var rootNode = (Node)symbol.value;
+            System.out.println(rootNode.Accept(new TreePrintingVisitor()));
+            System.out.println(rootNode.Accept(new PrettyPrintingVisitor()));
         }
         catch (Exception e) {
             System.out.println("Could not parse");

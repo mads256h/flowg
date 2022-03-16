@@ -38,7 +38,7 @@ decl ::= TYPE:t IDENTIFIER:i ASSIGNMENT expr:e
         {: RESULT = new DeclarationNode(t, i, e); :};
 
 expr ::= NUMBER_LITERAL:n
-        {: RESULT = new ExpressionNode(n); :}
+        {: RESULT = n; :}
         | BOOLEAN_LITERAL:b
-        {: RESULT = new ExpressionNode(b); :}
+        {: RESULT = b; :}
         ;

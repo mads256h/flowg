@@ -1,11 +1,20 @@
 package org.flowsoft.flowg.nodes;
 
-public class BooleanLiteralNode extends Node {
+import org.flowsoft.flowg.IVisitor;
+
+public class BooleanLiteralNode extends Node implements ExpressionNode {
+    private final Boolean _value;
+
     public BooleanLiteralNode(Boolean value) {
-        super(value);
+        _value = value;
     }
 
     public Boolean GetValue() {
-        return (Boolean) value;
+        return _value;
+    }
+
+    @Override
+    public <T> T Accept(IVisitor<T> visitor) {
+        return visitor.Visit(this);
     }
 }

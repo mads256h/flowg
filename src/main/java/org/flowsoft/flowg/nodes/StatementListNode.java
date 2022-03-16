@@ -1,23 +1,30 @@
 package org.flowsoft.flowg.nodes;
 
+import org.flowsoft.flowg.IVisitor;
+
 public class StatementListNode extends Node {
-    public StatementListNode(StatementNode leftChild, StatementListNode rightChild) {
-        super(new Node[] {leftChild, rightChild});
-    }
+    private final StatementNode _statement;
+    private final StatementListNode _statementList;
 
     public StatementListNode(StatementNode child) {
-        super(new Node[]{child});
+        this(child, null);
     }
 
-    public StatementNode GetLeftChild() {
-        return (StatementNode) children[0];
+    public StatementListNode(StatementNode leftChild, StatementListNode rightChild) {
+        _statement = leftChild;
+        _statementList = rightChild;
     }
 
-    public StatementListNode GetRightChild() {
-        if (children.length == 2)
-            return (StatementListNode) children[1];
-        else
-            return null;
+    public StatementNode GetStatementChild() {
+        return _statement;
     }
 
+    public StatementListNode GetStatementListChild() {
+        return _statementList;
+    }
+
+    @Override
+    public <T> T Accept(IVisitor<T> visitor) {
+        return visitor.Visit(this);
+    }
 }
