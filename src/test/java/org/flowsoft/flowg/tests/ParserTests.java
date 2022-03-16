@@ -14,12 +14,10 @@ public class ParserTests {
 
     @Test
     public void ParseNumberVariableDeclaration() throws Exception {
-        var programNode = Parse("number hello = 2;");
-        var statementList = programNode.GetChild();
+        var statementList = Parse("number hello = 2;");
         assertThat(statementList.GetRightChild()).isNull();
 
-        var statement = statementList.GetLeftChild();
-        var declaration = statement.GetChild();
+        var declaration = (DeclarationNode)statementList.GetLeftChild();
         var type = declaration.GetTypeChild();
         var identifier = declaration.GetIdentifierChild();
         assertThat(type.GetValue()).isEqualTo("number");
@@ -31,12 +29,10 @@ public class ParserTests {
 
     @Test
     public void ParseBooleanVariableDeclaration() throws Exception {
-        var programNode = Parse("bool world = true;");
-        var statementList = programNode.GetChild();
+        var statementList = Parse("bool world = true;");
         assertThat(statementList.GetRightChild()).isNull();
 
-        var statement = statementList.GetLeftChild();
-        var declaration = statement.GetChild();
+        var declaration = (DeclarationNode)statementList.GetLeftChild();
         var type = declaration.GetTypeChild();
         var identifier = declaration.GetIdentifierChild();
         assertThat(type.GetValue()).isEqualTo("bool");
@@ -46,9 +42,9 @@ public class ParserTests {
         assertThat(booleanLiteral.GetValue()).isEqualTo(true);
     }
 
-    private ProgramNode Parse(String input) throws Exception {
+    private StatementListNode Parse(String input) throws Exception {
         Yylex lexer = new Yylex(new StringReader(input));
         parser parser = new parser(lexer);
-        return (ProgramNode) parser.debug_parse().value;
+        return (StatementListNode) parser.debug_parse().value;
     }
 }
