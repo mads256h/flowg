@@ -1,6 +1,6 @@
 package org.flowsoft.flowg.nodes;
 
-import org.flowsoft.flowg.IVisitor;
+import org.flowsoft.flowg.visitors.IVisitor;
 
 public class IdentifierNode extends NullaryNode<String> {
     public IdentifierNode(String value) {
@@ -8,7 +8,7 @@ public class IdentifierNode extends NullaryNode<String> {
     }
 
     @Override
-    public <T> T Accept(IVisitor<T> visitor) {
+    public <T, TException extends Exception> T Accept(IVisitor<T, TException> visitor) throws TException{
         return visitor.Visit(this);
     }
 }

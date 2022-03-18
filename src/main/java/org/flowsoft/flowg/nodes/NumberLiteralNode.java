@@ -1,6 +1,6 @@
 package org.flowsoft.flowg.nodes;
 
-import org.flowsoft.flowg.IVisitor;
+import org.flowsoft.flowg.visitors.IVisitor;
 
 import java.math.BigDecimal;
 
@@ -11,7 +11,7 @@ public class NumberLiteralNode extends NullaryNode<BigDecimal> implements Expres
     }
 
     @Override
-    public <T> T Accept(IVisitor<T> visitor) {
+    public <T, TException extends Exception> T Accept(IVisitor<T, TException> visitor) throws TException {
         return visitor.Visit(this);
     }
 }
