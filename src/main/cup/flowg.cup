@@ -13,13 +13,19 @@ terminal BooleanLiteralNode BOOLEAN_LITERAL;
 
 terminal ASSIGNMENT;
 terminal SEMICOLON;
-
+terminal PLUS;
+terminal MINUS;
+terminal TIMES;
+terminal DIVIDE;
 
 non terminal StatementListNode program;
 non terminal ArrayList<StatementNode> stmt_list;
 non terminal StatementNode stmt;
 non terminal DeclarationNode decl;
 non terminal ExpressionNode expr;
+
+precedence left PLUS, MINUS;
+precedence left TIMES, DIVIDE;
 
 start with program;
 
@@ -42,4 +48,12 @@ expr ::= NUMBER_LITERAL:n
         {: RESULT = n; :}
         | BOOLEAN_LITERAL:b
         {: RESULT = b; :}
+        | NUMBER_LITERAL:n1 PLUS NUMBER_LITERAL:n2
+        {: RESULT = new PlusExpressionNode(n1, n2); :}
+        | NUMBER_LITERAL:n1 MINUS NUMBER_LITERAL:n2
+        {: RESULT = new MinusExpressionNode(n1, n2); :}
+        | NUMBER_LITERAL:n1 TIMES NUMBER_LITERAL:n2
+        {: RESULT = new TimesExpressionNode(n1, n2); :}
+        | NUMBER_LITERAL:n1 DIVIDE NUMBER_LITERAL:n2
+        {: RESULT = new DivideExpressionNode(n1, n2); :}
         ;

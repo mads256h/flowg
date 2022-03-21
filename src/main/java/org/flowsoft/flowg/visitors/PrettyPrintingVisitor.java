@@ -46,4 +46,24 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     public String Visit(BooleanLiteralNode booleanLiteralNode) {
         return booleanLiteralNode.GetValue().toString();
     }
+
+    @Override
+    public String Visit(PlusExpressionNode plusExpressionNode) throws NoException {
+        return plusExpressionNode.GetLeftChild().Accept(this) + " + " + plusExpressionNode.GetRightChild().Accept(this);
+    }
+
+    @Override
+    public String Visit(MinusExpressionNode minusExpressionNode) throws NoException {
+        return minusExpressionNode.GetLeftChild().Accept(this) + " - " + minusExpressionNode.GetRightChild().Accept(this);
+    }
+
+    @Override
+    public String Visit(TimesExpressionNode multiplyExpressionNode) throws NoException {
+        return multiplyExpressionNode.GetLeftChild().Accept(this) + " * " + multiplyExpressionNode.GetRightChild().Accept(this);
+    }
+
+    @Override
+    public String Visit(DivideExpressionNode divisionExpressionNode) throws NoException {
+        return divisionExpressionNode.GetLeftChild().Accept(this) + " / " + divisionExpressionNode.GetRightChild().Accept(this);
+    }
 }

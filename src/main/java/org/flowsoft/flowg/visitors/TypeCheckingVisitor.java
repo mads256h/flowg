@@ -67,5 +67,74 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     public Type Visit(BooleanLiteralNode booleanLiteralNode) {
         return Type.Boolean;
     }
-}
 
+    @Override
+    public Type Visit(PlusExpressionNode plusExpressionNode) throws TypeException {
+        switch (plusExpressionNode.GetLeftChild().Accept(this)) {
+            case Number -> {
+                switch (plusExpressionNode.GetRightChild().Accept(this)) {
+                    case Number -> {return Type.Number; }
+                    //case Boolean -> {return Type.Boolean; }
+                }
+            }
+//            case Point -> {
+//                switch (plusExpressionNode.GetRightChild().Accept(this)) {
+//                    case Point -> {return Type.Point; }
+//                }
+//            }
+//            case Boolean -> {
+//                switch (plusExpressionNode.GetRightChild().Accept(this)) {
+//                    case Number, Boolean -> {return Type.Boolean; }
+//                }
+//            }
+        }
+        throw new TypeException();
+    }
+
+    @Override
+    public Type Visit(MinusExpressionNode minusExpressionNode) throws TypeException {
+        switch (minusExpressionNode.GetLeftChild().Accept(this)) {
+            case Number -> {
+                switch (minusExpressionNode.GetRightChild().Accept(this)) {
+                    case Number -> { return Type.Number; }
+                }
+            }
+//            case Point -> {
+//                switch (minusExpressionNode.GetRightChild().Accept(this)) {
+//                    case Point -> { return Type.Point; }
+//                }
+//            }
+        }
+        throw new TypeException();
+    }
+
+    @Override
+    public Type Visit(TimesExpressionNode multiplyExpressionNode) throws TypeException {
+        switch (multiplyExpressionNode.GetLeftChild().Accept(this)) {
+            case Number -> {
+                switch (multiplyExpressionNode.GetRightChild().Accept(this)) {
+                    case Number -> { return Type.Number; }
+                    //case Point -> { return  Type.Point; }
+                }
+            }
+//            case Point -> {
+//                switch (multiplyExpressionNode.GetRightChild().Accept(this)) {
+//                    case Number, Point -> { return Type.Point; }
+//                }
+//            }
+        }
+        throw new TypeException();
+    }
+
+    @Override
+    public Type Visit(DivideExpressionNode divisionExpressionNode) throws TypeException {
+        switch (divisionExpressionNode.GetLeftChild().Accept(this)) {
+            case Number -> {
+                switch (divisionExpressionNode.GetRightChild().Accept(this)) {
+                    case Number -> { return Type.Number; }
+                }
+            }
+        }
+        throw new TypeException();
+    }
+}
