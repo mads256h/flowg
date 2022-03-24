@@ -2,6 +2,9 @@ package org.flowsoft.flowg;
 
 import java_cup.runtime.Symbol;
 import org.flowsoft.flowg.nodes.Node;
+import org.flowsoft.flowg.visitors.PrettyPrintingVisitor;
+import org.flowsoft.flowg.visitors.TreePrintingVisitor;
+import org.flowsoft.flowg.visitors.TypeCheckingVisitor;
 
 import java.io.FileReader;
 
@@ -27,6 +30,9 @@ public class main {
             var rootNode = (Node)symbol.value;
             System.out.println(rootNode.Accept(new TreePrintingVisitor()));
             System.out.println(rootNode.Accept(new PrettyPrintingVisitor()));
+            var typeCheckingVisitor = new TypeCheckingVisitor();
+            rootNode.Accept(typeCheckingVisitor);
+            typeCheckingVisitor.PrintSymbolTable();
         }
         catch (Exception e) {
             System.out.println("Could not parse");

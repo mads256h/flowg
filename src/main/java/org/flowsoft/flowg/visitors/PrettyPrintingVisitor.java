@@ -1,10 +1,12 @@
-package org.flowsoft.flowg;
+package org.flowsoft.flowg.visitors;
 
+import org.flowsoft.flowg.NoException;
+import org.flowsoft.flowg.TypeHelper;
 import org.flowsoft.flowg.nodes.*;
 
-public class PrettyPrintingVisitor implements IVisitor<String> {
+public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     @Override
-    public String Visit(StatementListNode statementListNode) {
+    public String Visit(StatementListNode statementListNode) throws NoException {
         var statement = statementListNode.GetLeftChild();
         var statementList = statementListNode.GetRightChild();
 
@@ -13,7 +15,7 @@ public class PrettyPrintingVisitor implements IVisitor<String> {
     }
 
     @Override
-    public String Visit(DeclarationNode declarationNode) {
+    public String Visit(DeclarationNode declarationNode) throws NoException {
         return declarationNode.GetTypeChild().Accept(this)
                 + " " + declarationNode.GetIdentifierChild().Accept(this)
                 + " ="
@@ -22,7 +24,7 @@ public class PrettyPrintingVisitor implements IVisitor<String> {
 
     @Override
     public String Visit(TypeNode typeNode) {
-        return typeNode.GetValue();
+        return TypeHelper.TypeToString(typeNode.GetValue());
     }
 
     @Override

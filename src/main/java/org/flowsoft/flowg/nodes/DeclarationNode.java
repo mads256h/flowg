@@ -1,6 +1,6 @@
 package org.flowsoft.flowg.nodes;
 
-import org.flowsoft.flowg.IVisitor;
+import org.flowsoft.flowg.visitors.IVisitor;
 
 public class DeclarationNode extends Node implements StatementNode {
     private final TypeNode _type;
@@ -26,7 +26,7 @@ public class DeclarationNode extends Node implements StatementNode {
     }
 
     @Override
-    public <T> T Accept(IVisitor<T> visitor) {
+    public <T, TException extends Exception> T Accept(IVisitor<T, TException> visitor) throws TException {
         return visitor.Visit(this);
     }
 }

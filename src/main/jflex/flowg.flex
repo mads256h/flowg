@@ -35,7 +35,7 @@ Comment = \/\/[^\n]*
 
 %%
 
-{Type} { return symbol(sym.TYPE, new TypeNode(yytext())); }
+{Type} { return symbol(sym.TYPE, new TypeNode(TypeHelper.StringToType(yytext()))); }
 
 "true" { return symbol(sym.BOOLEAN_LITERAL, new BooleanLiteralNode(true)); }
 "false" { return symbol(sym.BOOLEAN_LITERAL, new BooleanLiteralNode(false)); }

@@ -2,6 +2,7 @@ package org.flowsoft.flowg.tests;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.Yylex;
 import org.flowsoft.flowg.nodes.*;
 import org.flowsoft.flowg.parser;
@@ -20,7 +21,7 @@ public class ParserTests {
         var declaration = (DeclarationNode)statementList.GetLeftChild();
         var type = declaration.GetTypeChild();
         var identifier = declaration.GetIdentifierChild();
-        assertThat(type.GetValue()).isEqualTo("number");
+        assertThat(type.GetValue()).isEqualTo(Type.Number);
         assertThat(identifier.GetValue()).isEqualTo("hello");
 
         var numberLiteral = (NumberLiteralNode)declaration.GetExpressionChild();
@@ -35,7 +36,7 @@ public class ParserTests {
         var declaration = (DeclarationNode)statementList.GetLeftChild();
         var type = declaration.GetTypeChild();
         var identifier = declaration.GetIdentifierChild();
-        assertThat(type.GetValue()).isEqualTo("bool");
+        assertThat(type.GetValue()).isEqualTo(Type.Boolean);
         assertThat(identifier.GetValue()).isEqualTo("world");
 
         var booleanLiteral = (BooleanLiteralNode)declaration.GetExpressionChild();

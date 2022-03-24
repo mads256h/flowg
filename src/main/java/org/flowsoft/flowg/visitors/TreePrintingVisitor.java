@@ -1,8 +1,9 @@
-package org.flowsoft.flowg;
+package org.flowsoft.flowg.visitors;
 
+import org.flowsoft.flowg.NoException;
 import org.flowsoft.flowg.nodes.*;
 
-public class TreePrintingVisitor implements IVisitor<String> {
+public class TreePrintingVisitor implements IVisitor<String, NoException> {
 
     private int _indentation = 0;
 
@@ -11,7 +12,7 @@ public class TreePrintingVisitor implements IVisitor<String> {
         return "  ".repeat(_indentation) + node.toString() + "\n";
     }
 
-    private String PrintNode(INode node, INode... children) {
+    private String PrintNode(INode node, INode... children) throws NoException {
         var str = PrintNode(node);
         _indentation++;
         for (var child : children) {
@@ -23,7 +24,7 @@ public class TreePrintingVisitor implements IVisitor<String> {
     }
 
     @Override
-    public String Visit(StatementListNode statementListNode) {
+    public String Visit(StatementListNode statementListNode) throws NoException {
         if (statementListNode.GetRightChild() == null){
             return PrintNode(statementListNode, statementListNode.GetLeftChild());
         }
@@ -33,7 +34,7 @@ public class TreePrintingVisitor implements IVisitor<String> {
     }
 
     @Override
-    public String Visit(DeclarationNode declarationNode) {
+    public String Visit(DeclarationNode declarationNode) throws NoException {
         return PrintNode(declarationNode, declarationNode.GetTypeChild(), declarationNode.GetIdentifierChild(), declarationNode.GetExpressionChild());
     }
 
