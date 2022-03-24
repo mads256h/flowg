@@ -7,11 +7,16 @@ import org.flowsoft.flowg.nodes.*;
 public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     @Override
     public String Visit(StatementListNode statementListNode) throws NoException {
-        var statement = statementListNode.GetLeftChild();
-        var statementList = statementListNode.GetRightChild();
+        var children = statementListNode.GetChildren();
+        StringBuilder str = new StringBuilder();
 
-        return statement.Accept(this) + ";\n"
-                + (statementList == null ? "" : statementList.Accept(this));
+        for (int i = 0; i < children.size(); i++) {
+            str.append(children.get(i).Accept(this));
+            str.append(";\n");
+        }
+
+
+        return str.toString();
     }
 
     @Override

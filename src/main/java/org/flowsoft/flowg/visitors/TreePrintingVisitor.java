@@ -25,12 +25,9 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
 
     @Override
     public String Visit(StatementListNode statementListNode) throws NoException {
-        if (statementListNode.GetRightChild() == null){
-            return PrintNode(statementListNode, statementListNode.GetLeftChild());
-        }
-        else {
-            return PrintNode(statementListNode, statementListNode.GetLeftChild(), statementListNode.GetRightChild());
-        }
+        StatementNode[] array = statementListNode.GetChildren().toArray(new StatementNode[0]);
+
+        return PrintNode(statementListNode, array);
     }
 
     @Override
