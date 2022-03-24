@@ -16,9 +16,9 @@ public class ParserTests {
     @Test
     public void ParseNumberVariableDeclaration() throws Exception {
         var statementList = Parse("number hello = 2;");
-        assertThat(statementList.GetRightChild()).isNull();
+        assertThat(statementList.GetChildren().size()).isEqualTo(1);
 
-        var declaration = (DeclarationNode)statementList.GetLeftChild();
+        var declaration = (DeclarationNode)statementList.GetChildren().get(0);
         var type = declaration.GetTypeChild();
         var identifier = declaration.GetIdentifierChild();
         assertThat(type.GetValue()).isEqualTo(Type.Number);
@@ -31,9 +31,9 @@ public class ParserTests {
     @Test
     public void ParseBooleanVariableDeclaration() throws Exception {
         var statementList = Parse("bool world = true;");
-        assertThat(statementList.GetRightChild()).isNull();
+        assertThat(statementList.GetChildren().size()).isEqualTo(1);
 
-        var declaration = (DeclarationNode)statementList.GetLeftChild();
+        var declaration = (DeclarationNode)statementList.GetChildren().get(0);
         var type = declaration.GetTypeChild();
         var identifier = declaration.GetIdentifierChild();
         assertThat(type.GetValue()).isEqualTo(Type.Boolean);

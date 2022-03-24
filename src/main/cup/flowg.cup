@@ -1,5 +1,6 @@
 package org.flowsoft.flowg;
 
+import java.util.ArrayList;
 import java_cup.runtime.*;
 import org.flowsoft.flowg.nodes.*;
 
@@ -15,7 +16,7 @@ terminal SEMICOLON;
 
 
 non terminal StatementListNode program;
-non terminal StatementListNode stmt_list;
+non terminal ArrayList<StatementNode> stmt_list;
 non terminal StatementNode stmt;
 non terminal DeclarationNode decl;
 non terminal ExpressionNode expr;
@@ -23,13 +24,13 @@ non terminal ExpressionNode expr;
 start with program;
 
 program ::= stmt_list:l
-            {: RESULT = l; :};
+            {: RESULT = new StatementListNode(l); :};
 
-stmt_list ::= stmt:s SEMICOLON stmt_list:l
-            {: RESULT = new StatementListNode(s, l); :}
+stmt_list ::= stmt_list:l stmt:s SEMICOLON
+            {: l.add(s); RESULT = l; :}
             |
             stmt:s SEMICOLON
-            {: RESULT = new StatementListNode(s); :};
+            {: var list = new ArrayList<StatementNode>(); list.add(s); RESULT = list; :};
 
 stmt ::= decl:d
         {: RESULT = d; :};

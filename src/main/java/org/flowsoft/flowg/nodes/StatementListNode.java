@@ -2,14 +2,17 @@ package org.flowsoft.flowg.nodes;
 
 import org.flowsoft.flowg.visitors.IVisitor;
 
-public class StatementListNode extends BinaryNode<StatementNode, StatementListNode> {
+import java.util.ArrayList;
 
-    public StatementListNode(StatementNode child) {
-        this(child, null);
+public class StatementListNode extends Node {
+    private final ArrayList<StatementNode> _children;
+
+    public StatementListNode(ArrayList<StatementNode> children) {
+        _children = children;
     }
 
-    public StatementListNode(StatementNode leftChild, StatementListNode rightChild) {
-        super(leftChild, rightChild);
+    public ArrayList<StatementNode> GetChildren() {
+        return _children;
     }
 
     @Override

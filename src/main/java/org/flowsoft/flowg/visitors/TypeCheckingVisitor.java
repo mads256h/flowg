@@ -16,9 +16,10 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
     @Override
     public Type Visit(StatementListNode statementListNode) throws TypeException {
-        statementListNode.GetLeftChild().Accept(this);
-        if (statementListNode.GetRightChild() != null)
-            statementListNode.GetRightChild().Accept(this);
+
+        for (var child : statementListNode.GetChildren()) {
+            child.Accept(this);
+        }
 
         // Statements do not have a type
         return null;
