@@ -1,6 +1,6 @@
 # flowg
 
-This is the official repository for SW4-16's flowG language. 
+This is the official repository for SW4-16's FlowG language. 
 It is designed to assist in the creation of valid G-code to be used on 3d-printing machines.
 flowG focuses on readability and abstraction. 
 
