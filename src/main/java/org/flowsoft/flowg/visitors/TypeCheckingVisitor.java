@@ -77,19 +77,8 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
             case Number -> {
                 switch (plusExpressionNode.GetRightChild().Accept(this)) {
                     case Number -> {return Type.Number; }
-                    //case Boolean -> {return Type.Boolean; }
                 }
             }
-//            case Point -> {
-//                switch (plusExpressionNode.GetRightChild().Accept(this)) {
-//                    case Point -> {return Type.Point; }
-//                }
-//            }
-//            case Boolean -> {
-//                switch (plusExpressionNode.GetRightChild().Accept(this)) {
-//                    case Number, Boolean -> {return Type.Boolean; }
-//                }
-//            }
         }
         throw new TypeException();
     }
@@ -102,11 +91,6 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
                     case Number -> { return Type.Number; }
                 }
             }
-//            case Point -> {
-//                switch (minusExpressionNode.GetRightChild().Accept(this)) {
-//                    case Point -> { return Type.Point; }
-//                }
-//            }
         }
         throw new TypeException();
     }
@@ -117,14 +101,8 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
             case Number -> {
                 switch (multiplyExpressionNode.GetRightChild().Accept(this)) {
                     case Number -> { return Type.Number; }
-                    //case Point -> { return  Type.Point; }
                 }
             }
-//            case Point -> {
-//                switch (multiplyExpressionNode.GetRightChild().Accept(this)) {
-//                    case Number, Point -> { return Type.Point; }
-//                }
-//            }
         }
         throw new TypeException();
     }
