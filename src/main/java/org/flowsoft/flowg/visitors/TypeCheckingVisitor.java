@@ -13,6 +13,9 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         _symbolTable.Print();
     }
 
+    public SymbolTable GetSymbolTable() {
+        return _symbolTable;
+    }
 
     @Override
     public Type Visit(StatementListNode statementListNode) throws TypeException {
