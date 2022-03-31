@@ -2,7 +2,6 @@ package org.flowsoft.flowg;
 
 import java_cup.runtime.Symbol;
 import org.flowsoft.flowg.nodes.Node;
-import org.flowsoft.flowg.visitors.CodeGeneratingVisitor;
 import org.flowsoft.flowg.visitors.PrettyPrintingVisitor;
 import org.flowsoft.flowg.visitors.TreePrintingVisitor;
 import org.flowsoft.flowg.visitors.TypeCheckingVisitor;
@@ -33,8 +32,6 @@ public class main {
             System.out.println(rootNode.Accept(new PrettyPrintingVisitor()));
             var typeCheckingVisitor = new TypeCheckingVisitor();
             rootNode.Accept(typeCheckingVisitor);
-            var codeGeneratingVisitor = new CodeGeneratingVisitor(typeCheckingVisitor.GetSymbolTable());
-            rootNode.Accept(codeGeneratingVisitor);
             typeCheckingVisitor.PrintSymbolTable();
         }
         catch (Exception e) {

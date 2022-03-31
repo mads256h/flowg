@@ -32,8 +32,6 @@ Number = [0-9]+(\.[0-9]+)?
 Whitespace = [\ \n]
 NewLine = \n
 Comment = \/\/[^\n]*
-//DefaultFunction = `Line({Identifier})` | `Line(<{Number},{Number},{Number}>])`
-//                | `Move({Identifier})` | `Move(<{Number},{Number},{Number}>])`
 
 %%
 
