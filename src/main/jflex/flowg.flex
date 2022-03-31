@@ -50,6 +50,10 @@ Comment = \/\/[^\n]*
 
 "=" { return symbol(sym.ASSIGNMENT); }
 ";" { return symbol(sym.SEMICOLON); }
+"+" { return symbol(sym.PLUS); }
+"-" { return symbol(sym.MINUS); }
+"*" { return symbol(sym.TIMES); }
+"/" { return symbol(sym.DIVIDE); }
 
 
 

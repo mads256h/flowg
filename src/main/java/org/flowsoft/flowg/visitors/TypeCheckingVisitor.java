@@ -13,6 +13,9 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         _symbolTable.Print();
     }
 
+    public SymbolTable GetSymbolTable() {
+        return _symbolTable;
+    }
 
     @Override
     public Type Visit(StatementListNode statementListNode) throws TypeException {
@@ -67,5 +70,56 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     public Type Visit(BooleanLiteralNode booleanLiteralNode) {
         return Type.Boolean;
     }
-}
 
+    @Override
+    public Type Visit(PlusExpressionNode plusExpressionNode) throws TypeException {
+        var leftType = plusExpressionNode.GetLeftChild().Accept(this);
+        var rightType = plusExpressionNode.GetRightChild().Accept(this);
+        return PlusMinusTypeCheckExpr(leftType, rightType);
+    }
+
+    @Override
+    public Type Visit(MinusExpressionNode minusExpressionNode) throws TypeException {
+        var leftType = minusExpressionNode.GetLeftChild().Accept(this);
+        var rightType = minusExpressionNode.GetRightChild().Accept(this);
+        return PlusMinusTypeCheckExpr(leftType, rightType);
+    }
+
+    @Override
+    public Type Visit(TimesExpressionNode multiplyExpressionNode) throws TypeException {
+        var leftType = multiplyExpressionNode.GetLeftChild().Accept(this);
+        var rightType = multiplyExpressionNode.GetRightChild().Accept(this);
+        return TimesDivideTypeCheckExpr(leftType, rightType);
+    }
+
+    @Override
+    public Type Visit(DivideExpressionNode divisionExpressionNode) throws TypeException {
+        var leftType = divisionExpressionNode.GetLeftChild().Accept(this);
+        var rightType = divisionExpressionNode.GetRightChild().Accept(this);
+        return TimesDivideTypeCheckExpr(leftType, rightType);
+    }
+
+    private Type PlusMinusTypeCheckExpr(Type leftChild, Type rightChild) throws TypeException {
+        if (leftChild != rightChild) {
+            throw new TypeException();
+        }
+
+        if (leftChild == Type.Boolean) {
+            throw new TypeException();
+        }
+
+        return leftChild;
+    }
+
+    private Type TimesDivideTypeCheckExpr(Type leftChild, Type rightChild) throws TypeException {
+        if (leftChild != rightChild) {
+            throw new TypeException();
+        }
+
+        if (leftChild == Type.Boolean) {
+            throw new TypeException();
+        }
+
+        return leftChild;
+    }
+}
