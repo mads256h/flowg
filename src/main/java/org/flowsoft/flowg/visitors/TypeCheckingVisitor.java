@@ -73,49 +73,53 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
     @Override
     public Type Visit(PlusExpressionNode plusExpressionNode) throws TypeException {
-        switch (plusExpressionNode.GetLeftChild().Accept(this)) {
-            case Number -> {
-                switch (plusExpressionNode.GetRightChild().Accept(this)) {
-                    case Number -> {return Type.Number; }
-                }
-            }
-        }
-        throw new TypeException();
+        var leftType = plusExpressionNode.GetLeftChild().Accept(this);
+        var rightType = plusExpressionNode.GetRightChild().Accept(this);
+        return PlusMinusTypeCheckExpr(leftType, rightType);
     }
 
     @Override
     public Type Visit(MinusExpressionNode minusExpressionNode) throws TypeException {
-        switch (minusExpressionNode.GetLeftChild().Accept(this)) {
-            case Number -> {
-                switch (minusExpressionNode.GetRightChild().Accept(this)) {
-                    case Number -> { return Type.Number; }
-                }
-            }
-        }
-        throw new TypeException();
+        var leftType = minusExpressionNode.GetLeftChild().Accept(this);
+        var rightType = minusExpressionNode.GetRightChild().Accept(this);
+        return PlusMinusTypeCheckExpr(leftType, rightType);
     }
 
     @Override
     public Type Visit(TimesExpressionNode multiplyExpressionNode) throws TypeException {
-        switch (multiplyExpressionNode.GetLeftChild().Accept(this)) {
-            case Number -> {
-                switch (multiplyExpressionNode.GetRightChild().Accept(this)) {
-                    case Number -> { return Type.Number; }
-                }
-            }
-        }
-        throw new TypeException();
+        var leftType = multiplyExpressionNode.GetLeftChild().Accept(this);
+        var rightType = multiplyExpressionNode.GetRightChild().Accept(this);
+        return TimesDivideTypeCheckExpr(leftType, rightType);
     }
 
     @Override
     public Type Visit(DivideExpressionNode divisionExpressionNode) throws TypeException {
-        switch (divisionExpressionNode.GetLeftChild().Accept(this)) {
-            case Number -> {
-                switch (divisionExpressionNode.GetRightChild().Accept(this)) {
-                    case Number -> { return Type.Number; }
-                }
-            }
+        var leftType = divisionExpressionNode.GetLeftChild().Accept(this);
+        var rightType = divisionExpressionNode.GetRightChild().Accept(this);
+        return TimesDivideTypeCheckExpr(leftType, rightType);
+    }
+
+    private Type PlusMinusTypeCheckExpr(Type leftChild, Type rightChild) throws TypeException {
+        if (leftChild != rightChild) {
+            throw new TypeException();
         }
-        throw new TypeException();
+
+        if (leftChild == Type.Boolean) {
+            throw new TypeException();
+        }
+
+        return leftChild;
+    }
+
+    private Type TimesDivideTypeCheckExpr(Type leftChild, Type rightChild) throws TypeException {
+        if (leftChild != rightChild) {
+            throw new TypeException();
+        }
+
+        if (leftChild == Type.Boolean) {
+            throw new TypeException();
+        }
+
+        return leftChild;
     }
 }
