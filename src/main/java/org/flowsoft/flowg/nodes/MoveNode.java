@@ -2,11 +2,10 @@ package org.flowsoft.flowg.nodes;
 
 import org.flowsoft.flowg.visitors.IVisitor;
 
-import java.util.List;
+public class MoveNode extends UnaryNode<ActualParameterListNode> implements StatementNode {
 
-public class StatementListNode extends ArrayNode<StatementNode> {
-    public StatementListNode(List<StatementNode> children) {
-        super(children);
+    public MoveNode(ActualParameterListNode actualParameterListNode) {
+        super(actualParameterListNode);
     }
 
     @Override

@@ -4,6 +4,8 @@ import org.flowsoft.flowg.nodes.*;
 
 public interface IVisitor<T, TException extends Exception> {
     T Visit(StatementListNode statementListNode) throws TException;
+    T Visit(MoveNode moveNode) throws TException;
+    T Visit(ActualParameterListNode actualParameterListNode) throws TException;
     T Visit(DeclarationNode declarationNode) throws TException;
     T Visit(TypeNode typeNode) throws TException;
     T Visit(IdentifierNode identifierNode) throws TException;

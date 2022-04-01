@@ -20,6 +20,26 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
+    public String Visit(MoveNode moveNode) throws NoException {
+        return "move(" + moveNode.GetChild().Accept(this) + ")";
+    }
+
+    @Override
+    public String Visit(ActualParameterListNode actualParameterListNode) throws NoException {
+        var sb = new StringBuilder();
+        boolean first = true;
+        for (var child : actualParameterListNode.GetChildren()) {
+            if (!first) {
+                sb.append(", ");
+            }
+            sb.append(child.Accept(this));
+            first = false;
+        }
+
+        return sb.toString();
+    }
+
+    @Override
     public String Visit(DeclarationNode declarationNode) throws NoException {
         return declarationNode.GetTypeChild().Accept(this)
                 + " " + declarationNode.GetIdentifierChild().Accept(this)

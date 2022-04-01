@@ -4,8 +4,9 @@ import org.flowsoft.flowg.visitors.IVisitor;
 
 import java.util.List;
 
-public class StatementListNode extends ArrayNode<StatementNode> {
-    public StatementListNode(List<StatementNode> children) {
+public class ActualParameterListNode extends ArrayNode<ExpressionNode> {
+
+    public ActualParameterListNode(List<ExpressionNode> children) {
         super(children);
     }
 
