@@ -31,6 +31,18 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
+    public String Visit(MoveNode moveNode) throws NoException {
+        return PrintNode(moveNode, moveNode.GetChild());
+    }
+
+    @Override
+    public String Visit(ActualParameterListNode actualParameterListNode) throws NoException {
+        var array = actualParameterListNode.GetChildren().toArray(new ExpressionNode[0]);
+
+        return PrintNode(actualParameterListNode, array);
+    }
+
+    @Override
     public String Visit(DeclarationNode declarationNode) throws NoException {
         return PrintNode(declarationNode, declarationNode.GetTypeChild(), declarationNode.GetIdentifierChild(), declarationNode.GetExpressionChild());
     }

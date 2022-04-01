@@ -19,7 +19,7 @@ import java.math.BigDecimal;
   private Symbol symbol(int type) {
     return new Symbol(type, yyline, yycolumn);
   }
-  private Symbol symbol(int type, Object value) {
+  private Symbol symbol(int type, INode value) {
     return new Symbol(type, yyline, yycolumn, value);
   }
 %}
@@ -40,6 +40,8 @@ Comment = \/\/[^\n]*
 "true" { return symbol(sym.BOOLEAN_LITERAL, new BooleanLiteralNode(true)); }
 "false" { return symbol(sym.BOOLEAN_LITERAL, new BooleanLiteralNode(false)); }
 
+"move" { return symbol(sym.MOVE); }
+
 {Identifier} { return symbol(sym.IDENTIFIER, new IdentifierNode(yytext())); }
 
 {Number} { return symbol(sym.NUMBER_LITERAL, new NumberLiteralNode(new BigDecimal(yytext()))); }
@@ -48,8 +50,12 @@ Comment = \/\/[^\n]*
 
 {Comment} { /* Ignore */ }
 
+"(" { return symbol(sym.L_PAREN); }
+")" { return symbol(sym.R_PAREN); }
+
 "=" { return symbol(sym.ASSIGNMENT); }
 ";" { return symbol(sym.SEMICOLON); }
+"," { return symbol(sym.COMMA); }
 "+" { return symbol(sym.PLUS); }
 "-" { return symbol(sym.MINUS); }
 "*" { return symbol(sym.TIMES); }

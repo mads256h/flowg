@@ -11,8 +11,14 @@ terminal IdentifierNode IDENTIFIER;
 terminal NumberLiteralNode NUMBER_LITERAL;
 terminal BooleanLiteralNode BOOLEAN_LITERAL;
 
+terminal MOVE;
+
+terminal L_PAREN;
+terminal R_PAREN;
+
 terminal ASSIGNMENT;
 terminal SEMICOLON;
+terminal COMMA;
 terminal PLUS;
 terminal MINUS;
 terminal TIMES;
@@ -22,6 +28,9 @@ non terminal StatementListNode program;
 non terminal ArrayList<StatementNode> stmt_list;
 non terminal StatementNode stmt;
 non terminal DeclarationNode decl;
+non terminal MoveNode move;
+non terminal ActualParameterListNode a_param_list;
+non terminal ArrayList<ExpressionNode> a_param_list_impl;
 non terminal ExpressionNode expr;
 
 precedence left PLUS, MINUS;
@@ -39,10 +48,25 @@ stmt_list ::= stmt_list:l stmt:s SEMICOLON
             {: var list = new ArrayList<StatementNode>(); list.add(s); RESULT = list; :};
 
 stmt ::= decl:d
-        {: RESULT = d; :};
+        {: RESULT = d; :}
+        |
+        move:m
+        {: RESULT = m; :};
 
 decl ::= TYPE:t IDENTIFIER:i ASSIGNMENT expr:e
         {: RESULT = new DeclarationNode(t, i, e); :};
+
+move ::= MOVE L_PAREN a_param_list:p R_PAREN
+        {: RESULT = new MoveNode(p); :};
+
+a_param_list ::= a_param_list_impl:l
+        {: RESULT = new ActualParameterListNode(l); :};
+
+a_param_list_impl ::= a_param_list_impl:l COMMA expr:e
+        {: l.add(e); RESULT = l; :}
+        |
+        expr:e
+        {: var l = new ArrayList<ExpressionNode>(); l.add(e); RESULT = l; :};
 
 expr ::= NUMBER_LITERAL:n
         {: RESULT = n; :}

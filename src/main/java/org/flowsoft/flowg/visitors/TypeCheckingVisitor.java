@@ -29,6 +29,32 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     }
 
     @Override
+    public Type Visit(MoveNode moveNode) throws TypeException {
+        // moveNode.GetChild().Accept(this);
+        var params = moveNode.GetChild().GetChildren();
+        if (params.size() != 3) {
+            throw new TypeException();
+        }
+
+        for (var param : params) {
+            if (param.Accept(this) != Type.Number) {
+                throw new TypeException();
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public Type Visit(ActualParameterListNode actualParameterListNode) throws TypeException {
+        //TODO look up symbol table for expected types
+        for (var child : actualParameterListNode.GetChildren()) {
+            child.Accept(this);
+        }
+        return null;
+    }
+
+    @Override
     public Type Visit(DeclarationNode declarationNode) throws TypeException {
         var typeNode = declarationNode.GetTypeChild();
         var identifierNode = declarationNode.GetIdentifierChild();
