@@ -5,6 +5,7 @@ import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.nodes.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exception> {
 
@@ -81,6 +82,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
         var leftChildValue = plusExpressionNode.GetLeftChild().Accept(this).getNumber();
         var rightChildValue = plusExpressionNode.GetRightChild().Accept(this).getNumber();
+
         var sum = leftChildValue.add(rightChildValue);
 
         expressionValue.setNumber(sum);
@@ -94,6 +96,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
         var leftChildValue = minusExpressionNode.GetLeftChild().Accept(this).getNumber();
         var rightChildValue = minusExpressionNode.GetRightChild().Accept(this).getNumber();
+
         var sum = leftChildValue.subtract(rightChildValue);
 
         expressionValue.setNumber(sum);
@@ -107,6 +110,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
         var leftChildValue = multiplyExpressionNode.GetLeftChild().Accept(this).getNumber();
         var rightChildValue = multiplyExpressionNode.GetRightChild().Accept(this).getNumber();
+
         var sum = leftChildValue.multiply(rightChildValue);
 
         expressionValue.setNumber(sum);
@@ -120,7 +124,8 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
         var leftChildValue = divisionExpressionNode.GetLeftChild().Accept(this).getNumber();
         var rightChildValue = divisionExpressionNode.GetRightChild().Accept(this).getNumber();
-        var sum = leftChildValue.divide(rightChildValue);
+
+        var sum = leftChildValue.divide(rightChildValue, RoundingMode.HALF_UP);
 
         expressionValue.setNumber(sum);
         expressionValue.setType(Type.Number);
