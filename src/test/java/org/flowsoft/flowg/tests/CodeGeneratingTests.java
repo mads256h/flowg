@@ -25,6 +25,7 @@ public class CodeGeneratingTests {
     public static BigDecimal[] BigDecimals = new BigDecimal[] {
             new BigDecimal("-1"),
             new BigDecimal("1"),
+            new BigDecimal("3"),
             new BigDecimal(Integer.toString(Integer.MAX_VALUE)),
             new BigDecimal(Integer.toString(Integer.MIN_VALUE))};
 
@@ -75,7 +76,13 @@ public class CodeGeneratingTests {
 
         var expressionValue = new CodeGeneratingVisitor(new SymbolTable()).Visit(divideExpressionNode);
         var actual = expressionValue.getNumber();
-        var expected = leftVal.divide(rightVal, RoundingMode.HALF_UP);
+
+        BigDecimal expected;
+        try {
+            expected = leftVal.divide(rightVal);
+        } catch (ArithmeticException e) {
+            expected = leftVal.divide(rightVal, RoundingMode.HALF_UP).setScale(100, RoundingMode.HALF_UP);
+        }
 
         assertThat(actual).isEqualTo(expected);
     }

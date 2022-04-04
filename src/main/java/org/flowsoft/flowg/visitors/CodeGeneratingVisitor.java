@@ -24,6 +24,16 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     }
 
     @Override
+    public ExpressionValue Visit(MoveNode moveNode) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ExpressionValue Visit(ActualParameterListNode actualParameterListNode) throws Exception {
+        return null;
+    }
+
+    @Override
     public ExpressionValue Visit(DeclarationNode declarationNode) throws Exception {
         var identifierNode = declarationNode.GetIdentifierChild();
         var expressionNode = declarationNode.GetExpressionChild();
@@ -125,7 +135,12 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         var leftChildValue = divisionExpressionNode.GetLeftChild().Accept(this).getNumber();
         var rightChildValue = divisionExpressionNode.GetRightChild().Accept(this).getNumber();
 
-        var sum = leftChildValue.divide(rightChildValue, RoundingMode.HALF_UP);
+        BigDecimal sum;
+        try {
+            sum = leftChildValue.divide(rightChildValue);
+        } catch (ArithmeticException e) {
+            sum = leftChildValue.divide(rightChildValue, RoundingMode.HALF_UP).setScale(100, RoundingMode.HALF_UP);
+        }
 
         expressionValue.setNumber(sum);
         expressionValue.setType(Type.Number);
