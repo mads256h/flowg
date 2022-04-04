@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java_cup.runtime.*;
 import org.flowsoft.flowg.nodes.*;
 
+terminal INVALID;
+
 terminal TypeNode TYPE;
 
 terminal IdentifierNode IDENTIFIER;
