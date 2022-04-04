@@ -5,13 +5,13 @@ import org.flowsoft.flowg.nodes.ExpressionValue;
 
 public class VariableEntry {
 
-    public VariableEntry(String identifier, org.flowsoft.flowg.Type type, ExpressionValue expressionValue) {
+    public VariableEntry(String identifier, Type type, ExpressionValue expressionValue) {
         Identifier = identifier;
         Type = type;
         Value = expressionValue;
     }
 
-    public VariableEntry(String identifier, org.flowsoft.flowg.Type type) {
+    public VariableEntry(String identifier, Type type) {
         Identifier = identifier;
         Type = type;
         Value = null;

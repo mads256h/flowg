@@ -30,7 +30,7 @@ public class CodeGeneratingTests {
                 new NumberLiteralNode(rightVal));
 
         var expressionValue = new CodeGeneratingVisitor(new SymbolTable()).Visit(plusExpressionNode);
-        var actual = expressionValue.getNumber();
+        var actual = expressionValue.GetNumber();
         var expected = leftVal.add(rightVal);
 
         assertThat(actual).isEqualTo(expected);
@@ -43,7 +43,7 @@ public class CodeGeneratingTests {
                 new NumberLiteralNode(rightVal));
 
         var expressionValue = new CodeGeneratingVisitor(new SymbolTable()).Visit(minusExpressionNode);
-        var actual = expressionValue.getNumber();
+        var actual = expressionValue.GetNumber();
         var expected = leftVal.subtract(rightVal);
 
         assertThat(actual).isEqualTo(expected);
@@ -56,7 +56,7 @@ public class CodeGeneratingTests {
                 new NumberLiteralNode(rightVal));
 
         var expressionValue = new CodeGeneratingVisitor(new SymbolTable()).Visit(timesExpressionNode);
-        var actual = expressionValue.getNumber();
+        var actual = expressionValue.GetNumber();
         var expected = leftVal.multiply(rightVal);
 
         assertThat(actual).isEqualTo(expected);
@@ -69,7 +69,7 @@ public class CodeGeneratingTests {
                 new NumberLiteralNode(rightVal));
 
         var expressionValue = new CodeGeneratingVisitor(new SymbolTable()).Visit(divideExpressionNode);
-        var actual = expressionValue.getNumber();
+        var actual = expressionValue.GetNumber();
 
         BigDecimal expected;
         try {

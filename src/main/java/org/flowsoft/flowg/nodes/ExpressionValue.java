@@ -2,7 +2,6 @@ package org.flowsoft.flowg.nodes;
 
 import org.flowsoft.flowg.Type;
 
-import java.awt.*;
 import java.math.BigDecimal;
 
 public class ExpressionValue {
@@ -10,49 +9,35 @@ public class ExpressionValue {
     private Type _type = null;
     private BigDecimal _number = null;
     private Boolean _boolean = null;
-    private Type _point = null;
 
-    public ExpressionValue(Type Type, BigDecimal Number) {
-        _type = Type;
+    public ExpressionValue(BigDecimal Number) {
         _number = Number;
+        _type = Type.Number;
     }
 
-    public ExpressionValue(Type Type, Boolean Boolean) {
-        _type = Type;
+    public ExpressionValue(Boolean Boolean) {
         _boolean = Boolean;
+        _type = Type.Boolean;
     }
 
     public ExpressionValue(Type Type) {
         _type = Type;
     }
 
-    public Type getType() {
+    public Type GetType() {
         return _type;
     }
 
-    public BigDecimal getNumber() {
+    public BigDecimal GetNumber() {
         return _number;
     }
 
-    public Boolean getBoolean() {
+    public Boolean GetBoolean() {
         return _boolean;
     }
 
-    public Type getPoint() {
-        return _point;
-    }
-
-    public void setType(Type type) { this._type = _type; }
-
-    public void setNumber(BigDecimal _number) {
-        this._number = _number;
-    }
-
-    public void setBoolean(Boolean _boolean) {
-        this._boolean = _boolean;
-    }
-
-    public void setPoint(Type _point) {
-        this._point = _point;
+    @Override
+    public String toString() {
+        return String.format("Type: %s, Numeric: %s, Boolean: %s", this._type, this._number, this._boolean);
     }
 }

@@ -1,7 +1,5 @@
 package org.flowsoft.flowg.visitors;
 
-import org.flowsoft.flowg.Type;
-import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.nodes.*;
 
 import java.math.BigDecimal;
@@ -25,11 +23,15 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     @Override
     public ExpressionValue Visit(MoveNode moveNode) throws Exception {
+       moveNode.GetChild().Accept(this);
         return null;
     }
 
     @Override
     public ExpressionValue Visit(ActualParameterListNode actualParameterListNode) throws Exception {
+        for (var child : actualParameterListNode.GetChildren()) {
+            child.Accept(this);
+        }
         return null;
     }
 
@@ -47,7 +49,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     @Override
     public ExpressionValue Visit(TypeNode typeNode) throws Exception {
-        return new ExpressionValue(typeNode.GetValue());
+        return null;
     }
 
     @Override
@@ -58,42 +60,42 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     @Override
     public ExpressionValue Visit(NumberLiteralNode numberLiteralNode) throws Exception {
-        return new ExpressionValue(Type.Number, numberLiteralNode.GetValue());
+        return new ExpressionValue(numberLiteralNode.GetValue());
     }
 
     @Override
     public ExpressionValue Visit(BooleanLiteralNode booleanLiteralNode) throws Exception {
-        return new ExpressionValue(Type.Boolean, booleanLiteralNode.GetValue());
+        return new ExpressionValue(booleanLiteralNode.GetValue());
     }
 
     @Override
     public ExpressionValue Visit(PlusExpressionNode plusExpressionNode) throws Exception {
-        var leftChildValue = plusExpressionNode.GetLeftChild().Accept(this).getNumber();
-        var rightChildValue = plusExpressionNode.GetRightChild().Accept(this).getNumber();
+        var leftChildValue = plusExpressionNode.GetLeftChild().Accept(this).GetNumber();
+        var rightChildValue = plusExpressionNode.GetRightChild().Accept(this).GetNumber();
         var sum = leftChildValue.add(rightChildValue);
-        return new ExpressionValue(Type.Number, sum);
+        return new ExpressionValue(sum);
     }
 
     @Override
     public ExpressionValue Visit(MinusExpressionNode minusExpressionNode) throws Exception {
-        var leftChildValue = minusExpressionNode.GetLeftChild().Accept(this).getNumber();
-        var rightChildValue = minusExpressionNode.GetRightChild().Accept(this).getNumber();
+        var leftChildValue = minusExpressionNode.GetLeftChild().Accept(this).GetNumber();
+        var rightChildValue = minusExpressionNode.GetRightChild().Accept(this).GetNumber();
         var sum = leftChildValue.subtract(rightChildValue);
-        return new ExpressionValue(Type.Number, sum);
+        return new ExpressionValue(sum);
     }
 
     @Override
     public ExpressionValue Visit(TimesExpressionNode multiplyExpressionNode) throws Exception {
-        var leftChildValue = multiplyExpressionNode.GetLeftChild().Accept(this).getNumber();
-        var rightChildValue = multiplyExpressionNode.GetRightChild().Accept(this).getNumber();
+        var leftChildValue = multiplyExpressionNode.GetLeftChild().Accept(this).GetNumber();
+        var rightChildValue = multiplyExpressionNode.GetRightChild().Accept(this).GetNumber();
         var sum = leftChildValue.multiply(rightChildValue);
-        return new ExpressionValue(Type.Number, sum);
+        return new ExpressionValue(sum);
     }
 
     @Override
     public ExpressionValue Visit(DivideExpressionNode divisionExpressionNode) throws Exception {
-        var leftChildValue = divisionExpressionNode.GetLeftChild().Accept(this).getNumber();
-        var rightChildValue = divisionExpressionNode.GetRightChild().Accept(this).getNumber();
+        var leftChildValue = divisionExpressionNode.GetLeftChild().Accept(this).GetNumber();
+        var rightChildValue = divisionExpressionNode.GetRightChild().Accept(this).GetNumber();
 
         BigDecimal sum;
         try {
@@ -102,6 +104,6 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
             sum = leftChildValue.divide(rightChildValue, RoundingMode.HALF_UP).setScale(100, RoundingMode.HALF_UP);
         }
 
-        return new ExpressionValue(Type.Number, sum);
+        return new ExpressionValue(sum);
     }
 }

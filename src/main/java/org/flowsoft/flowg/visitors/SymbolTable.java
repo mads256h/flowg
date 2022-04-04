@@ -26,11 +26,12 @@ public class SymbolTable {
             var variableEntry = entry.getValue();
             System.out.println(variableEntry.Identifier
                     + ": "
-                    + variableEntry.Type
-                    + ", Numeric: "
-                    + (variableEntry.Value.getNumber() == null ? " NULL " : variableEntry.Value.getNumber())
-                    + ", Boolean: "
-                    + (variableEntry.Value.getBoolean() == null ? " NULL " : variableEntry.Value.getBoolean())
+                    + variableEntry.Value.toString()
+//                    + variableEntry.Type
+//                    + ", Numeric: "
+//                    + (variableEntry.Value.GetNumber() == null ? " NULL " : variableEntry.Value.GetNumber())
+//                    + ", Boolean: "
+//                    + (variableEntry.Value.GetBoolean() == null ? " NULL " : variableEntry.Value.GetBoolean())
                     );
         }
     }
