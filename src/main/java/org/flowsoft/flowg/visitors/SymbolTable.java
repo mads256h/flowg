@@ -27,8 +27,10 @@ public class SymbolTable {
             System.out.println(variableEntry.Identifier
                     + ": "
                     + variableEntry.Type
-                    + ", value: "
-                    + (variableEntry.Value == null ? " NULL " : variableEntry.Value.getNumber())
+                    + ", Numeric: "
+                    + (variableEntry.Value.getNumber() == null ? " NULL " : variableEntry.Value.getNumber())
+                    + ", Boolean: "
+                    + (variableEntry.Value.getBoolean() == null ? " NULL " : variableEntry.Value.getBoolean())
                     );
         }
     }

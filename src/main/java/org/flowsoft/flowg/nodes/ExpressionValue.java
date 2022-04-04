@@ -12,6 +12,20 @@ public class ExpressionValue {
     private Boolean _boolean = null;
     private Type _point = null;
 
+    public ExpressionValue(Type Type, BigDecimal Number) {
+        _type = Type;
+        _number = Number;
+    }
+
+    public ExpressionValue(Type Type, Boolean Boolean) {
+        _type = Type;
+        _boolean = Boolean;
+    }
+
+    public ExpressionValue(Type Type) {
+        _type = Type;
+    }
+
     public Type getType() {
         return _type;
     }
@@ -28,9 +42,7 @@ public class ExpressionValue {
         return _point;
     }
 
-    public void setType(Type type) {
-        this._type = _type;
-    }
+    public void setType(Type type) { this._type = _type; }
 
     public void setNumber(BigDecimal _number) {
         this._number = _number;

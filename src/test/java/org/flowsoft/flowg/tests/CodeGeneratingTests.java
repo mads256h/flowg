@@ -1,15 +1,9 @@
 package org.flowsoft.flowg.tests;
 
-import org.flowsoft.flowg.Type;
-import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.nodes.*;
 import org.flowsoft.flowg.visitors.CodeGeneratingVisitor;
-import org.flowsoft.flowg.visitors.IVisitor;
 import org.flowsoft.flowg.visitors.SymbolTable;
-import org.flowsoft.flowg.visitors.TypeCheckingVisitor;
-import org.junit.Test;
 import org.junit.experimental.theories.*;
-import org.junit.matchers.JUnitMatchers;
 import org.junit.runner.RunWith;
 
 import java.math.BigDecimal;
