@@ -42,7 +42,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
             }
         }
 
-        return null;
+        return Type.Void;
     }
 
     @Override
