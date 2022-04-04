@@ -4,40 +4,67 @@ import static com.google.common.truth.Truth.assertThat;
 
 import org.flowsoft.flowg.Yylex;
 import org.flowsoft.flowg.sym;
-import org.junit.Test;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
+import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.io.StringReader;
 
+@RunWith(Theories.class)
 public class LexerTests {
 
-    private Yylex _lexer;
+    private static class TextSymbolPair {
+        private final String _input;
+        private final int[] _symbols;
 
-    @Test
-    public void ScanNumberVariableDeclaration() throws IOException {
-        Scan("number x = 2;");
-        assertThat(NextToken()).isEqualTo(sym.TYPE);
-        assertThat(NextToken()).isEqualTo(sym.IDENTIFIER);
-        assertThat(NextToken()).isEqualTo(sym.ASSIGNMENT);
-        assertThat(NextToken()).isEqualTo(sym.NUMBER_LITERAL);
-        assertThat(NextToken()).isEqualTo(sym.SEMICOLON);
+        public TextSymbolPair(String input, int... symbols) {
+            _input = input;
+            _symbols = symbols;
+        }
+
+        public String GetText() {
+            return  _input;
+        }
+
+        public int[] GetSymbols() {
+            return _symbols;
+        }
+
     }
 
-    @Test
-    public void ScanBooleanVariableDeclaration() throws IOException {
-        Scan("bool y = true;");
-        assertThat(NextToken()).isEqualTo(sym.TYPE);
-        assertThat(NextToken()).isEqualTo(sym.IDENTIFIER);
-        assertThat(NextToken()).isEqualTo(sym.ASSIGNMENT);
-        assertThat(NextToken()).isEqualTo(sym.BOOLEAN_LITERAL);
-        assertThat(NextToken()).isEqualTo(sym.SEMICOLON);
+    @DataPoints
+    public static final TextSymbolPair[] _pairs = {
+            new TextSymbolPair("number x = 2;", sym.TYPE, sym.IDENTIFIER, sym.ASSIGNMENT, sym.NUMBER_LITERAL, sym.SEMICOLON),
+            new TextSymbolPair("bool y = true;", sym.TYPE, sym.IDENTIFIER, sym.ASSIGNMENT, sym.BOOLEAN_LITERAL, sym.SEMICOLON),
+            //new TextSymbolPair("point z = [1,2,3];", sym.TYPE, sym.IDENTIFIER, sym.ASSIGNMENT, sym.BOOLEAN_LITERAL, sym.SEMICOLON),
+    };
+
+    @DataPoints
+    public static final String[] _invalidInput = {
+            "\"",
+            "#",
+            "$",
+            "%",
+            ":",
+            "\\"
+    };
+
+    @Theory
+    public void TestLexerSuccess(TextSymbolPair pair) throws IOException {
+        var lexer = new Yylex(new StringReader(pair.GetText()));
+        for (int symbol : pair.GetSymbols()) {
+            assertThat(lexer.next_token().sym).isEqualTo(symbol);
+        }
+        assertThat(lexer.next_token().sym).isEqualTo(sym.EOF);
     }
 
-    private void Scan(String input) {
-        _lexer = new Yylex(new StringReader(input));
+    @Theory
+    public void TestLexerFailure(String input) throws IOException {
+        var lexer = new Yylex(new StringReader(input));
+        assertThat(lexer.next_token().sym).isEqualTo(sym.INVALID);
+        assertThat(lexer.next_token().sym).isEqualTo(sym.EOF);
     }
 
-    private int NextToken() throws IOException {
-        return _lexer.next_token().sym;
-    }
 }

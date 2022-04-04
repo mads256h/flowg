@@ -27,11 +27,12 @@ import java.math.BigDecimal;
 
 
 Type = "number"|"bool"|"point"|"void"
-Identifier = [:jletter:][:jletterdigit:]*
+Identifier = [a-zA-Z][a-zA-Z0-9]*
 Number = [0-9]+(\.[0-9]+)?
 Whitespace = [\ \n]
 NewLine = \n
 Comment = \/\/[^\n]*
+Anything = .
 
 %%
 
@@ -61,5 +62,7 @@ Comment = \/\/[^\n]*
 "*" { return symbol(sym.TIMES); }
 "/" { return symbol(sym.DIVIDE); }
 
-
+// This catches any error.
+// Never match this symbol unless it is to report is as an error!
+{Anything} { return symbol(sym.INVALID); }
 
