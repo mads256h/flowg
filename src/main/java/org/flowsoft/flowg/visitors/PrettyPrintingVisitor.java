@@ -86,4 +86,9 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     public String Visit(DivideExpressionNode divisionExpressionNode) throws NoException {
         return divisionExpressionNode.GetLeftChild().Accept(this) + " / " + divisionExpressionNode.GetRightChild().Accept(this);
     }
+
+    @Override
+    public String Visit(IdentifierExpressionNode identifierExpressionNode) throws NoException {
+        return identifierExpressionNode.GetChild().Accept(this);
+    }
 }

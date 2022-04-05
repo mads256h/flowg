@@ -127,4 +127,11 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
         return new ExpressionValue(sum);
     }
+
+    @Override
+    public ExpressionValue Visit(IdentifierExpressionNode identifierExpressionNode) throws Exception {
+        var identifier = identifierExpressionNode.GetChild().GetValue();
+        var variableEntry = _symbolTable.Lookup(identifier);
+        return variableEntry.Value;
+    }
 }

@@ -78,4 +78,9 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
 
     @Override
     public String Visit(DivideExpressionNode divisionExpressionNode) throws NoException { return PrintNode(divisionExpressionNode, divisionExpressionNode.GetLeftChild(), divisionExpressionNode.GetRightChild()); }
+
+    @Override
+    public String Visit(IdentifierExpressionNode identifierExpressionNode) throws NoException {
+        return PrintNode(identifierExpressionNode, identifierExpressionNode.GetChild());
+    }
 }

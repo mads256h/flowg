@@ -1,7 +1,6 @@
 package org.flowsoft.flowg.visitors;
 
 import org.flowsoft.flowg.Type;
-import org.flowsoft.flowg.nodes.ExpressionValue;
 
 public class VariableEntry {
 

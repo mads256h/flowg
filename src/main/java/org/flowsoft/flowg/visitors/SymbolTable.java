@@ -1,13 +1,13 @@
 package org.flowsoft.flowg.visitors;
 
 import org.flowsoft.flowg.Type;
-import org.flowsoft.flowg.nodes.ExpressionValue;
+import org.flowsoft.flowg.TypeException;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class SymbolTable {
-    private Map<String, VariableEntry> _variableEntries = new HashMap<>();
+    private final Map<String, VariableEntry> _variableEntries = new HashMap<>();
 
     public void Enter(String identifier, Type type, ExpressionValue expressionValue) {
         _variableEntries.put(identifier, new VariableEntry(identifier, type, expressionValue));
@@ -17,8 +17,11 @@ public class SymbolTable {
         _variableEntries.put(identifier, new VariableEntry(identifier, type));
     }
 
-    public VariableEntry Lookup(String identifier) {
-        return _variableEntries.get(identifier);
+    public VariableEntry Lookup(String identifier) throws TypeException {
+        if (_variableEntries.containsKey(identifier)) {
+            return _variableEntries.get(identifier);
+        }
+        throw new TypeException();
     }
 
     public void Print() {
