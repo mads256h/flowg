@@ -1,5 +1,6 @@
 package org.flowsoft.flowg.visitors;
 
+import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.nodes.*;
 
 import java.math.BigDecimal;
@@ -9,8 +10,14 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     private SymbolTable _symbolTable;
 
+    private final StringBuilder _stringBuilder = new StringBuilder();
+
     public CodeGeneratingVisitor(SymbolTable symbolTable) {
         _symbolTable = symbolTable;
+    }
+
+    public String GetCode() {
+        return _stringBuilder.toString();
     }
 
     @Override
@@ -23,8 +30,22 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     @Override
     public ExpressionValue Visit(MoveNode moveNode) throws Exception {
-       moveNode.GetChild().Accept(this);
-        return null;
+        var parameters = moveNode.GetChild().GetChildren();
+
+        var first = parameters.get(0).Accept(this);
+        var second = parameters.get(1).Accept(this);
+        var third = parameters.get(2).Accept(this);
+
+        _stringBuilder
+                .append("G1")
+                // Don't extrude anything we are moving :)
+                .append(" E0")
+                .append(" X").append(first.GetNumber())
+                .append(" Y").append(second.GetNumber())
+                .append(" Z").append(third.GetNumber())
+                .append('\n');
+
+        return new ExpressionValue(Type.Void);
     }
 
     @Override
