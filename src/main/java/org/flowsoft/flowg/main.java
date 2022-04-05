@@ -36,6 +36,7 @@ public class main {
             var codeGeneratingVisitor = new CodeGeneratingVisitor(typeCheckingVisitor.GetSymbolTable());
             rootNode.Accept(codeGeneratingVisitor);
             typeCheckingVisitor.PrintSymbolTable();
+            System.out.println(codeGeneratingVisitor.GetCode());
         }
         catch (Exception e) {
             System.out.println("Could not parse");
