@@ -101,6 +101,26 @@ public class ParserTests {
                                 }
                             }
                     )
+            ),
+            new TextAstPair(
+                    "number x = 2;\n" +
+                         "number y = x + 2;",
+                    new StatementListNode(
+                            new ArrayList<>() {
+                                {
+                                    add(new DeclarationNode(new TypeNode(Type.Number), new IdentifierNode("x"), new NumberLiteralNode(new BigDecimal(2))));
+
+                                    add(new DeclarationNode(new TypeNode(Type.Number), new IdentifierNode("y"),
+                                            new PlusExpressionNode(
+                                                    new IdentifierExpressionNode(
+                                                            new IdentifierNode("x")
+                                                    ),
+                                                    new NumberLiteralNode(new BigDecimal(2))
+                                            )
+                                    ));
+                                }
+                            }
+                    )
             )
     };
 

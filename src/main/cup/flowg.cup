@@ -82,4 +82,6 @@ expr ::= NUMBER_LITERAL:n
         {: RESULT = new TimesExpressionNode(e1, e2); :}
         | expr:e1 DIVIDE expr:e2
         {: RESULT = new DivideExpressionNode(e1, e2); :}
+        | IDENTIFIER:i
+        {: RESULT = new IdentifierExpressionNode(i); :}
         ;

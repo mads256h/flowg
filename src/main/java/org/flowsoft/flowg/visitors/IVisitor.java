@@ -14,5 +14,6 @@ public interface IVisitor<T, TException extends Exception> {
     T Visit(PlusExpressionNode plusExpressionNode) throws TException;
     T Visit(MinusExpressionNode minusExpressionNode) throws TException;
     T Visit(TimesExpressionNode multiplyExpressionNode) throws TException;
-    T Visit(DivideExpressionNode divisionExpressionNode)  throws TException;
+    T Visit(DivideExpressionNode divisionExpressionNode) throws TException;
+    T Visit(IdentifierExpressionNode identifierExpressionNode) throws TException;
 }

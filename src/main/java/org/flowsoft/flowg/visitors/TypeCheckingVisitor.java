@@ -82,7 +82,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     }
 
     @Override
-    public Type Visit(IdentifierNode identifierNode) {
+    public Type Visit(IdentifierNode identifierNode) throws TypeException {
         var variableEntry = _symbolTable.Lookup(identifierNode.GetValue());
         return variableEntry.Type;
     }
@@ -123,6 +123,12 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         var leftType = divisionExpressionNode.GetLeftChild().Accept(this);
         var rightType = divisionExpressionNode.GetRightChild().Accept(this);
         return TimesDivideTypeCheckExpr(leftType, rightType);
+    }
+
+    @Override
+    public Type Visit(IdentifierExpressionNode identifierExpressionNode) throws TypeException {
+        var identifier = identifierExpressionNode.GetChild().GetValue();
+        return _symbolTable.Lookup(identifier).Type;
     }
 
     private Type PlusMinusTypeCheckExpr(Type leftChild, Type rightChild) throws TypeException {
