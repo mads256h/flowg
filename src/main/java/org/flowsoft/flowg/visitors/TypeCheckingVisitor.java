@@ -4,7 +4,22 @@ import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.nodes.*;
 
+import java.util.HashMap;
+import java.util.Objects;
+
 public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
+
+    private final static HashMap<TypePair, Type> PLUS_MINUS_TYPE_MAP = new HashMap<>() {
+        {
+            put(new TypePair(Type.Number, Type.Number), Type.Number);
+            put(new TypePair(Type.Point, Type.Point), Type.Point);
+        }};
+
+    private final static HashMap<TypePair, Type> MULTIPLY_DIVIDE_TYPE_MAP = new HashMap<>() {
+        {
+            put(new TypePair(Type.Number, Type.Number), Type.Number);
+            put(new TypePair(Type.Point, Type.Number), Type.Point);
+        }};
 
     private final SymbolTable _symbolTable = new SymbolTable();
 
@@ -30,16 +45,14 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
     @Override
     public Type Visit(MoveNode moveNode) throws TypeException {
-        // moveNode.GetChild().Accept(this);
         var params = moveNode.GetChild().GetChildren();
-        if (params.size() != 3) {
+        if (params.size() != 1) {
             throw new TypeException();
         }
 
-        for (var param : params) {
-            if (param.Accept(this) != Type.Number) {
-                throw new TypeException();
-            }
+        var type = params.get(0).Accept(this);
+        if (type != Type.Point) {
+            throw new TypeException();
         }
 
         return Type.Void;
@@ -56,22 +69,17 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
     @Override
     public Type Visit(DeclarationNode declarationNode) throws TypeException {
-        var typeNode = declarationNode.GetTypeChild();
-        var identifierNode = declarationNode.GetIdentifierChild();
-        var expressionNode = declarationNode.GetExpressionChild();
+        var typeNode = declarationNode.GetFirstNode();
+        var identifierNode = declarationNode.GetSecondNode();
+        var expressionNode = declarationNode.GetThirdNode();
 
         var typeNodeType = typeNode.Accept(this);
         var expressionNodeType = expressionNode.Accept(this);
         if (typeNodeType == expressionNodeType) {
-            System.out.println(
-                    declarationNode.GetIdentifierChild().GetValue()
-                    + " has type: "
-                    + typeNodeType);
             _symbolTable.Enter(identifierNode.GetValue(), typeNodeType);
             return typeNodeType;
         }
         else {
-            // TODO: Report type error
             throw new TypeException();
         }
     }
@@ -95,6 +103,19 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     @Override
     public Type Visit(BooleanLiteralNode booleanLiteralNode) {
         return Type.Boolean;
+    }
+
+    @Override
+    public Type Visit(PointNode pointNode) throws TypeException {
+        var firstType = pointNode.GetFirstNode().Accept(this);
+        var secondType = pointNode.GetSecondNode().Accept(this);
+        var thirdType = pointNode.GetThirdNode().Accept(this);
+
+        if (firstType != Type.Number || secondType != Type.Number || thirdType != Type.Number) {
+            throw new TypeException();
+        }
+
+        return Type.Point;
     }
 
     @Override
@@ -131,27 +152,11 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         return _symbolTable.Lookup(identifier).Type;
     }
 
-    private Type PlusMinusTypeCheckExpr(Type leftChild, Type rightChild) throws TypeException {
-        if (leftChild != rightChild) {
-            throw new TypeException();
-        }
-
-        if (leftChild == Type.Boolean) {
-            throw new TypeException();
-        }
-
-        return leftChild;
+    private Type PlusMinusTypeCheckExpr(Type leftType, Type rightType) throws TypeException {
+        return TypePair.TryBothWays(leftType, rightType, PLUS_MINUS_TYPE_MAP);
     }
 
-    private Type TimesDivideTypeCheckExpr(Type leftChild, Type rightChild) throws TypeException {
-        if (leftChild != rightChild) {
-            throw new TypeException();
-        }
-
-        if (leftChild == Type.Boolean) {
-            throw new TypeException();
-        }
-
-        return leftChild;
+    private Type TimesDivideTypeCheckExpr(Type leftType, Type rightType) throws TypeException {
+        return TypePair.TryBothWays(leftType, rightType, MULTIPLY_DIVIDE_TYPE_MAP);
     }
 }

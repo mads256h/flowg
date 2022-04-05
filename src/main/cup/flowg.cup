@@ -18,6 +18,9 @@ terminal MOVE;
 terminal L_PAREN;
 terminal R_PAREN;
 
+terminal L_BRACKET;
+terminal R_BRACKET;
+
 terminal ASSIGNMENT;
 terminal SEMICOLON;
 terminal COMMA;
@@ -34,6 +37,7 @@ non terminal MoveNode move;
 non terminal ActualParameterListNode a_param_list;
 non terminal ArrayList<ExpressionNode> a_param_list_impl;
 non terminal ExpressionNode expr;
+non terminal PointNode point;
 
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE;
@@ -74,6 +78,8 @@ expr ::= NUMBER_LITERAL:n
         {: RESULT = n; :}
         | BOOLEAN_LITERAL:b
         {: RESULT = b; :}
+        | point:p
+        {: RESULT = p; :}
         | expr:e1 PLUS expr:e2
         {: RESULT = new PlusExpressionNode(e1, e2); :}
         | expr:e1 MINUS expr:e2
@@ -85,3 +91,6 @@ expr ::= NUMBER_LITERAL:n
         | IDENTIFIER:i
         {: RESULT = new IdentifierExpressionNode(i); :}
         ;
+
+point ::= L_BRACKET expr:e1 COMMA expr:e2 COMMA expr:e3 R_BRACKET
+        {: RESULT = new PointNode(e1, e2, e3); :};
