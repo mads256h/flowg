@@ -27,11 +27,6 @@ public class SymbolTable {
             System.out.println(variableEntry.Identifier
                     + ": "
                     + variableEntry.Value.toString()
-//                    + variableEntry.Type
-//                    + ", Numeric: "
-//                    + (variableEntry.Value.GetNumber() == null ? " NULL " : variableEntry.Value.GetNumber())
-//                    + ", Boolean: "
-//                    + (variableEntry.Value.GetBoolean() == null ? " NULL " : variableEntry.Value.GetBoolean())
                     );
         }
     }
