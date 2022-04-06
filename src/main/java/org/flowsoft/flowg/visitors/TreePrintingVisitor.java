@@ -44,7 +44,7 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
 
     @Override
     public String Visit(DeclarationNode declarationNode) throws NoException {
-        return PrintNode(declarationNode, declarationNode.GetTypeChild(), declarationNode.GetIdentifierChild(), declarationNode.GetExpressionChild());
+        return PrintNode(declarationNode, declarationNode.GetFirstNode(), declarationNode.GetSecondNode(), declarationNode.GetThirdNode());
     }
 
     @Override
@@ -65,6 +65,11 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     @Override
     public String Visit(BooleanLiteralNode booleanLiteralNode) {
         return PrintNode(booleanLiteralNode);
+    }
+
+    @Override
+    public String Visit(PointNode pointNode) throws NoException {
+        return PrintNode(pointNode, pointNode.GetFirstNode(), pointNode.GetSecondNode(), pointNode.GetThirdNode());
     }
 
     @Override

@@ -7,22 +7,34 @@ import java.math.BigDecimal;
 
 public class ExpressionValue {
 
-    private Type _type = null;
-    private BigDecimal _number = null;
-    private Boolean _boolean = null;
+    private final Type _type;
+    private final BigDecimal _number;
+    private final Boolean _boolean;
+    private final Point _point;
 
-    public ExpressionValue(BigDecimal Number) {
-        _number = Number;
-        _type = Type.Number;
+    private ExpressionValue(Type type, BigDecimal number, Boolean bool, Point point) {
+        _type = type;
+        _number = number;
+        _boolean = bool;
+        _point = point;
     }
 
-    public ExpressionValue(Boolean Boolean) {
-        _boolean = Boolean;
-        _type = Type.Boolean;
+    public ExpressionValue(BigDecimal number) {
+        this(Type.Number, number, null, null);
     }
 
-    public ExpressionValue(Type Type) {
-        _type = Type;
+    public ExpressionValue(Boolean bool) {
+        this(Type.Boolean, null, bool, null);
+    }
+
+    public ExpressionValue(Point point) {
+        this(Type.Point, null, null, point);
+    }
+
+    public ExpressionValue(Type type) {
+        this(type, null, null, null);
+
+        assert(type == Type.Void);
     }
 
     public Type GetType() {
@@ -47,6 +59,15 @@ public class ExpressionValue {
         return _boolean;
     }
 
+    public Point GetPoint() throws TypeException {
+        if (_type != Type.Point) {
+            throw new TypeException();
+        }
+
+        assert (_point != null);
+        return _point;
+    }
+
     @Override
     public String toString() {
         var str = "Type: " + _type + " Value: ";
@@ -61,7 +82,7 @@ public class ExpressionValue {
                 str += _boolean;
             }
             case Point -> {
-                // TODO
+                str += _point.toString();
             }
         }
 

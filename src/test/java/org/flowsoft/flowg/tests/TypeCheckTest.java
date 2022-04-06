@@ -16,15 +16,20 @@ import java.util.ArrayList;
 @RunWith(Theories.class)
 public class TypeCheckTest {
 
-    @DataPoints("number")
-    public static ExpressionNode[] numberLiteralNode = new ExpressionNode[] {
+    @DataPoints({"number", "notboolean", "notpoint"})
+    public static final ExpressionNode[] NUMBER_NODES = new ExpressionNode[] {
             new PlusExpressionNode(new NumberLiteralNode(new BigDecimal(1)), new NumberLiteralNode(new BigDecimal(2))),
             new MinusExpressionNode(new NumberLiteralNode(new BigDecimal(1)), new NumberLiteralNode(new BigDecimal(2))),
             new NumberLiteralNode(new BigDecimal(1))};
 
 
-    @DataPoints({"boolean", "notnumber"})
-    public static ExpressionNode[] booleanLiteralNode = new BooleanLiteralNode[] {new BooleanLiteralNode(true), new BooleanLiteralNode(false)};
+    @DataPoints({"boolean", "notnumber", "notpoint"})
+    public static final ExpressionNode[] BOOLEAN_NODES = new BooleanLiteralNode[] {new BooleanLiteralNode(true), new BooleanLiteralNode(false)};
+
+    @DataPoints({"point", "notnumber", "notboolean"})
+    public static final ExpressionNode[] POINT_NODES = new PointNode[] {
+            new PointNode(new NumberLiteralNode(new BigDecimal(1)), new NumberLiteralNode(new BigDecimal(2)), new NumberLiteralNode(new BigDecimal(3)))
+    };
 
 
     @Theory
@@ -38,6 +43,22 @@ public class TypeCheckTest {
         assertThat(n2.Accept(new TypeCheckingVisitor())).isEqualTo(Type.Number);
         assertThat(n3.Accept(new TypeCheckingVisitor())).isEqualTo(Type.Number);
         assertThat(n4.Accept(new TypeCheckingVisitor())).isEqualTo(Type.Number);
+    }
+
+    @Theory
+    public void TestPointNumberMultiplySuccess(@FromDataPoints("point") ExpressionNode left, @FromDataPoints("number") ExpressionNode right) throws Exception {
+        var n1 = new TimesExpressionNode(left, right);
+        var n2 = new TimesExpressionNode(right, left);
+
+        var n3 = new DivideExpressionNode(left, right);
+        var n4 = new DivideExpressionNode(right, left);
+
+
+        assertThat(n1.Accept(new TypeCheckingVisitor())).isEqualTo(Type.Point);
+        assertThat(n2.Accept(new TypeCheckingVisitor())).isEqualTo(Type.Point);
+
+        assertThat(n3.Accept(new TypeCheckingVisitor())).isEqualTo(Type.Point);
+        assertThat(n4.Accept(new TypeCheckingVisitor())).isEqualTo(Type.Point);
     }
 
     @Theory
@@ -70,11 +91,9 @@ public class TypeCheckTest {
 
 
     @Theory
-    public void TestMoveBuiltinSuccess(@FromDataPoints("number") ExpressionNode first, @FromDataPoints("number") ExpressionNode second, @FromDataPoints("number") ExpressionNode third) throws Exception {
+    public void TestMoveBuiltinSuccess(@FromDataPoints("point") ExpressionNode node) throws Exception {
         var list = new ArrayList<ExpressionNode>();
-        list.add(first);
-        list.add(second);
-        list.add(third);
+        list.add(node);
 
         var n = new MoveNode(new ActualParameterListNode(list));
 
@@ -83,11 +102,9 @@ public class TypeCheckTest {
     }
 
     @Theory
-    public void TestMoveBuiltinTypeFailure(ExpressionNode first, ExpressionNode second, @FromDataPoints("notnumber") ExpressionNode third) {
+    public void TestMoveBuiltinTypeFailure(@FromDataPoints("notpoint") ExpressionNode node) {
         var list = new ArrayList<ExpressionNode>();
-        list.add(first);
-        list.add(second);
-        list.add(third);
+        list.add(node);
 
         var n = new MoveNode(new ActualParameterListNode(list));
 

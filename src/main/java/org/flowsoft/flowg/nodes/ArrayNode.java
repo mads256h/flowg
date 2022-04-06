@@ -2,11 +2,11 @@ package org.flowsoft.flowg.nodes;
 
 import java.util.List;
 
-public abstract class ArrayNode<TNode> extends Node {
+public abstract class ArrayNode<TNode extends INode> extends Node {
 
     private final List<TNode> _children;
 
-    public ArrayNode(List<TNode> children) {
+    protected ArrayNode(List<TNode> children) {
         _children = children;
     }
 

@@ -41,10 +41,10 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
 
     @Override
     public String Visit(DeclarationNode declarationNode) throws NoException {
-        return declarationNode.GetTypeChild().Accept(this)
-                + " " + declarationNode.GetIdentifierChild().Accept(this)
+        return declarationNode.GetFirstNode().Accept(this)
+                + " " + declarationNode.GetSecondNode().Accept(this)
                 + " ="
-                + " " + declarationNode.GetExpressionChild().Accept(this);
+                + " " + declarationNode.GetThirdNode().Accept(this);
     }
 
     @Override
@@ -65,6 +65,15 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     @Override
     public String Visit(BooleanLiteralNode booleanLiteralNode) {
         return booleanLiteralNode.GetValue().toString();
+    }
+
+    @Override
+    public String Visit(PointNode pointNode) throws NoException {
+        return "["
+                + pointNode.GetFirstNode().Accept(this) + ", "
+                + pointNode.GetSecondNode().Accept(this) + ", "
+                + pointNode.GetThirdNode().Accept(this) +
+                "]";
     }
 
     @Override
