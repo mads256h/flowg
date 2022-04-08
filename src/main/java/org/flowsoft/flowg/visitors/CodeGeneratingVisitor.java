@@ -251,6 +251,13 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         return null;
     }
 
+    @Override
+    public ExpressionValue Visit(AssignmentNode assignmentNode) throws Exception {
+        var entry =_symbolTable.LookupVariable(assignmentNode.GetLeftChild().GetValue());
+        entry.Value = assignmentNode.GetRightChild().Accept(this);
+        return null;
+    }
+
     private static BiFunction<ExpressionValue, ExpressionValue, ExpressionValue> TryBoth(Type left, Type right, Map<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> map) throws TypeException {
         var pair = new TypePair(left, right);
         if (map.containsKey(pair)) {

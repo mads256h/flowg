@@ -40,6 +40,7 @@ non terminal StatementListNode stmt_list;
 non terminal ArrayList<StatementNode> stmt_list_impl;
 non terminal StatementNode stmt;
 non terminal DeclarationNode decl;
+non terminal AssignmentNode assign;
 non terminal MoveNode move;
 non terminal ActualParameterListNode a_param_list;
 non terminal ArrayList<ExpressionNode> a_param_list_impl;
@@ -78,10 +79,16 @@ stmt ::=decl:d
         {: RESULT = d; :}
         |
         func_call:c
-        {: RESULT = c; :};
+        {: RESULT = c; :}
+        |
+        assign:a
+        {: RESULT = a; :};
 
 decl ::= TYPE:t IDENTIFIER:i ASSIGNMENT expr:e
         {: RESULT = new DeclarationNode(t, i, e); :};
+
+assign ::= IDENTIFIER:i ASSIGNMENT expr:e
+        {: RESULT = new AssignmentNode(i, e); :};
 
 move ::= MOVE L_PAREN a_param_list:p R_PAREN
         {: RESULT = new MoveNode(p); :};
