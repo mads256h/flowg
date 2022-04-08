@@ -2,6 +2,8 @@ package org.flowsoft.flowg.visitors;
 
 import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.TypeException;
+import org.flowsoft.flowg.nodes.FormalParameterNode;
+import org.flowsoft.flowg.nodes.StatementListNode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,8 +21,8 @@ public class SymbolTable {
         _variableEntries.put(identifier, new VariableEntry(identifier, type));
     }
 
-    public void Enter(Type returnType, String identifier, ArrayList<Type> parameterTypes) {
-        _functionEntries.put(identifier, new FunctionEntry(returnType, identifier, parameterTypes));
+    public void Enter(Type returnType, String identifier, ArrayList<FormalParameterNode> formalParameters, StatementListNode functionBody) {
+        _functionEntries.put(identifier, new FunctionEntry(returnType, identifier, formalParameters, functionBody));
     }
 
     public VariableEntry LookupVariable(String identifier) throws TypeException {
@@ -56,13 +58,13 @@ public class SymbolTable {
                     + functionEntry.GetIdentifier()
                     + "(");
             var first = true;
-            for (var type : functionEntry.GetParameterTypes()) {
+            for (var type : functionEntry.GetFormalParameters()) {
                 if (!first) {
                     System.out.print(", ");
                 }
                 first = false;
 
-                System.out.print(type);
+                System.out.print(type.GetLeftChild().GetValue());
             }
             System.out.println(")");
         }

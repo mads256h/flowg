@@ -246,7 +246,27 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     @Override
     public ExpressionValue Visit(FunctionCallNode functionCallNode) throws Exception {
-        // TODO call the actual function
+        // FIXME HUGE HACK
+
+        var identifier = functionCallNode.GetLeftChild().GetValue();
+        var params = functionCallNode.GetRightChild().GetChildren();
+
+        var functionEntry = _symbolTable.LookupFunction(identifier);
+        var formalParams = functionEntry.GetFormalParameters();
+
+        // Insert values of the formal parameters into the symbol table
+        for (int i = 0; i < params.size(); i++) {
+            var type = formalParams.get(i).GetLeftChild().GetValue();
+            var paramId = formalParams.get(i).GetRightChild().GetValue();
+            var value = params.get(i).Accept(this);
+
+            _symbolTable.Enter(paramId, type, value);
+        }
+
+        // Get and run the function body
+        var functionBody = functionEntry.GetFunctionBody();
+        functionBody.Accept(this);
+
         return null;
     }
 
