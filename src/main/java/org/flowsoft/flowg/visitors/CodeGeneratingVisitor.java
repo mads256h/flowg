@@ -154,6 +154,16 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     }
 
     @Override
+    public ExpressionValue Visit(FormalParameterListNode formalParameterListNode) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ExpressionValue Visit(FormalParameterNode formalParameterNode) throws Exception {
+        return null;
+    }
+
+    @Override
     public ExpressionValue Visit(DeclarationNode declarationNode) throws Exception {
         var type = declarationNode.GetFirstNode().GetValue();
         var identifier = declarationNode.GetSecondNode().GetValue();
@@ -164,14 +174,18 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     }
 
     @Override
+    public ExpressionValue Visit(FunctionDefinitionNode functionDefinitionNode) throws Exception {
+        return null;
+    }
+
+    @Override
     public ExpressionValue Visit(TypeNode typeNode) throws Exception {
         return null;
     }
 
     @Override
     public ExpressionValue Visit(IdentifierNode identifierNode) throws Exception {
-        var variableEntry = _symbolTable.Lookup(identifierNode.GetValue());
-        return new ExpressionValue(variableEntry.Type);
+        throw new RuntimeException("This should never be visited");
     }
 
     @Override
@@ -227,7 +241,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     @Override
     public ExpressionValue Visit(IdentifierExpressionNode identifierExpressionNode) throws Exception {
         var identifier = identifierExpressionNode.GetChild().GetValue();
-        var variableEntry = _symbolTable.Lookup(identifier);
+        var variableEntry = _symbolTable.LookupVariable(identifier);
         return variableEntry.Value;
     }
 

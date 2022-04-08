@@ -15,11 +15,17 @@ terminal BooleanLiteralNode BOOLEAN_LITERAL;
 
 terminal MOVE;
 
+// ()
 terminal L_PAREN;
 terminal R_PAREN;
 
+// {}
 terminal L_BRACKET;
 terminal R_BRACKET;
+
+// []
+terminal L_SQUARE_BRACKET;
+terminal R_SQUARE_BRACKET;
 
 terminal ASSIGNMENT;
 terminal SEMICOLON;
@@ -30,14 +36,19 @@ terminal TIMES;
 terminal DIVIDE;
 
 non terminal StatementListNode program;
-non terminal ArrayList<StatementNode> stmt_list;
+non terminal StatementListNode stmt_list;
+non terminal ArrayList<StatementNode> stmt_list_impl;
 non terminal StatementNode stmt;
 non terminal DeclarationNode decl;
 non terminal MoveNode move;
 non terminal ActualParameterListNode a_param_list;
 non terminal ArrayList<ExpressionNode> a_param_list_impl;
+non terminal FormalParameterListNode f_param_list;
+non terminal ArrayList<FormalParameterNode> f_param_list_impl;
+non terminal FormalParameterNode f_param;
 non terminal ExpressionNode expr;
 non terminal PointNode point;
+non terminal FunctionDefinitionNode func_def;
 
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE;
@@ -45,19 +56,25 @@ precedence left TIMES, DIVIDE;
 start with program;
 
 program ::= stmt_list:l
+            {: RESULT = l; :};
+
+stmt_list ::= stmt_list_impl:l
             {: RESULT = new StatementListNode(l); :};
 
-stmt_list ::= stmt_list:l stmt:s SEMICOLON
+stmt_list_impl ::= stmt_list_impl:l stmt:s SEMICOLON
             {: l.add(s); RESULT = l; :}
             |
             stmt:s SEMICOLON
             {: var list = new ArrayList<StatementNode>(); list.add(s); RESULT = list; :};
 
-stmt ::= decl:d
+stmt ::=decl:d
         {: RESULT = d; :}
         |
         move:m
-        {: RESULT = m; :};
+        {: RESULT = m; :}
+        |
+        func_def:d
+        {: RESULT = d; :};
 
 decl ::= TYPE:t IDENTIFIER:i ASSIGNMENT expr:e
         {: RESULT = new DeclarationNode(t, i, e); :};
@@ -73,6 +90,19 @@ a_param_list_impl ::= a_param_list_impl:l COMMA expr:e
         |
         expr:e
         {: var l = new ArrayList<ExpressionNode>(); l.add(e); RESULT = l; :};
+
+f_param_list ::= f_param_list_impl:l
+        {: RESULT = new FormalParameterListNode(l); :};
+
+
+f_param_list_impl ::= f_param_list_impl:l COMMA f_param:p
+        {: l.add(p); RESULT = l; :}
+        |
+        f_param:p
+        {: var l = new ArrayList<FormalParameterNode>(); l.add(p); RESULT = l; :};
+
+f_param ::= TYPE:t IDENTIFIER:i
+        {: RESULT = new FormalParameterNode(t, i); :};
 
 expr ::= NUMBER_LITERAL:n
         {: RESULT = n; :}
@@ -92,5 +122,8 @@ expr ::= NUMBER_LITERAL:n
         {: RESULT = new IdentifierExpressionNode(i); :}
         ;
 
-point ::= L_BRACKET expr:e1 COMMA expr:e2 COMMA expr:e3 R_BRACKET
+func_def ::= TYPE:t IDENTIFIER:i L_PAREN f_param_list:p R_PAREN L_BRACKET stmt_list:l R_BRACKET
+        {: RESULT = new FunctionDefinitionNode(t, i, p, l); :};
+
+point ::= L_SQUARE_BRACKET expr:e1 COMMA expr:e2 COMMA expr:e3 R_SQUARE_BRACKET
         {: RESULT = new PointNode(e1, e2, e3); :};
