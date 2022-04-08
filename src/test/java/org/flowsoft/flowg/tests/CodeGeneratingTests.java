@@ -6,10 +6,13 @@ import org.flowsoft.flowg.nodes.*;
 import org.flowsoft.flowg.visitors.CodeGeneratingVisitor;
 import org.flowsoft.flowg.visitors.Point;
 import org.flowsoft.flowg.visitors.SymbolTable;
+import org.flowsoft.flowg.visitors.TypeCheckingVisitor;
+import org.junit.Test;
 import org.junit.experimental.theories.*;
 import org.junit.runner.RunWith;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.*;
@@ -220,5 +223,26 @@ public class CodeGeneratingTests {
 
         assertThat(value.GetType()).isEqualTo(Type.Point);
         assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void TestNumberAssignmentSuccess() throws Exception {
+        var node = new StatementListNode(new ArrayList<>() {
+            {
+                add(new DeclarationNode(new TypeNode(Type.Number), new IdentifierNode("x"), new NumberLiteralNode(new BigDecimal("2"))));
+                add(new AssignmentNode(new IdentifierNode("x"), new NumberLiteralNode(new BigDecimal("4"))));
+            }
+        });
+
+        var typeChecker = new TypeCheckingVisitor();
+        node.Accept(typeChecker);
+
+        var codeGen = new CodeGeneratingVisitor(typeChecker.GetSymbolTable());
+        node.Accept(codeGen);
+
+
+        var symbolTable = typeChecker.GetSymbolTable();
+
+        assertTrue(symbolTable.LookupVariable("x").Value.GetNumber().compareTo(new BigDecimal("4")) == 0);
     }
 }

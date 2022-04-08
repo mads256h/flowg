@@ -136,4 +136,9 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
                 functionCallNode.GetLeftChild().Accept(this) + "(" +
                 functionCallNode.GetRightChild().Accept(this) + ")";
     }
+
+    @Override
+    public String Visit(AssignmentNode assignmentNode) throws NoException {
+        return assignmentNode.GetLeftChild().Accept(this) + " = " + assignmentNode.GetRightChild().Accept(this);
+    }
 }

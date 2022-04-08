@@ -199,6 +199,20 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         return functionEntry.GetReturnType();
     }
 
+    @Override
+    public Type Visit(AssignmentNode assignmentNode) throws TypeException {
+        var identifier = assignmentNode.GetLeftChild().GetValue();
+
+        var identifierType = _symbolTable.LookupVariable(identifier).Type;
+        var expressionType = assignmentNode.GetRightChild().Accept(this);
+
+        if (identifierType != expressionType) {
+            throw new TypeException();
+        }
+
+        return null;
+    }
+
     private Type PlusMinusTypeCheckExpr(Type leftType, Type rightType) throws TypeException {
         return TypePair.TryBothWays(leftType, rightType, PLUS_MINUS_TYPE_MAP);
     }

@@ -111,4 +111,9 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     public String Visit(FunctionCallNode functionCallNode) throws NoException {
         return PrintNode(functionCallNode, functionCallNode.GetLeftChild(), functionCallNode.GetRightChild());
     }
+
+    @Override
+    public String Visit(AssignmentNode assignmentNode) throws NoException {
+        return PrintNode(assignmentNode, assignmentNode.GetLeftChild(), assignmentNode.GetRightChild());
+    }
 }
