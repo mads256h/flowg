@@ -54,8 +54,11 @@ Anything = .
 "(" { return symbol(sym.L_PAREN); }
 ")" { return symbol(sym.R_PAREN); }
 
-"[" { return symbol(sym.L_BRACKET); }
-"]" { return symbol(sym.R_BRACKET); }
+"{" { return symbol(sym.L_BRACKET); }
+"}" { return symbol(sym.R_BRACKET); }
+
+"[" { return symbol(sym.L_SQUARE_BRACKET); }
+"]" { return symbol(sym.R_SQUARE_BRACKET); }
 
 "=" { return symbol(sym.ASSIGNMENT); }
 ";" { return symbol(sym.SEMICOLON); }

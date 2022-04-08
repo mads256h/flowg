@@ -4,6 +4,7 @@ import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.nodes.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -68,6 +69,16 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     }
 
     @Override
+    public Type Visit(FormalParameterListNode formalParameterListNode) throws TypeException {
+        return null;
+    }
+
+    @Override
+    public Type Visit(FormalParameterNode formalParameterNode) throws TypeException {
+        return null;
+    }
+
+    @Override
     public Type Visit(DeclarationNode declarationNode) throws TypeException {
         var typeNode = declarationNode.GetFirstNode();
         var identifierNode = declarationNode.GetSecondNode();
@@ -85,14 +96,29 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     }
 
     @Override
+    public Type Visit(FunctionDefinitionNode functionDefinitionNode) throws TypeException {
+        var returnType = functionDefinitionNode.GetTypeNode().Accept(this);
+        var identifier = functionDefinitionNode.GetIdentifierNode().GetValue();
+        var formalParams = functionDefinitionNode.GetFormalParameterListNode();
+
+        var params = new ArrayList<Type>();
+
+        for (var param : formalParams.GetChildren()) {
+            params.add(param.GetLeftChild().Accept(this));
+        }
+
+        _symbolTable.Enter(returnType, identifier, params);
+        return null;
+    }
+
+    @Override
     public Type Visit(TypeNode typeNode) {
         return typeNode.GetValue();
     }
 
     @Override
     public Type Visit(IdentifierNode identifierNode) throws TypeException {
-        var variableEntry = _symbolTable.Lookup(identifierNode.GetValue());
-        return variableEntry.Type;
+        throw new RuntimeException("This should never be visited");
     }
 
     @Override
@@ -149,7 +175,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     @Override
     public Type Visit(IdentifierExpressionNode identifierExpressionNode) throws TypeException {
         var identifier = identifierExpressionNode.GetChild().GetValue();
-        return _symbolTable.Lookup(identifier).Type;
+        return _symbolTable.LookupVariable(identifier).Type;
     }
 
     private Type PlusMinusTypeCheckExpr(Type leftType, Type rightType) throws TypeException {

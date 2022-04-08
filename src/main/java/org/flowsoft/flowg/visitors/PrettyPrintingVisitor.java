@@ -40,11 +40,40 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
+    public String Visit(FormalParameterListNode formalParameterListNode) throws NoException {
+        var sb = new StringBuilder();
+        boolean first = true;
+        for (var child : formalParameterListNode.GetChildren()) {
+            if (!first) {
+                sb.append(", ");
+            }
+            sb.append(child.Accept(this));
+            first = false;
+        }
+
+        return sb.toString();
+    }
+
+    @Override
+    public String Visit(FormalParameterNode formalParameterNode) throws NoException {
+        return formalParameterNode.GetLeftChild().Accept(this) + " " + formalParameterNode.GetRightChild().Accept(this);
+    }
+
+    @Override
     public String Visit(DeclarationNode declarationNode) throws NoException {
         return declarationNode.GetFirstNode().Accept(this)
                 + " " + declarationNode.GetSecondNode().Accept(this)
                 + " ="
                 + " " + declarationNode.GetThirdNode().Accept(this);
+    }
+
+    @Override
+    public String Visit(FunctionDefinitionNode functionDefinitionNode) throws NoException {
+        return
+                functionDefinitionNode.GetTypeNode().Accept(this) + " " +
+                functionDefinitionNode.GetIdentifierNode().Accept(this) + "(" +
+                functionDefinitionNode.GetFormalParameterListNode().Accept(this) + ") {\n" +
+                functionDefinitionNode.GetStatementListNode().Accept(this) + "}";
     }
 
     @Override
