@@ -34,6 +34,8 @@ terminal PLUS;
 terminal MINUS;
 terminal TIMES;
 terminal DIVIDE;
+terminal FOR;
+terminal TO;
 
 non terminal StatementListNode program;
 non terminal StatementListNode stmt_list;
@@ -51,6 +53,7 @@ non terminal ExpressionNode expr;
 non terminal PointNode point;
 non terminal FunctionDefinitionNode func_def;
 non terminal FunctionCallNode func_call;
+non terminal ForToNode for_to;
 
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE;
@@ -82,7 +85,10 @@ stmt ::=decl:d
         {: RESULT = c; :}
         |
         assign:a
-        {: RESULT = a; :};
+        {: RESULT = a; :}
+        |
+        for_to:f
+        {: RESULT = f; :};
 
 decl ::= TYPE:t IDENTIFIER:i ASSIGNMENT expr:e
         {: RESULT = new DeclarationNode(t, i, e); :};
@@ -143,3 +149,6 @@ func_call ::= IDENTIFIER:i L_PAREN a_param_list:p R_PAREN
 
 point ::= L_SQUARE_BRACKET expr:e1 COMMA expr:e2 COMMA expr:e3 R_SQUARE_BRACKET
         {: RESULT = new PointNode(e1, e2, e3); :};
+
+for_to ::= FOR L_PAREN decl:d TO expr:e R_PAREN L_BRACKET program:l R_BRACKET
+        {: RESULT = new ForToNode(d, e, l); :};

@@ -5,6 +5,7 @@ import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.nodes.*;
 
 import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -209,6 +210,24 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         if (identifierType != expressionType) {
             throw new TypeException();
         }
+
+        return null;
+    }
+
+    @Override
+    public Type Visit(ForToNode forToNode) throws TypeException {
+        var declNode = forToNode.GetFirstNode();
+        declNode.Accept(this);
+        var declType = declNode.GetFirstNode().GetValue();
+
+        var exprNode = forToNode.GetSecondNode();
+        var toType = exprNode.Accept(this);
+
+        if (declType != Type.Number && toType != Type.Number) {
+            throw new TypeException();
+        }
+
+        forToNode.GetThirdNode().Accept(this);
 
         return null;
     }
