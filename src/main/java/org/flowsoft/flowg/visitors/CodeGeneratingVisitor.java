@@ -180,7 +180,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     @Override
     public ExpressionValue Visit(TypeNode typeNode) throws Exception {
-        return null;
+        throw new RuntimeException("This should never be visited");
     }
 
     @Override
@@ -243,6 +243,12 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         var identifier = identifierExpressionNode.GetChild().GetValue();
         var variableEntry = _symbolTable.LookupVariable(identifier);
         return variableEntry.Value;
+    }
+
+    @Override
+    public ExpressionValue Visit(FunctionCallNode functionCallNode) throws Exception {
+        // TODO call the actual function
+        return null;
     }
 
     private static BiFunction<ExpressionValue, ExpressionValue, ExpressionValue> TryBoth(Type left, Type right, Map<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> map) throws TypeException {

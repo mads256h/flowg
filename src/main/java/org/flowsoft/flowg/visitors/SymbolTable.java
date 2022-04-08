@@ -42,9 +42,9 @@ public class SymbolTable {
         System.out.println("Variables:");
         for (var entry : _variableEntries.entrySet()) {
             var variableEntry = entry.getValue();
-            System.out.println(variableEntry.Identifier
-                    + ": "
-                    + variableEntry.Value.toString()
+            System.out.println(
+                    variableEntry.Type + " " + variableEntry.Identifier
+                    + (variableEntry.Value == null ? "" : " = " + variableEntry.Value)
                     );
         }
 

@@ -178,6 +178,27 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         return _symbolTable.LookupVariable(identifier).Type;
     }
 
+    @Override
+    public Type Visit(FunctionCallNode functionCallNode) throws TypeException {
+        var identifier = functionCallNode.GetLeftChild().GetValue();
+        var paramList = functionCallNode.GetRightChild().GetChildren();
+
+        var functionEntry = _symbolTable.LookupFunction(identifier);
+        var expectedTypes = functionEntry.GetParameterTypes();
+
+        if (paramList.size() != expectedTypes.size()) {
+            throw new TypeException();
+        }
+
+        for (int i = 0; i < paramList.size(); i++) {
+            if (paramList.get(i).Accept(this) != expectedTypes.get(i)) {
+                throw new TypeException();
+            }
+        }
+
+        return functionEntry.GetReturnType();
+    }
+
     private Type PlusMinusTypeCheckExpr(Type leftType, Type rightType) throws TypeException {
         return TypePair.TryBothWays(leftType, rightType, PLUS_MINUS_TYPE_MAP);
     }
