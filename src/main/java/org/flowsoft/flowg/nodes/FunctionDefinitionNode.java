@@ -2,7 +2,7 @@ package org.flowsoft.flowg.nodes;
 
 import org.flowsoft.flowg.visitors.IVisitor;
 
-public class FunctionDefinitionNode extends Node implements StatementNode, ExpressionNode{
+public class FunctionDefinitionNode extends Node implements StatementNode{
     private final TypeNode _typeNode;
     private final IdentifierNode _identifierNode;
     private final FormalParameterListNode _formalParameterListNode;

@@ -49,6 +49,7 @@ non terminal FormalParameterNode f_param;
 non terminal ExpressionNode expr;
 non terminal PointNode point;
 non terminal FunctionDefinitionNode func_def;
+non terminal FunctionCallNode func_call;
 
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE;
@@ -74,7 +75,10 @@ stmt ::=decl:d
         {: RESULT = m; :}
         |
         func_def:d
-        {: RESULT = d; :};
+        {: RESULT = d; :}
+        |
+        func_call:c
+        {: RESULT = c; :};
 
 decl ::= TYPE:t IDENTIFIER:i ASSIGNMENT expr:e
         {: RESULT = new DeclarationNode(t, i, e); :};
@@ -120,10 +124,15 @@ expr ::= NUMBER_LITERAL:n
         {: RESULT = new DivideExpressionNode(e1, e2); :}
         | IDENTIFIER:i
         {: RESULT = new IdentifierExpressionNode(i); :}
+        | func_call:c
+        {: RESULT = c; :}
         ;
 
 func_def ::= TYPE:t IDENTIFIER:i L_PAREN f_param_list:p R_PAREN L_BRACKET stmt_list:l R_BRACKET
         {: RESULT = new FunctionDefinitionNode(t, i, p, l); :};
+
+func_call ::= IDENTIFIER:i L_PAREN a_param_list:p R_PAREN
+        {: RESULT = new FunctionCallNode(i, p); :};
 
 point ::= L_SQUARE_BRACKET expr:e1 COMMA expr:e2 COMMA expr:e3 R_SQUARE_BRACKET
         {: RESULT = new PointNode(e1, e2, e3); :};

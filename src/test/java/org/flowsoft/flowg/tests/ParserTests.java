@@ -121,6 +121,53 @@ public class ParserTests {
                                 }
                             }
                     )
+            ),
+            new TextAstPair(
+                    """
+                            void test(number x, number y) {
+                               number z = x + y;
+                            };
+                            test(1,2);""",
+                    new StatementListNode(
+                            new ArrayList<>() {
+                                {
+                                    add(new FunctionDefinitionNode(
+                                            new TypeNode(Type.Void),
+                                            new IdentifierNode("test"),
+                                            new FormalParameterListNode(
+                                                    new ArrayList<>() {
+                                                        {
+                                                            add(new FormalParameterNode(new TypeNode(Type.Number), new IdentifierNode("x")));
+                                                            add(new FormalParameterNode(new TypeNode(Type.Number), new IdentifierNode("y")));
+                                                        }
+                                                    }
+                                            ),
+                                            new StatementListNode(new ArrayList<>() {
+                                                {
+                                                    add(new DeclarationNode(
+                                                            new TypeNode(Type.Number),
+                                                            new IdentifierNode("z"),
+                                                            new PlusExpressionNode(
+                                                                    new IdentifierExpressionNode(new IdentifierNode("x")),
+                                                                    new IdentifierExpressionNode(new IdentifierNode("y"))
+                                                            )));
+                                                }
+                                            })
+                                    ));
+
+                                    add (new FunctionCallNode(
+                                            new IdentifierNode("test"),
+                                            new ActualParameterListNode(
+                                                    new ArrayList<>() {
+                                                        {
+                                                            add(new NumberLiteralNode(new BigDecimal("1")));
+                                                            add(new NumberLiteralNode(new BigDecimal("2")));
+                                                        }
+                                                    }
+                                            )));
+                                }
+                            }
+                    )
             )
     };
 
