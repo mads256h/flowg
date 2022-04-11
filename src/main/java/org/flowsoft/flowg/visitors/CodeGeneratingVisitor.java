@@ -6,7 +6,6 @@ import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.nodes.*;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -255,6 +254,28 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     public ExpressionValue Visit(AssignmentNode assignmentNode) throws Exception {
         var entry =_symbolTable.LookupVariable(assignmentNode.GetLeftChild().GetValue());
         entry.Value = assignmentNode.GetRightChild().Accept(this);
+
+	return null;
+    }
+    
+    @Override
+    public ExpressionValue Visit(ForToNode forToNode) throws Exception {
+        var declNode = forToNode.GetFirstNode();
+        var declType = declNode.GetFirstNode().GetValue();
+        var declIdentifier = declNode.GetSecondNode().GetValue();
+        var declValue = declNode.GetThirdNode().Accept(this).GetNumber();
+
+        var expressionValue = forToNode.GetSecondNode().Accept(this).GetNumber();
+        if (declValue.compareTo(expressionValue) > 0) {
+            throw new Exception();
+        }
+
+        for (BigDecimal i = declValue; i.compareTo(expressionValue) < 0; i = i.add(new BigDecimal("1"))) {
+            _symbolTable.LookupVariable(declIdentifier).Value = new ExpressionValue(i);
+            var statementNodeList = forToNode.GetThirdNode();
+            statementNodeList.Accept(this);
+        }
+
         return null;
     }
 

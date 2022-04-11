@@ -141,4 +141,9 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     public String Visit(AssignmentNode assignmentNode) throws NoException {
         return assignmentNode.GetLeftChild().Accept(this) + " = " + assignmentNode.GetRightChild().Accept(this);
     }
+
+    @Override
+    public String Visit(ForToNode forToNode) throws NoException {
+        return "for (" + forToNode.GetFirstNode().Accept(this) + " to " + forToNode.GetSecondNode().Accept(this) + ") {\n" + forToNode.GetThirdNode().Accept(this) + "}";
+    }
 }

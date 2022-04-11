@@ -43,6 +43,9 @@ Anything = .
 
 "move" { return symbol(sym.MOVE); }
 
+"for" { return symbol(sym.FOR); }
+"to" { return symbol(sym.TO); }
+
 {Identifier} { return symbol(sym.IDENTIFIER, new IdentifierNode(yytext())); }
 
 {Number} { return symbol(sym.NUMBER_LITERAL, new NumberLiteralNode(new BigDecimal(yytext()))); }
