@@ -1,6 +1,7 @@
 package org.flowsoft.flowg.visitors;
 
 import org.flowsoft.flowg.BigDecimalUtils;
+import org.flowsoft.flowg.ReturnException;
 import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.nodes.*;
@@ -268,11 +269,31 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         // Get and run the function body
         var oldSymbolTable = _symbolTable;
         _symbolTable = bodyTable;
-        var functionBody = functionEntry.GetFunctionBody();
-        functionBody.Accept(this);
+
+        ExpressionValue value = null;
+
+        try {
+            var functionBody = functionEntry.GetFunctionBody();
+            functionBody.Accept(this);
+        }
+        catch (ReturnException e) {
+            value = e.GetExpressionValue();
+        }
+
         _symbolTable = oldSymbolTable;
 
-        return null;
+        return value;
+    }
+
+    @Override
+    public ExpressionValue Visit(ReturnNode returnNode) throws Exception {
+        var value = new ExpressionValue(Type.Void);
+        var child = returnNode.GetChild();
+        if (child != null) {
+            value = child.Accept(this);
+        }
+
+        throw new ReturnException(value);
     }
 
     @Override

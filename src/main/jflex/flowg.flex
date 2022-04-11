@@ -41,6 +41,7 @@ Anything = .
 "true" { return symbol(sym.BOOLEAN_LITERAL, new BooleanLiteralNode(true)); }
 "false" { return symbol(sym.BOOLEAN_LITERAL, new BooleanLiteralNode(false)); }
 
+"return" { return symbol(sym.RETURN); }
 "move" { return symbol(sym.MOVE); }
 
 "for" { return symbol(sym.FOR); }

@@ -138,6 +138,12 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
+    public String Visit(ReturnNode returnNode) throws NoException {
+        var child = returnNode.GetChild();
+        return "return" + (child == null ? "" : " " + child.Accept(this));
+    }
+
+    @Override
     public String Visit(AssignmentNode assignmentNode) throws NoException {
         return assignmentNode.GetLeftChild().Accept(this) + " = " + assignmentNode.GetRightChild().Accept(this);
     }
