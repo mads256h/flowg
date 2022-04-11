@@ -37,6 +37,13 @@ terminal DIVIDE;
 terminal FOR;
 terminal TO;
 
+terminal GE;
+terminal LE;
+terminal EQGE;
+terminal EQLE;
+terminal AND;
+terminal OR;
+
 non terminal StatementListNode program;
 non terminal StatementListNode stmt_list;
 non terminal ArrayList<StatementNode> stmt_list_impl;
@@ -55,6 +62,8 @@ non terminal FunctionDefinitionNode func_def;
 non terminal FunctionCallNode func_call;
 non terminal ForToNode for_to;
 
+precedence left AND, OR;
+precedence left GE, LE, EQGE, EQLE;
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE;
 
@@ -139,6 +148,19 @@ expr ::= NUMBER_LITERAL:n
         {: RESULT = new IdentifierExpressionNode(i); :}
         | func_call:c
         {: RESULT = c; :}
+        // Boolean Expressions
+        | expr:b1 GE expr:b2
+        {: RESULT = new GeExpressionNode(b1, b2); :}
+        | expr:b1 LE expr:b2
+        {: RESULT = new LeExpressionNode(b1, b2); :}
+        | expr:b1 EQGE expr:b2
+        {: RESULT = new EqGeExpressionNode(b1, b2); :}
+        | expr:b1 EQLE expr:b2
+        {: RESULT = new EqLeExpressionNode(b1, b2); :}
+        | expr:b1 AND expr:b2
+        {: RESULT = new AndExpressionNode(b1, b2); :}
+        | expr:b1 OR expr:b2
+        {: RESULT = new OrExpressionNode(b1, b2); :}
         ;
 
 func_def ::= TYPE:t IDENTIFIER:i L_PAREN f_param_list:p R_PAREN L_BRACKET stmt_list:l R_BRACKET

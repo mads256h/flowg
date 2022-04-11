@@ -71,6 +71,13 @@ Anything = .
 "*" { return symbol(sym.TIMES); }
 "/" { return symbol(sym.DIVIDE); }
 
+">" { return symbol(sym.GE); }
+"<" { return symbol(sym.LE); }
+">=" { return symbol(sym.EQGE); }
+"<=" { return symbol(sym.EQLE); }
+"&&" { return symbol(sym.AND); }
+"||" { return symbol(sym.OR); }
+
 // This catches any error.
 // Never match this symbol unless it is to report is as an error!
 {Anything} { return symbol(sym.INVALID); }

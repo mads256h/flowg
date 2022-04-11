@@ -307,6 +307,36 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         return null;
     }
 
+    @Override
+    public ExpressionValue Visit(GeExpressionNode geExpressionNode) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ExpressionValue Visit(LeExpressionNode leExpressionNode) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ExpressionValue Visit(EqGeExpressionNode eqGeExpressionNode) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ExpressionValue Visit(EqLeExpressionNode eqLeExpressionNode) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ExpressionValue Visit(AndExpressionNode andExpressionNode) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ExpressionValue Visit(OrExpressionNode orExpressionNode) throws Exception {
+        return null;
+    }
+
     private static BiFunction<ExpressionValue, ExpressionValue, ExpressionValue> TryBoth(Type left, Type right, Map<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> map) throws TypeException {
         var pair = new TypePair(left, right);
         if (map.containsKey(pair)) {

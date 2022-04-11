@@ -121,4 +121,34 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     public String Visit(ForToNode forToNode) throws NoException {
         return PrintNode(forToNode, forToNode.GetFirstNode(), forToNode.GetSecondNode(), forToNode.GetThirdNode());
     }
+
+    @Override
+    public String Visit(GeExpressionNode geExpressionNode) throws NoException {
+        return PrintNode(geExpressionNode, geExpressionNode.GetLeftChild(), geExpressionNode.GetRightChild());
+    }
+
+    @Override
+    public String Visit(LeExpressionNode leExpressionNode) throws NoException {
+        return PrintNode(leExpressionNode, leExpressionNode.GetLeftChild(), leExpressionNode.GetRightChild());
+    }
+
+    @Override
+    public String Visit(EqGeExpressionNode eqGeExpressionNode) throws NoException {
+        return PrintNode(eqGeExpressionNode, eqGeExpressionNode.GetLeftChild(), eqGeExpressionNode.GetRightChild());
+    }
+
+    @Override
+    public String Visit(EqLeExpressionNode eqLeExpressionNode) throws NoException {
+        return PrintNode(eqLeExpressionNode, eqLeExpressionNode.GetLeftChild(), eqLeExpressionNode.GetRightChild());
+    }
+
+    @Override
+    public String Visit(AndExpressionNode andExpressionNode) throws NoException {
+        return PrintNode(andExpressionNode, andExpressionNode.GetLeftChild(), andExpressionNode.GetRightChild());
+    }
+
+    @Override
+    public String Visit(OrExpressionNode orExpressionNode) throws NoException {
+        return PrintNode(orExpressionNode, orExpressionNode.GetLeftChild(), orExpressionNode.GetRightChild());
+    }
 }

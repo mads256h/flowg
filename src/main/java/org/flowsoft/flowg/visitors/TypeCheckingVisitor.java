@@ -242,6 +242,36 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         return null;
     }
 
+    @Override
+    public Type Visit(GeExpressionNode geExpressionNode) throws TypeException {
+        return null;
+    }
+
+    @Override
+    public Type Visit(LeExpressionNode leExpressionNode) throws TypeException {
+        return null;
+    }
+
+    @Override
+    public Type Visit(EqGeExpressionNode eqGeExpressionNode) throws TypeException {
+        return null;
+    }
+
+    @Override
+    public Type Visit(EqLeExpressionNode eqLeExpressionNode) throws TypeException {
+        return null;
+    }
+
+    @Override
+    public Type Visit(AndExpressionNode andExpressionNode) throws TypeException {
+        return null;
+    }
+
+    @Override
+    public Type Visit(OrExpressionNode orExpressionNode) throws TypeException {
+        return null;
+    }
+
     private Type PlusMinusTypeCheckExpr(Type leftType, Type rightType) throws TypeException {
         return TypePair.TryBothWays(leftType, rightType, PLUS_MINUS_TYPE_MAP);
     }

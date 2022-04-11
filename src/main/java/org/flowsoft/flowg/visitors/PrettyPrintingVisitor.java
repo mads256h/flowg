@@ -146,4 +146,34 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     public String Visit(ForToNode forToNode) throws NoException {
         return "for (" + forToNode.GetFirstNode().Accept(this) + " to " + forToNode.GetSecondNode().Accept(this) + ") {\n" + forToNode.GetThirdNode().Accept(this) + "}";
     }
+
+    @Override
+    public String Visit(GeExpressionNode geExpressionNode) throws NoException {
+        return geExpressionNode.GetLeftChild().Accept(this) + " > " + geExpressionNode.GetRightChild().Accept(this);
+    }
+
+    @Override
+    public String Visit(LeExpressionNode leExpressionNode) throws NoException {
+        return leExpressionNode.GetLeftChild().Accept(this) + " < " + leExpressionNode.GetRightChild().Accept(this);
+    }
+
+    @Override
+    public String Visit(EqGeExpressionNode eqGeExpressionNode) throws NoException {
+        return eqGeExpressionNode.GetLeftChild().Accept(this) + " >= " + eqGeExpressionNode.GetRightChild().Accept(this);
+    }
+
+    @Override
+    public String Visit(EqLeExpressionNode eqLeExpressionNode) throws NoException {
+        return eqLeExpressionNode.GetLeftChild().Accept(this) + " <= " + eqLeExpressionNode.GetRightChild().Accept(this);
+    }
+
+    @Override
+    public String Visit(AndExpressionNode andExpressionNode) throws NoException {
+        return andExpressionNode.GetLeftChild().Accept(this) + " && " + andExpressionNode.GetRightChild().Accept(this);
+    }
+
+    @Override
+    public String Visit(OrExpressionNode orExpressionNode) throws NoException {
+        return orExpressionNode.GetLeftChild().Accept(this) + " || " + orExpressionNode.GetRightChild().Accept(this);
+    }
 }
