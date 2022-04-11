@@ -246,7 +246,27 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     @Override
     public ExpressionValue Visit(FunctionCallNode functionCallNode) throws Exception {
-        // TODO call the actual function
+        // FIXME HUGE HACK
+
+        var identifier = functionCallNode.GetLeftChild().GetValue();
+        var params = functionCallNode.GetRightChild().GetChildren();
+
+        var functionEntry = _symbolTable.LookupFunction(identifier);
+        var formalParams = functionEntry.GetFormalParameters();
+
+        // Insert values of the formal parameters into the symbol table
+        for (int i = 0; i < params.size(); i++) {
+            var type = formalParams.get(i).GetLeftChild().GetValue();
+            var paramId = formalParams.get(i).GetRightChild().GetValue();
+            var value = params.get(i).Accept(this);
+
+            _symbolTable.Enter(paramId, type, value);
+        }
+
+        // Get and run the function body
+        var functionBody = functionEntry.GetFunctionBody();
+        functionBody.Accept(this);
+
         return null;
     }
 
@@ -265,12 +285,14 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         var declIdentifier = declNode.GetSecondNode().GetValue();
         var declValue = declNode.GetThirdNode().Accept(this).GetNumber();
 
+        declNode.Accept(this);
+
         var expressionValue = forToNode.GetSecondNode().Accept(this).GetNumber();
         if (declValue.compareTo(expressionValue) > 0) {
             throw new Exception();
         }
 
-        for (BigDecimal i = declValue; i.compareTo(expressionValue) < 0; i = i.add(new BigDecimal("1"))) {
+        for (BigDecimal i = declValue; i.compareTo(expressionValue) <= 0; i = i.add(new BigDecimal("1"))) {
             _symbolTable.LookupVariable(declIdentifier).Value = new ExpressionValue(i);
             var statementNodeList = forToNode.GetThirdNode();
             statementNodeList.Accept(this);

@@ -102,13 +102,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         var identifier = functionDefinitionNode.GetIdentifierNode().GetValue();
         var formalParams = functionDefinitionNode.GetFormalParameterListNode();
 
-        var params = new ArrayList<Type>();
-
-        for (var param : formalParams.GetChildren()) {
-            params.add(param.GetLeftChild().Accept(this));
-        }
-
-        _symbolTable.Enter(returnType, identifier, params);
+        _symbolTable.Enter(returnType, identifier, (ArrayList<FormalParameterNode>) formalParams.GetChildren(), functionDefinitionNode.GetStatementListNode());
         return null;
     }
 
@@ -185,14 +179,14 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         var paramList = functionCallNode.GetRightChild().GetChildren();
 
         var functionEntry = _symbolTable.LookupFunction(identifier);
-        var expectedTypes = functionEntry.GetParameterTypes();
+        var expectedTypes = functionEntry.GetFormalParameters();
 
         if (paramList.size() != expectedTypes.size()) {
             throw new TypeException();
         }
 
         for (int i = 0; i < paramList.size(); i++) {
-            if (paramList.get(i).Accept(this) != expectedTypes.get(i)) {
+            if (paramList.get(i).Accept(this) != expectedTypes.get(i).GetLeftChild().GetValue()) {
                 throw new TypeException();
             }
         }

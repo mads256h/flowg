@@ -245,4 +245,67 @@ public class CodeGeneratingTests {
 
         assertTrue(symbolTable.LookupVariable("x").Value.GetNumber().compareTo(new BigDecimal("4")) == 0);
     }
+
+    @Test
+    public void TestFunctionCall() throws Exception {
+        var node = new StatementListNode(new ArrayList<>() {
+            {
+                add(new FunctionDefinitionNode(
+                        new TypeNode(Type.Void),
+                        new IdentifierNode("test"),
+                        new FormalParameterListNode(
+                                new ArrayList<>() {
+                                    {
+                                        add(new FormalParameterNode(new TypeNode(Type.Number), new IdentifierNode("x")));
+                                        add(new FormalParameterNode(new TypeNode(Type.Number), new IdentifierNode("y")));
+                                        add(new FormalParameterNode(new TypeNode(Type.Number), new IdentifierNode("z")));
+                                    }
+                                }
+                        ),
+                        new StatementListNode(
+                                new ArrayList<>() {
+                                    {
+                                        add(new MoveNode(
+                                                new ActualParameterListNode(
+                                                        new ArrayList<>() {
+                                                            {
+                                                                add(new PointNode(
+                                                                        new PlusExpressionNode(new IdentifierExpressionNode(new IdentifierNode("x")), new NumberLiteralNode(new BigDecimal("1"))),
+                                                                        new PlusExpressionNode(new IdentifierExpressionNode(new IdentifierNode("y")), new NumberLiteralNode(new BigDecimal("2"))),
+                                                                        new PlusExpressionNode(new IdentifierExpressionNode(new IdentifierNode("z")), new NumberLiteralNode(new BigDecimal("3")))
+                                                                ));
+                                                            }
+                                                        }
+                                                )
+                                        ));
+                                    }
+                                }
+                        )
+                ));
+
+                add(new FunctionCallNode(
+                        new IdentifierNode("test"),
+                        new ActualParameterListNode(
+                                new ArrayList<>() {
+                                    {
+                                        add(new NumberLiteralNode(new BigDecimal("1")));
+                                        add(new NumberLiteralNode(new BigDecimal("2")));
+                                        add(new NumberLiteralNode(new BigDecimal("3")));
+                                    }
+                                }
+                        )));
+            }
+        });
+
+        var typeChecker = new TypeCheckingVisitor();
+        node.Accept(typeChecker);
+
+        var codeGen = new CodeGeneratingVisitor(typeChecker.GetSymbolTable());
+        node.Accept(codeGen);
+
+
+        var symbolTable = typeChecker.GetSymbolTable();
+
+        assertThat(codeGen.GetCode()).isEqualTo("G1 E0 X2 Y4 Z6\n");
+    }
 }
