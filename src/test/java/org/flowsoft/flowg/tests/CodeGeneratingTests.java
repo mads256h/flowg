@@ -206,7 +206,7 @@ public class CodeGeneratingTests {
         var node = thing.GetNode();
         var expected = thing.GetExpected();
 
-        var value = node.Accept(new CodeGeneratingVisitor(new SymbolTable()));
+        var value = node.Accept(new CodeGeneratingVisitor(new SymbolTable(null)));
         var actual = value.GetNumber();
 
         assertThat(value.GetType()).isEqualTo(Type.Number);
@@ -218,7 +218,7 @@ public class CodeGeneratingTests {
         var node = thing.GetNode();
         var expected = thing.GetExpected();
 
-        var value = node.Accept(new CodeGeneratingVisitor(new SymbolTable()));
+        var value = node.Accept(new CodeGeneratingVisitor(new SymbolTable(null)));
         var actual = value.GetPoint();
 
         assertThat(value.GetType()).isEqualTo(Type.Point);
@@ -241,9 +241,9 @@ public class CodeGeneratingTests {
         node.Accept(codeGen);
 
 
-        var symbolTable = typeChecker.GetSymbolTable();
+        var symbolTable = codeGen.GetSymbolTable();
 
-        assertTrue(symbolTable.LookupVariable("x").Value.GetNumber().compareTo(new BigDecimal("4")) == 0);
+        assertTrue(symbolTable.LookupVariable("x").GetNumber().compareTo(new BigDecimal("4")) == 0);
     }
 
     @Test
