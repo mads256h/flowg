@@ -285,12 +285,14 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         var declIdentifier = declNode.GetSecondNode().GetValue();
         var declValue = declNode.GetThirdNode().Accept(this).GetNumber();
 
+        declNode.Accept(this);
+
         var expressionValue = forToNode.GetSecondNode().Accept(this).GetNumber();
         if (declValue.compareTo(expressionValue) > 0) {
             throw new Exception();
         }
 
-        for (BigDecimal i = declValue; i.compareTo(expressionValue) < 0; i = i.add(new BigDecimal("1"))) {
+        for (BigDecimal i = declValue; i.compareTo(expressionValue) <= 0; i = i.add(new BigDecimal("1"))) {
             _symbolTable.LookupVariable(declIdentifier).Value = new ExpressionValue(i);
             var statementNodeList = forToNode.GetThirdNode();
             statementNodeList.Accept(this);
