@@ -23,7 +23,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
             put(new TypePair(Type.Point, Type.Number), Type.Point);
         }};
 
-    private final SymbolTable _symbolTable = new SymbolTable();
+    private SymbolTable _symbolTable = new SymbolTable(null);
 
     public void PrintSymbolTable() {
         System.out.println("Printing symbol table");
@@ -101,8 +101,24 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         var returnType = functionDefinitionNode.GetTypeNode().Accept(this);
         var identifier = functionDefinitionNode.GetIdentifierNode().GetValue();
         var formalParams = functionDefinitionNode.GetFormalParameterListNode();
+        var statementList = functionDefinitionNode.GetStatementListNode();
 
-        _symbolTable.Enter(returnType, identifier, (ArrayList<FormalParameterNode>) formalParams.GetChildren(), functionDefinitionNode.GetStatementListNode());
+        var parentSymbolTable = _symbolTable.Clone();
+        var bodySymbolTable = new SymbolTable(parentSymbolTable);
+        for (var param : formalParams.GetChildren()) {
+            bodySymbolTable.Enter(param.GetRightChild().GetValue(), param.GetLeftChild().GetValue());
+        }
+
+        parentSymbolTable.Enter(returnType, identifier, (ArrayList<FormalParameterNode>) formalParams.GetChildren(), functionDefinitionNode.GetStatementListNode(), bodySymbolTable);
+        _symbolTable.Enter(returnType, identifier, (ArrayList<FormalParameterNode>) formalParams.GetChildren(), functionDefinitionNode.GetStatementListNode(), bodySymbolTable);
+        var oldSymbolTable = _symbolTable;
+
+        _symbolTable = bodySymbolTable;
+
+        statementList.Accept(this);
+
+        _symbolTable = oldSymbolTable;
+
         return null;
     }
 
@@ -170,7 +186,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     @Override
     public Type Visit(IdentifierExpressionNode identifierExpressionNode) throws TypeException {
         var identifier = identifierExpressionNode.GetChild().GetValue();
-        return _symbolTable.LookupVariable(identifier).Type;
+        return _symbolTable.LookupVariable(identifier).GetType();
     }
 
     @Override
@@ -198,7 +214,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     public Type Visit(AssignmentNode assignmentNode) throws TypeException {
         var identifier = assignmentNode.GetLeftChild().GetValue();
 
-        var identifierType = _symbolTable.LookupVariable(identifier).Type;
+        var identifierType = _symbolTable.LookupVariable(identifier).GetType();
         var expressionType = assignmentNode.GetRightChild().Accept(this);
 
         if (identifierType != expressionType) {

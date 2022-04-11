@@ -2,21 +2,26 @@ package org.flowsoft.flowg.visitors;
 
 import org.flowsoft.flowg.Type;
 
-public class VariableEntry {
-
-    public VariableEntry(String identifier, Type type, ExpressionValue expressionValue) {
-        Identifier = identifier;
-        Type = type;
-        Value = expressionValue;
-    }
+public class VariableEntry implements Cloneable<VariableEntry> {
+    private final String _identifier;
+    private final Type _type;
 
     public VariableEntry(String identifier, Type type) {
-        Identifier = identifier;
-        Type = type;
-        Value = null;
+        _identifier = identifier;
+        _type = type;
     }
 
-    public String Identifier;
-    public Type Type;
-    public ExpressionValue Value;
+    public String GetIdentifier() {
+        return _identifier;
+    }
+
+    public Type GetType() {
+        return _type;
+    }
+
+
+    @Override
+    public VariableEntry Clone() {
+        return new VariableEntry(GetIdentifier(), GetType());
+    }
 }

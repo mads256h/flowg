@@ -107,16 +107,20 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         }
     };
 
-    private final SymbolTable _symbolTable;
+    private RuntimeSymbolTable _symbolTable;
 
     private final StringBuilder _stringBuilder = new StringBuilder();
 
     public CodeGeneratingVisitor(SymbolTable symbolTable) {
-        _symbolTable = symbolTable;
+        _symbolTable = new RuntimeSymbolTable(symbolTable, null);
     }
 
     public String GetCode() {
         return _stringBuilder.toString();
+    }
+
+    public RuntimeSymbolTable GetSymbolTable() {
+        return _symbolTable;
     }
 
     @Override
@@ -164,11 +168,10 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     @Override
     public ExpressionValue Visit(DeclarationNode declarationNode) throws Exception {
-        var type = declarationNode.GetFirstNode().GetValue();
         var identifier = declarationNode.GetSecondNode().GetValue();
         var value = declarationNode.GetThirdNode().Accept(this);
 
-        _symbolTable.Enter(identifier, type, value);
+        _symbolTable.SetValue(identifier, value);
         return null;
     }
 
@@ -241,41 +244,44 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     public ExpressionValue Visit(IdentifierExpressionNode identifierExpressionNode) throws Exception {
         var identifier = identifierExpressionNode.GetChild().GetValue();
         var variableEntry = _symbolTable.LookupVariable(identifier);
-        return variableEntry.Value;
+        return variableEntry;
     }
 
     @Override
     public ExpressionValue Visit(FunctionCallNode functionCallNode) throws Exception {
-        // FIXME HUGE HACK
-
         var identifier = functionCallNode.GetLeftChild().GetValue();
         var params = functionCallNode.GetRightChild().GetChildren();
 
         var functionEntry = _symbolTable.LookupFunction(identifier);
         var formalParams = functionEntry.GetFormalParameters();
 
+        var bodyTable = _symbolTable.Create(functionEntry.GetSymbolTable());
+
         // Insert values of the formal parameters into the symbol table
         for (int i = 0; i < params.size(); i++) {
-            var type = formalParams.get(i).GetLeftChild().GetValue();
             var paramId = formalParams.get(i).GetRightChild().GetValue();
             var value = params.get(i).Accept(this);
 
-            _symbolTable.Enter(paramId, type, value);
+            bodyTable.SetValue(paramId, value);
         }
 
         // Get and run the function body
+        var oldSymbolTable = _symbolTable;
+        _symbolTable = bodyTable;
         var functionBody = functionEntry.GetFunctionBody();
         functionBody.Accept(this);
+        _symbolTable = oldSymbolTable;
 
         return null;
     }
 
     @Override
     public ExpressionValue Visit(AssignmentNode assignmentNode) throws Exception {
-        var entry =_symbolTable.LookupVariable(assignmentNode.GetLeftChild().GetValue());
-        entry.Value = assignmentNode.GetRightChild().Accept(this);
+        var identifier = assignmentNode.GetLeftChild().GetValue();
+        var value = assignmentNode.GetRightChild().Accept(this);
+        _symbolTable.SetValue(identifier, value);
 
-	return null;
+        return null;
     }
     
     @Override
@@ -293,7 +299,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         }
 
         for (BigDecimal i = declValue; i.compareTo(expressionValue) <= 0; i = i.add(new BigDecimal("1"))) {
-            _symbolTable.LookupVariable(declIdentifier).Value = new ExpressionValue(i);
+            _symbolTable.SetValue(declIdentifier, new ExpressionValue(i));
             var statementNodeList = forToNode.GetThirdNode();
             statementNodeList.Accept(this);
         }
