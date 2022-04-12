@@ -316,7 +316,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
         var expressionValue = forToNode.GetSecondNode().Accept(this).GetNumber();
         if (declValue.compareTo(expressionValue) > 0) {
-            throw new Exception();
+            return null;
         }
 
         for (BigDecimal i = declValue; i.compareTo(expressionValue) <= 0; i = i.add(new BigDecimal("1"))) {
