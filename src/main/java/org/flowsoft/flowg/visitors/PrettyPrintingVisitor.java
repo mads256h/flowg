@@ -158,6 +158,11 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
+    public String Visit(EqExpressionNode eqExpressionNode) throws NoException {
+        return eqExpressionNode.GetLeftChild().Accept(this) + " == " + eqExpressionNode.GetRightChild().Accept(this);
+    }
+
+    @Override
     public String Visit(EqGeExpressionNode eqGeExpressionNode) throws NoException {
         return eqGeExpressionNode.GetLeftChild().Accept(this) + " >= " + eqGeExpressionNode.GetRightChild().Accept(this);
     }

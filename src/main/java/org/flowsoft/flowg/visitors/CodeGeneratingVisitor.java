@@ -107,6 +107,61 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         }
     };
 
+    private final static HashMap<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> EQ_MAP = new HashMap<>() {
+        {
+            put(new TypePair(Type.Number, Type.Number), (left, right) -> {
+                try {
+                    return new ExpressionValue(BigDecimalUtils.NumberCompare("EQ", left.GetNumber(), right.GetNumber()));
+                } catch (TypeException e) {
+                    e.printStackTrace();
+                    assert(false);
+                    return null;
+                }
+            });
+            put(new TypePair(Type.Point, Type.Point), (left, right) -> {
+                try {
+                    var xLeft = left.GetPoint().GetX();
+                    var yLeft = left.GetPoint().GetY();
+                    var zLeft = left.GetPoint().GetZ();
+
+                    var xRight = right.GetPoint().GetX();
+                    var yRight = right.GetPoint().GetY();
+                    var zRight = right.GetPoint().GetZ();
+
+                    if (!Boolean.TRUE.equals(BigDecimalUtils.NumberCompare("EQ", xLeft, xRight))
+                        && !Boolean.TRUE.equals(BigDecimalUtils.NumberCompare("EQ", yLeft, yRight))
+                        && !Boolean.TRUE.equals(BigDecimalUtils.NumberCompare("EQ", zLeft, zRight))) {
+                        return new ExpressionValue(true);
+                    } else {
+                        return new ExpressionValue(false);
+                    }
+
+                } catch (TypeException e) {
+                    e.printStackTrace();
+                    assert(false);
+                    return null;
+                }
+            });
+            put(new TypePair(Type.Boolean, Type.Boolean), (left, right) -> {
+                try {
+                    var boolLeft = left.GetBoolean().booleanValue();
+                    var boolRight = right.GetBoolean().booleanValue();
+
+                    if (boolLeft == boolRight) {
+                        return new ExpressionValue(true);
+                    } else {
+                        return new ExpressionValue(false);
+                    }
+
+                } catch (TypeException e) {
+                    e.printStackTrace();
+                    assert(false);
+                    return null;
+                }
+            });
+        }
+    };
+
     private RuntimeSymbolTable _symbolTable;
 
     private final StringBuilder _stringBuilder = new StringBuilder();
@@ -309,32 +364,66 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     @Override
     public ExpressionValue Visit(GeExpressionNode geExpressionNode) throws Exception {
-        return null;
+        var leftNumber = geExpressionNode.GetLeftChild().Accept(this).GetNumber();
+        var rightNumber = geExpressionNode.GetRightChild().Accept(this).GetNumber();
+        return new ExpressionValue(BigDecimalUtils.NumberCompare("GE", leftNumber, rightNumber));
     }
 
     @Override
     public ExpressionValue Visit(LeExpressionNode leExpressionNode) throws Exception {
+        var leftNumber = leExpressionNode.GetLeftChild().Accept(this).GetNumber();
+        var rightNumber = leExpressionNode.GetRightChild().Accept(this).GetNumber();
+        return new ExpressionValue(BigDecimalUtils.NumberCompare("LE", leftNumber, rightNumber));
+    }
+
+    @Override
+    public ExpressionValue Visit(EqExpressionNode eqExpressionNode) throws Exception {
+        //var x = eqExpressionNode.Accept(this).GetType();
+
+        //var leftNumber = eqExpressionNode.GetLeftChild().Accept(this).GetNumber();
+        //var rightNumber = eqExpressionNode.GetRightChild().Accept(this).GetNumber();
+
+        // var s = TryBoth(leftNumber.GetType(), rightValue.GetType(), DIVIDE_MAP).apply(leftValue, rightValue);
+        // new ExpressionValue(BigDecimalUtils.NumberCompare("EQ", leftNumber, rightNumber))
         return null;
     }
 
     @Override
     public ExpressionValue Visit(EqGeExpressionNode eqGeExpressionNode) throws Exception {
-        return null;
+        var leftNumber = eqGeExpressionNode.GetLeftChild().Accept(this).GetNumber();
+        var rightNumber = eqGeExpressionNode.GetRightChild().Accept(this).GetNumber();
+        return new ExpressionValue(BigDecimalUtils.NumberCompare("EQGE", leftNumber, rightNumber));
     }
 
     @Override
     public ExpressionValue Visit(EqLeExpressionNode eqLeExpressionNode) throws Exception {
-        return null;
+        var leftNumber = eqLeExpressionNode.GetLeftChild().Accept(this).GetNumber();
+        var rightNumber = eqLeExpressionNode.GetRightChild().Accept(this).GetNumber();
+        return new ExpressionValue(BigDecimalUtils.NumberCompare("EQLE", leftNumber, rightNumber));
     }
 
     @Override
     public ExpressionValue Visit(AndExpressionNode andExpressionNode) throws Exception {
-        return null;
+        var leftBool = andExpressionNode.GetLeftChild().Accept(this).GetBoolean();
+        var rightBool = andExpressionNode.GetRightChild().Accept(this).GetBoolean();
+
+        if (leftBool && rightBool) {
+            return new ExpressionValue(true);
+        }
+
+        return new ExpressionValue(false);
     }
 
     @Override
     public ExpressionValue Visit(OrExpressionNode orExpressionNode) throws Exception {
-        return null;
+        var leftBool = orExpressionNode.GetLeftChild().Accept(this).GetBoolean();
+        var rightBool = orExpressionNode.GetRightChild().Accept(this).GetBoolean();
+
+        if (leftBool || rightBool) {
+            return new ExpressionValue(true);
+        }
+
+        return new ExpressionValue(false);
     }
 
     private static BiFunction<ExpressionValue, ExpressionValue, ExpressionValue> TryBoth(Type left, Type right, Map<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> map) throws TypeException {

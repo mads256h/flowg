@@ -39,6 +39,7 @@ terminal TO;
 
 terminal GE;
 terminal LE;
+terminal EQ;
 terminal EQGE;
 terminal EQLE;
 terminal AND;
@@ -63,7 +64,7 @@ non terminal FunctionCallNode func_call;
 non terminal ForToNode for_to;
 
 precedence left AND, OR;
-precedence left GE, LE, EQGE, EQLE;
+precedence left EQ, GE, LE, EQGE, EQLE;
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE;
 
@@ -153,6 +154,8 @@ expr ::= NUMBER_LITERAL:n
         {: RESULT = new GeExpressionNode(b1, b2); :}
         | expr:b1 LE expr:b2
         {: RESULT = new LeExpressionNode(b1, b2); :}
+        | expr:e1 EQ expr:e2
+        {: RESULT = new EqExpressionNode(e1, e2); :}
         | expr:b1 EQGE expr:b2
         {: RESULT = new EqGeExpressionNode(b1, b2); :}
         | expr:b1 EQLE expr:b2

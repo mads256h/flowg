@@ -73,6 +73,7 @@ Anything = .
 
 ">" { return symbol(sym.GE); }
 "<" { return symbol(sym.LE); }
+"==" { return symbol(sym.EQ); }
 ">=" { return symbol(sym.EQGE); }
 "<=" { return symbol(sym.EQLE); }
 "&&" { return symbol(sym.AND); }

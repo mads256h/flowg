@@ -23,6 +23,23 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
             put(new TypePair(Type.Point, Type.Number), Type.Point);
         }};
 
+    private final static HashMap<TypePair, Type> GE_LE_EQGE_EQLE_TYPE_MAP = new HashMap<>() {
+        {
+            put(new TypePair(Type.Number, Type.Number), Type.Boolean);
+        }};
+
+    private final static HashMap<TypePair, Type> EQ_TYPE_MAP = new HashMap<>() {
+        {
+           put(new TypePair(Type.Number, Type.Number), Type.Boolean);
+           put(new TypePair(Type.Point, Type.Point), Type.Boolean);
+           put(new TypePair(Type.Boolean, Type.Boolean), Type.Boolean);
+        }};
+
+    private final static HashMap<TypePair, Type> AND_OR_TYPE_MAP = new HashMap<>() {
+        {
+           put(new TypePair(Type.Boolean, Type.Boolean), Type.Boolean);
+        }};
+
     private SymbolTable _symbolTable = new SymbolTable(null);
 
     public void PrintSymbolTable() {
@@ -244,32 +261,51 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
     @Override
     public Type Visit(GeExpressionNode geExpressionNode) throws TypeException {
-        return null;
+        var leftType = geExpressionNode.GetLeftChild().Accept(this);
+        var rightType = geExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, GE_LE_EQGE_EQLE_TYPE_MAP);
     }
 
     @Override
     public Type Visit(LeExpressionNode leExpressionNode) throws TypeException {
-        return null;
+        var leftType = leExpressionNode.GetLeftChild().Accept(this);
+        var rightType = leExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, GE_LE_EQGE_EQLE_TYPE_MAP);
+    }
+
+    @Override
+    public Type Visit(EqExpressionNode eqExpressionNode) throws TypeException {
+        var leftType = eqExpressionNode.GetLeftChild().Accept(this);
+        var rightType = eqExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, EQ_TYPE_MAP);
     }
 
     @Override
     public Type Visit(EqGeExpressionNode eqGeExpressionNode) throws TypeException {
-        return null;
+        var leftType = eqGeExpressionNode.GetLeftChild().Accept(this);
+        var rightType = eqGeExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, GE_LE_EQGE_EQLE_TYPE_MAP);
     }
 
     @Override
     public Type Visit(EqLeExpressionNode eqLeExpressionNode) throws TypeException {
-        return null;
+        var leftType = eqLeExpressionNode.GetLeftChild().Accept(this);
+        var rightType = eqLeExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, GE_LE_EQGE_EQLE_TYPE_MAP);
     }
 
     @Override
     public Type Visit(AndExpressionNode andExpressionNode) throws TypeException {
-        return null;
+        var leftType = andExpressionNode.GetLeftChild().Accept(this);
+        var rightType = andExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, AND_OR_TYPE_MAP);
     }
 
     @Override
     public Type Visit(OrExpressionNode orExpressionNode) throws TypeException {
-        return null;
+        var leftType = orExpressionNode.GetLeftChild().Accept(this);
+        var rightType = orExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, AND_OR_TYPE_MAP);
     }
 
     private Type PlusMinusTypeCheckExpr(Type leftType, Type rightType) throws TypeException {

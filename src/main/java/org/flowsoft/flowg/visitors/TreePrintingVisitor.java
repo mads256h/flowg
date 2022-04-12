@@ -133,6 +133,11 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
+    public String Visit(EqExpressionNode eqExpressionNode) throws NoException {
+        return PrintNode(eqExpressionNode, eqExpressionNode.GetLeftChild(), eqExpressionNode.GetRightChild());
+    }
+
+    @Override
     public String Visit(EqGeExpressionNode eqGeExpressionNode) throws NoException {
         return PrintNode(eqGeExpressionNode, eqGeExpressionNode.GetLeftChild(), eqGeExpressionNode.GetRightChild());
     }
