@@ -8,6 +8,8 @@ import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.nodes.*;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.math.MathContext;
 import java.util.HashMap;
 import java.util.Map;
@@ -158,6 +160,9 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     private final StringBuilder _stringBuilder = new StringBuilder();
 
+    private Point _currentPosition = new Point(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+    private BigDecimal _currentExtrusion = new BigDecimal("0");
+
     public CodeGeneratingVisitor(SymbolTable symbolTable) {
         _symbolTable = new RuntimeSymbolTable(symbolTable, null);
     }
@@ -182,11 +187,56 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     public ExpressionValue Visit(MoveNode moveNode) throws Exception {
         var parameters = moveNode.GetChild().GetChildren();
         var point = parameters.get(0).Accept(this).GetPoint();
+        _currentPosition = point;
+
+        _stringBuilder
+                .append("G0")
+                // Don't extrude anything we are moving :)
+                .append(" X").append(point.GetX())
+                .append(" Y").append(point.GetY())
+                .append(" Z").append(point.GetZ())
+                .append('\n');
+
+        return new ExpressionValue(Type.Void);
+    }
+
+    @Override
+    public ExpressionValue Visit(LineNode lineNode) throws Exception {
+        var parameters = lineNode.GetChild().GetChildren();
+        var point = parameters.get(0).Accept(this).GetPoint();
+
+        // All distances in mm
+        var distance = point.Distance(_currentPosition);
+        var filamentDiameter = new BigDecimal("2.85");
+        var nozzleDiameter = new BigDecimal("0.4");
+        var layerHeight = new BigDecimal("0.1");
+
+        var pi = new BigDecimal(Math.PI);
+        var filamentRadius = BigDecimalUtils.Divide(filamentDiameter, new BigDecimal(2));
+
+
+        var filamentVolumeNeeded = distance.multiply(nozzleDiameter).multiply(layerHeight);
+
+        // PI * r²
+        var filamentArea = pi.multiply(filamentRadius.pow(2));
+
+        var filamentMm = BigDecimalUtils.Divide(filamentVolumeNeeded, filamentArea);
+        _currentExtrusion = _currentExtrusion.add(filamentMm);
+
+        _currentPosition = point;
+
+        var decimalSeperator = new DecimalFormatSymbols();
+        decimalSeperator.setDecimalSeparator('.');
+
+        var df = new DecimalFormat();
+        df.setMaximumFractionDigits(5);
+        df.setMinimumFractionDigits(0);
+        df.setGroupingUsed(false);
+        df.setDecimalFormatSymbols(decimalSeperator);
 
         _stringBuilder
                 .append("G1")
-                // Don't extrude anything we are moving :)
-                .append(" E0")
+                .append(" E").append(df.format(_currentExtrusion))
                 .append(" X").append(point.GetX())
                 .append(" Y").append(point.GetY())
                 .append(" Z").append(point.GetZ())

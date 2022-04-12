@@ -36,6 +36,11 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
+    public String Visit(LineNode lineNode) throws NoException {
+        return PrintNode(lineNode, lineNode.GetChild());
+    }
+
+    @Override
     public String Visit(SqrtNode sqrtNode) throws NoException {
         return PrintNode(sqrtNode, sqrtNode.GetChild());
     }

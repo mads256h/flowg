@@ -3,6 +3,7 @@ package org.flowsoft.flowg.visitors;
 import org.flowsoft.flowg.BigDecimalUtils;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Objects;
 
 public final class Point {
@@ -54,6 +55,20 @@ public final class Point {
         );
     }
 
+    public BigDecimal Distance(Point point) {
+        var x = GetX().subtract(point.GetX());
+        var y = GetY().subtract(point.GetY());
+        var z = GetZ().subtract(point.GetZ());
+
+        var x2 = x.pow(2);
+        var y2 = y.pow(2);
+        var z2 = z.pow(2);
+
+        var sum = x2.add(y2).add(z2);
+
+        return sum.sqrt(MathContext.UNLIMITED);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -68,4 +83,5 @@ public final class Point {
     public int hashCode() {
         return Objects.hash(_x, _y, _z);
     }
+
 }

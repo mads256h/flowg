@@ -14,6 +14,7 @@ terminal NumberLiteralNode NUMBER_LITERAL;
 terminal BooleanLiteralNode BOOLEAN_LITERAL;
 
 terminal MOVE;
+terminal LINE;
 terminal SQRT;
 terminal RETURN;
 
@@ -56,6 +57,7 @@ non terminal StatementNode stmt;
 non terminal DeclarationNode decl;
 non terminal AssignmentNode assign;
 non terminal MoveNode move;
+non terminal LineNode line;
 non terminal SqrtNode sqrt;
 non terminal ActualParameterListNode a_param_list;
 non terminal ArrayList<ExpressionNode> a_param_list_impl;
@@ -95,6 +97,9 @@ stmt ::=decl:d
         move:m
         {: RESULT = m; :}
         |
+        line:l
+        {: RESULT = l; :}
+        |
         func_def:d
         {: RESULT = d; :}
         |
@@ -118,6 +123,9 @@ assign ::= IDENTIFIER:i ASSIGNMENT expr:e
 
 move ::= MOVE L_PAREN a_param_list:p R_PAREN
         {: RESULT = new MoveNode(p); :};
+
+line ::= LINE L_PAREN a_param_list:p R_PAREN
+        {: RESULT = new LineNode(p); :};
 
 sqrt ::= SQRT L_PAREN a_param_list:p R_PAREN
         {: RESULT = new SqrtNode(p); :};

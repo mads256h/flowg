@@ -25,6 +25,11 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
+    public String Visit(LineNode lineNode) throws NoException {
+        return "line(" + lineNode.GetChild().Accept(this) + ")";
+    }
+
+    @Override
     public String Visit(SqrtNode sqrtNode) throws NoException {
         return "sqrt(" + sqrtNode.GetChild().Accept(this) + ")";
     }
