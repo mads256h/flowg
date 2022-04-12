@@ -14,6 +14,7 @@ terminal NumberLiteralNode NUMBER_LITERAL;
 terminal BooleanLiteralNode BOOLEAN_LITERAL;
 
 terminal MOVE;
+terminal RETURN;
 
 // ()
 terminal L_PAREN;
@@ -53,6 +54,7 @@ non terminal ExpressionNode expr;
 non terminal PointNode point;
 non terminal FunctionDefinitionNode func_def;
 non terminal FunctionCallNode func_call;
+non terminal ReturnNode return;
 non terminal ForToNode for_to;
 
 precedence left PLUS, MINUS;
@@ -84,6 +86,9 @@ stmt ::=decl:d
         func_call:c
         {: RESULT = c; :}
         |
+        return:r
+        {: RESULT = r; :}
+        |
         assign:a
         {: RESULT = a; :}
         |
@@ -106,7 +111,10 @@ a_param_list_impl ::= a_param_list_impl:l COMMA expr:e
         {: l.add(e); RESULT = l; :}
         |
         expr:e
-        {: var l = new ArrayList<ExpressionNode>(); l.add(e); RESULT = l; :};
+        {: var l = new ArrayList<ExpressionNode>(); l.add(e); RESULT = l; :}
+        |
+        {: RESULT = new ArrayList<ExpressionNode>(); :};
+
 
 f_param_list ::= f_param_list_impl:l
         {: RESULT = new FormalParameterListNode(l); :};
@@ -116,7 +124,9 @@ f_param_list_impl ::= f_param_list_impl:l COMMA f_param:p
         {: l.add(p); RESULT = l; :}
         |
         f_param:p
-        {: var l = new ArrayList<FormalParameterNode>(); l.add(p); RESULT = l; :};
+        {: var l = new ArrayList<FormalParameterNode>(); l.add(p); RESULT = l; :}
+        |
+        {: RESULT = new ArrayList<FormalParameterNode>(); :};
 
 f_param ::= TYPE:t IDENTIFIER:i
         {: RESULT = new FormalParameterNode(t, i); :};
@@ -146,6 +156,11 @@ func_def ::= TYPE:t IDENTIFIER:i L_PAREN f_param_list:p R_PAREN L_BRACKET stmt_l
 
 func_call ::= IDENTIFIER:i L_PAREN a_param_list:p R_PAREN
         {: RESULT = new FunctionCallNode(i, p); :};
+
+return::= RETURN expr:e
+        {: RESULT = new ReturnNode(e); :}
+        | RETURN
+        {: RESULT = new ReturnNode(null); :};
 
 point ::= L_SQUARE_BRACKET expr:e1 COMMA expr:e2 COMMA expr:e3 R_SQUARE_BRACKET
         {: RESULT = new PointNode(e1, e2, e3); :};

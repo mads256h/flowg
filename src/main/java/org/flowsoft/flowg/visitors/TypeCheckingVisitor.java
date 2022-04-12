@@ -24,6 +24,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         }};
 
     private SymbolTable _symbolTable = new SymbolTable(null);
+    private Type _functionReturnType = Type.Void;
 
     public void PrintSymbolTable() {
         System.out.println("Printing symbol table");
@@ -111,13 +112,16 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
         parentSymbolTable.Enter(returnType, identifier, (ArrayList<FormalParameterNode>) formalParams.GetChildren(), functionDefinitionNode.GetStatementListNode(), bodySymbolTable);
         _symbolTable.Enter(returnType, identifier, (ArrayList<FormalParameterNode>) formalParams.GetChildren(), functionDefinitionNode.GetStatementListNode(), bodySymbolTable);
-        var oldSymbolTable = _symbolTable;
 
+        var oldFunctionReturnType = _functionReturnType;
+        var oldSymbolTable = _symbolTable;
+        _functionReturnType = returnType;
         _symbolTable = bodySymbolTable;
 
         statementList.Accept(this);
 
         _symbolTable = oldSymbolTable;
+        _functionReturnType = oldFunctionReturnType;
 
         return null;
     }
@@ -208,6 +212,21 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         }
 
         return functionEntry.GetReturnType();
+    }
+
+    @Override
+    public Type Visit(ReturnNode returnNode) throws TypeException {
+        Type type = Type.Void;
+        var child = returnNode.GetChild();
+        if (child != null) {
+            type = child.Accept(this);
+        }
+
+        if (type != _functionReturnType) {
+            throw new TypeException();
+        }
+
+        return null;
     }
 
     @Override
