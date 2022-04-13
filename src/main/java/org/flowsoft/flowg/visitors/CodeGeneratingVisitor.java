@@ -119,33 +119,16 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
                 }
             });
             put(new TypePair(Type.Point, Type.Point), (left, right) -> {
-                try {
-                    var xLeft = left.GetPoint().GetX();
-                    var yLeft = left.GetPoint().GetY();
-                    var zLeft = left.GetPoint().GetZ();
-
-                    var xRight = right.GetPoint().GetX();
-                    var yRight = right.GetPoint().GetY();
-                    var zRight = right.GetPoint().GetZ();
-
-                    if (!Boolean.TRUE.equals(BigDecimalUtils.NumberCompare("EQ", xLeft, xRight))
-                        && !Boolean.TRUE.equals(BigDecimalUtils.NumberCompare("EQ", yLeft, yRight))
-                        && !Boolean.TRUE.equals(BigDecimalUtils.NumberCompare("EQ", zLeft, zRight))) {
+                    if (left.equals(right)) {
                         return new ExpressionValue(true);
                     } else {
                         return new ExpressionValue(false);
                     }
-
-                } catch (TypeException e) {
-                    e.printStackTrace();
-                    assert(false);
-                    return null;
-                }
             });
             put(new TypePair(Type.Boolean, Type.Boolean), (left, right) -> {
                 try {
-                    var boolLeft = left.GetBoolean().booleanValue();
-                    var boolRight = right.GetBoolean().booleanValue();
+                    var boolLeft = left.GetBoolean();
+                    var boolRight = right.GetBoolean();
 
                     if (boolLeft == boolRight) {
                         return new ExpressionValue(true);
@@ -378,14 +361,13 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     @Override
     public ExpressionValue Visit(EqExpressionNode eqExpressionNode) throws Exception {
-        //var x = eqExpressionNode.Accept(this).GetType();
+        var leftType = eqExpressionNode.GetLeftChild().Accept(this).GetType();
+        var rightType = eqExpressionNode.GetRightChild().Accept(this).GetType();
 
-        //var leftNumber = eqExpressionNode.GetLeftChild().Accept(this).GetNumber();
-        //var rightNumber = eqExpressionNode.GetRightChild().Accept(this).GetNumber();
+        var leftValue = eqExpressionNode.GetLeftChild().Accept(this);
+        var rightValue = eqExpressionNode.GetRightChild().Accept(this);
 
-        // var s = TryBoth(leftNumber.GetType(), rightValue.GetType(), DIVIDE_MAP).apply(leftValue, rightValue);
-        // new ExpressionValue(BigDecimalUtils.NumberCompare("EQ", leftNumber, rightNumber))
-        return null;
+        return TryBoth(leftType, rightType, EQ_MAP).apply(leftValue, rightValue);
     }
 
     @Override
