@@ -203,22 +203,36 @@ public class CodeGeneratingTests {
             new Thing<>(
                     true,
                     new GeExpressionNode(
-                            new NumberLiteralNode(new BigDecimal('1')),
-                            new NumberLiteralNode(new BigDecimal('0'))
+                            new NumberLiteralNode(new BigDecimal("1")),
+                            new NumberLiteralNode(new BigDecimal("0"))
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new GeExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("0")),
+                            new NumberLiteralNode(new BigDecimal("1"))
                     )
             ),
             new Thing<>(
                     true,
                     new LeExpressionNode(
-                            new NumberLiteralNode(new BigDecimal('0')),
-                            new NumberLiteralNode(new BigDecimal('1'))
+                            new NumberLiteralNode(new BigDecimal("0")),
+                            new NumberLiteralNode(new BigDecimal("1"))
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new LeExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("1")),
+                            new NumberLiteralNode(new BigDecimal("0"))
                     )
             ),
             new Thing<>(
                     true,
                     new EqGeExpressionNode(
-                            new NumberLiteralNode(new BigDecimal('0')),
-                            new NumberLiteralNode(new BigDecimal('0'))
+                            new NumberLiteralNode(new BigDecimal("0")),
+                            new NumberLiteralNode(new BigDecimal("0"))
                     )
             ),
             new Thing<>(
@@ -229,6 +243,13 @@ public class CodeGeneratingTests {
                     )
             ),
             new Thing<>(
+                    false,
+                    new EqGeExpressionNode(
+                            new NumberLiteralNode(new BigDecimal('0')),
+                            new NumberLiteralNode(new BigDecimal('1'))
+                    )
+            ),
+            new Thing<>(
                     true,
                     new EqLeExpressionNode(
                             new NumberLiteralNode(new BigDecimal('0')),
@@ -240,6 +261,13 @@ public class CodeGeneratingTests {
                     new EqLeExpressionNode(
                             new NumberLiteralNode(new BigDecimal('0')),
                             new NumberLiteralNode(new BigDecimal('1'))
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new EqLeExpressionNode(
+                            new NumberLiteralNode(new BigDecimal('1')),
+                            new NumberLiteralNode(new BigDecimal('0'))
                     )
             ),
             new Thing<>(
@@ -250,10 +278,31 @@ public class CodeGeneratingTests {
                     )
             ),
             new Thing<>(
+                    false,
+                    new AndExpressionNode(
+                            new BooleanLiteralNode(false),
+                            new BooleanLiteralNode(true)
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new AndExpressionNode(
+                            new BooleanLiteralNode(true),
+                            new BooleanLiteralNode(false)
+                    )
+            ),
+            new Thing<>(
                     true,
                     new OrExpressionNode(
                             new BooleanLiteralNode(true),
                             new BooleanLiteralNode(true)
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new OrExpressionNode(
+                            new BooleanLiteralNode(false),
+                            new BooleanLiteralNode(false)
                     )
             ),
             new Thing<>(
@@ -292,6 +341,34 @@ public class CodeGeneratingTests {
                     )
             ),
             new Thing<>(
+                    false,
+                    new EqExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("1")),
+                            new NumberLiteralNode(new BigDecimal("0"))
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new EqExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("0")),
+                            new NumberLiteralNode(new BigDecimal("1"))
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new EqExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("-1")),
+                            new NumberLiteralNode(new BigDecimal("1"))
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new EqExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("1")),
+                            new NumberLiteralNode(new BigDecimal("-1"))
+                    )
+            ),
+            new Thing<>(
                     true,
                     new EqExpressionNode(
                             new PointNode(
@@ -305,6 +382,19 @@ public class CodeGeneratingTests {
                     )
             ),
             new Thing<>(
+                    false,
+                    new EqExpressionNode(
+                            new PointNode(
+                                    new NumberLiteralNode(new BigDecimal("1")),
+                                    new NumberLiteralNode(new BigDecimal("2")),
+                                    new NumberLiteralNode(new BigDecimal("3"))),
+                            new PointNode(
+                                    new NumberLiteralNode(new BigDecimal("3")),
+                                    new NumberLiteralNode(new BigDecimal("2")),
+                                    new NumberLiteralNode(new BigDecimal("1")))
+                    )
+            ),
+            new Thing<>(
                     true,
                     new EqExpressionNode(
                             new BooleanLiteralNode(true),
@@ -315,6 +405,20 @@ public class CodeGeneratingTests {
                     true,
                     new EqExpressionNode(
                             new BooleanLiteralNode(false),
+                            new BooleanLiteralNode(false)
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new EqExpressionNode(
+                            new BooleanLiteralNode(false),
+                            new BooleanLiteralNode(true)
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new EqExpressionNode(
+                            new BooleanLiteralNode(true),
                             new BooleanLiteralNode(false)
                     )
             ),
