@@ -119,11 +119,17 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
                 }
             });
             put(new TypePair(Type.Point, Type.Point), (left, right) -> {
-                    if (left.equals(right)) {
+                try {
+                    if (left.GetPoint().equals(right.GetPoint())) {
                         return new ExpressionValue(true);
                     } else {
                         return new ExpressionValue(false);
                     }
+                } catch (TypeException e) {
+                    e.printStackTrace();
+                    assert(false);
+                    return null;
+                }
             });
             put(new TypePair(Type.Boolean, Type.Boolean), (left, right) -> {
                 try {

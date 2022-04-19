@@ -3,10 +3,7 @@ package org.flowsoft.flowg.tests;
 import org.flowsoft.flowg.BigDecimalUtils;
 import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.nodes.*;
-import org.flowsoft.flowg.visitors.CodeGeneratingVisitor;
-import org.flowsoft.flowg.visitors.Point;
-import org.flowsoft.flowg.visitors.SymbolTable;
-import org.flowsoft.flowg.visitors.TypeCheckingVisitor;
+import org.flowsoft.flowg.visitors.*;
 import org.junit.Test;
 import org.junit.experimental.theories.*;
 import org.junit.runner.RunWith;
@@ -201,6 +198,128 @@ public class CodeGeneratingTests {
             )
     };
 
+    @DataPoints("bool")
+    public static final Thing<Boolean>[] BOOL_EXPR_THING = new Thing[] {
+            new Thing<>(
+                    true,
+                    new GeExpressionNode(
+                            new NumberLiteralNode(new BigDecimal('1')),
+                            new NumberLiteralNode(new BigDecimal('0'))
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new LeExpressionNode(
+                            new NumberLiteralNode(new BigDecimal('0')),
+                            new NumberLiteralNode(new BigDecimal('1'))
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new EqGeExpressionNode(
+                            new NumberLiteralNode(new BigDecimal('0')),
+                            new NumberLiteralNode(new BigDecimal('0'))
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new EqGeExpressionNode(
+                            new NumberLiteralNode(new BigDecimal('1')),
+                            new NumberLiteralNode(new BigDecimal('0'))
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new EqLeExpressionNode(
+                            new NumberLiteralNode(new BigDecimal('0')),
+                            new NumberLiteralNode(new BigDecimal('0'))
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new EqLeExpressionNode(
+                            new NumberLiteralNode(new BigDecimal('0')),
+                            new NumberLiteralNode(new BigDecimal('1'))
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new AndExpressionNode(
+                            new BooleanLiteralNode(true),
+                            new BooleanLiteralNode(true)
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new OrExpressionNode(
+                            new BooleanLiteralNode(true),
+                            new BooleanLiteralNode(true)
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new OrExpressionNode(
+                            new BooleanLiteralNode(false),
+                            new BooleanLiteralNode(true)
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new OrExpressionNode(
+                            new BooleanLiteralNode(true),
+                            new BooleanLiteralNode(false)
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new EqExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("1")),
+                            new NumberLiteralNode(new BigDecimal("1"))
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new EqExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("0")),
+                            new NumberLiteralNode(new BigDecimal("0"))
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new EqExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("-1")),
+                            new NumberLiteralNode(new BigDecimal("-1"))
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new EqExpressionNode(
+                            new PointNode(
+                                    new NumberLiteralNode(new BigDecimal("1")),
+                                    new NumberLiteralNode(new BigDecimal("2")),
+                                    new NumberLiteralNode(new BigDecimal("3"))),
+                            new PointNode(
+                                    new NumberLiteralNode(new BigDecimal("1")),
+                                    new NumberLiteralNode(new BigDecimal("2")),
+                                    new NumberLiteralNode(new BigDecimal("3")))
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new EqExpressionNode(
+                            new BooleanLiteralNode(true),
+                            new BooleanLiteralNode(true)
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new EqExpressionNode(
+                            new BooleanLiteralNode(false),
+                            new BooleanLiteralNode(false)
+                    )
+            ),
+    };
+
     @Theory
     public void TestExpressionNumberSuccess(@FromDataPoints("number") Thing<BigDecimal> thing) throws Exception {
         var node = thing.GetNode();
@@ -222,6 +341,18 @@ public class CodeGeneratingTests {
         var actual = value.GetPoint();
 
         assertThat(value.GetType()).isEqualTo(Type.Point);
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Theory
+    public void TestExpressionBooleanSuccess(@FromDataPoints("bool") Thing<Boolean> thing) throws Exception {
+        var node = thing.GetNode();
+        var expected = thing.GetExpected();
+
+        var value = node.Accept(new CodeGeneratingVisitor(new SymbolTable(null)));
+        var actual = value.GetBoolean();
+
+        assertThat(value.GetType()).isEqualTo(Type.Boolean);
         assertThat(actual).isEqualTo(expected);
     }
 

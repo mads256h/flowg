@@ -18,8 +18,8 @@ public final class BigDecimalUtils {
             case "GE" -> { return left.compareTo(right) > 0; }
             case "LE" -> { return left.compareTo(right) < 0; }
             case "EQ" -> { return  left.compareTo(right) == 0; }
-            case "EQGE" -> { return left.compareTo(right) <= 0; }
-            case "EQLE" -> { return left.compareTo(right) >= 0; }
+            case "EQGE" -> { return left.compareTo(right) >= 0; }
+            case "EQLE" -> { return left.compareTo(right) <= 0; }
             default -> { return null; }
         }
     }
