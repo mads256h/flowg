@@ -37,9 +37,12 @@ terminal MINUS;
 terminal TIMES;
 terminal DIVIDE;
 terminal POWER;
+terminal NOT;
+
 terminal FOR;
 terminal TO;
-terminal NOT;
+terminal IF;
+terminal ELSE;
 
 terminal GREATER_THAN;
 terminal LESS_THAN;
@@ -108,7 +111,10 @@ stmt ::=decl:d
         {: RESULT = a; :}
         |
         for_to:f
-        {: RESULT = f; :};
+        {: RESULT = f; :}
+        |
+        if_else:i
+        {: RESULT = i; :};
 
 decl ::= TYPE:t IDENTIFIER:i ASSIGNMENT expr:e
         {: RESULT = new DeclarationNode(t, i, e); :};
@@ -204,5 +210,10 @@ return::= RETURN expr:e
 point ::= L_SQUARE_BRACKET expr:e1 COMMA expr:e2 COMMA expr:e3 R_SQUARE_BRACKET
         {: RESULT = new PointNode(e1, e2, e3); :};
 
-for_to ::= FOR L_PAREN decl:d TO expr:e R_PAREN L_BRACKET program:l R_BRACKET
+for_to ::= FOR L_PAREN decl:d TO expr:e R_PAREN L_BRACKET stmt_list:l R_BRACKET
         {: RESULT = new ForToNode(d, e, l); :};
+
+if_else ::= IF L_PAREN expr:e R_PAREN L_BRACKET stmt_list:l1 R_BRACKET
+        {: RESULT = new IfElseStatementNode(e, l1, null); :}
+        | IF L_BRACKET expr:e R_PAREN L_BRACKET stmt_list:l1 R_BRACKET ELSE L_BRACKET stmt_list:l2 R_BRACKET
+        {: RESULT = new IfElseStatementNode(e, l1, l2); :};
