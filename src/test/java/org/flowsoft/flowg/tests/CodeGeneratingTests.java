@@ -202,70 +202,70 @@ public class CodeGeneratingTests {
     public static final Thing<Boolean>[] BOOL_EXPR_THING = new Thing[] {
             new Thing<>(
                     true,
-                    new GreaterThenExpressionNode(
+                    new GreaterThanExpressionNode(
                             new NumberLiteralNode(new BigDecimal("1")),
                             new NumberLiteralNode(new BigDecimal("0"))
                     )
             ),
             new Thing<>(
                     false,
-                    new GreaterThenExpressionNode(
+                    new GreaterThanExpressionNode(
                             new NumberLiteralNode(new BigDecimal("0")),
                             new NumberLiteralNode(new BigDecimal("1"))
                     )
             ),
             new Thing<>(
                     true,
-                    new LessThenExpressionNode(
+                    new LessThanExpressionNode(
                             new NumberLiteralNode(new BigDecimal("0")),
                             new NumberLiteralNode(new BigDecimal("1"))
                     )
             ),
             new Thing<>(
                     false,
-                    new LessThenExpressionNode(
+                    new LessThanExpressionNode(
                             new NumberLiteralNode(new BigDecimal("1")),
                             new NumberLiteralNode(new BigDecimal("0"))
                     )
             ),
             new Thing<>(
                     true,
-                    new GreaterThenEqualsExpressionNode(
+                    new GreaterThanEqualsExpressionNode(
                             new NumberLiteralNode(new BigDecimal("0")),
                             new NumberLiteralNode(new BigDecimal("0"))
                     )
             ),
             new Thing<>(
                     true,
-                    new GreaterThenEqualsExpressionNode(
+                    new GreaterThanEqualsExpressionNode(
                             new NumberLiteralNode(new BigDecimal('1')),
                             new NumberLiteralNode(new BigDecimal('0'))
                     )
             ),
             new Thing<>(
                     false,
-                    new GreaterThenEqualsExpressionNode(
+                    new GreaterThanEqualsExpressionNode(
                             new NumberLiteralNode(new BigDecimal('0')),
                             new NumberLiteralNode(new BigDecimal('1'))
                     )
             ),
             new Thing<>(
                     true,
-                    new LessThenEqualsExpressionNode(
+                    new LessThanEqualsExpressionNode(
                             new NumberLiteralNode(new BigDecimal('0')),
                             new NumberLiteralNode(new BigDecimal('0'))
                     )
             ),
             new Thing<>(
                     true,
-                    new LessThenEqualsExpressionNode(
+                    new LessThanEqualsExpressionNode(
                             new NumberLiteralNode(new BigDecimal('0')),
                             new NumberLiteralNode(new BigDecimal('1'))
                     )
             ),
             new Thing<>(
                     false,
-                    new LessThenEqualsExpressionNode(
+                    new LessThanEqualsExpressionNode(
                             new NumberLiteralNode(new BigDecimal('1')),
                             new NumberLiteralNode(new BigDecimal('0'))
                     )

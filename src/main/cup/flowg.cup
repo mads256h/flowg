@@ -37,11 +37,11 @@ terminal DIVIDE;
 terminal FOR;
 terminal TO;
 
-terminal GREATER_THEN;
-terminal LESS_THEN;
+terminal GREATER_THAN;
+terminal LESS_THAN;
 terminal EQUALS;
-terminal GREATER_THEN_EQUALS;
-terminal LESS_THEN_EQUALS;
+terminal GREATER_THAN_EQUALS;
+terminal LESS_THAN_EQUALS;
 terminal AND;
 terminal OR;
 
@@ -64,7 +64,7 @@ non terminal FunctionCallNode func_call;
 non terminal ForToNode for_to;
 
 precedence left AND, OR;
-precedence left EQUALS, GREATER_THEN, LESS_THEN, GREATER_THEN_EQUALS, LESS_THEN_EQUALS;
+precedence left EQUALS, GREATER_THAN, LESS_THAN, GREATER_THAN_EQUALS, LESS_THAN_EQUALS;
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE;
 
@@ -150,16 +150,16 @@ expr ::= NUMBER_LITERAL:n
         | func_call:c
         {: RESULT = c; :}
         // Boolean Expressions
-        | expr:b1 GREATER_THEN expr:b2
-        {: RESULT = new GreaterThenExpressionNode(b1, b2); :}
-        | expr:b1 LESS_THEN expr:b2
-        {: RESULT = new LessThenExpressionNode(b1, b2); :}
+        | expr:b1 GREATER_THAN expr:b2
+        {: RESULT = new GreaterThanExpressionNode(b1, b2); :}
+        | expr:b1 LESS_THAN expr:b2
+        {: RESULT = new LessThanExpressionNode(b1, b2); :}
         | expr:e1 EQUALS expr:e2
         {: RESULT = new EqualsExpressionNode(e1, e2); :}
-        | expr:b1 GREATER_THEN_EQUALS expr:b2
-        {: RESULT = new GreaterThenEqualsExpressionNode(b1, b2); :}
-        | expr:b1 LESS_THEN_EQUALS expr:b2
-        {: RESULT = new LessThenEqualsExpressionNode(b1, b2); :}
+        | expr:b1 GREATER_THAN_EQUALS expr:b2
+        {: RESULT = new GreaterThanEqualsExpressionNode(b1, b2); :}
+        | expr:b1 LESS_THAN_EQUALS expr:b2
+        {: RESULT = new LessThanEqualsExpressionNode(b1, b2); :}
         | expr:b1 AND expr:b2
         {: RESULT = new AndExpressionNode(b1, b2); :}
         | expr:b1 OR expr:b2

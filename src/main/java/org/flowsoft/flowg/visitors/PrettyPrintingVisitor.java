@@ -148,13 +148,13 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
-    public String Visit(GreaterThenExpressionNode greaterThenExpressionNode) throws NoException {
-        return greaterThenExpressionNode.GetLeftChild().Accept(this) + " > " + greaterThenExpressionNode.GetRightChild().Accept(this);
+    public String Visit(GreaterThanExpressionNode greaterThanExpressionNode) throws NoException {
+        return greaterThanExpressionNode.GetLeftChild().Accept(this) + " > " + greaterThanExpressionNode.GetRightChild().Accept(this);
     }
 
     @Override
-    public String Visit(LessThenExpressionNode lessThenExpressionNode) throws NoException {
-        return lessThenExpressionNode.GetLeftChild().Accept(this) + " < " + lessThenExpressionNode.GetRightChild().Accept(this);
+    public String Visit(LessThanExpressionNode lessThanExpressionNode) throws NoException {
+        return lessThanExpressionNode.GetLeftChild().Accept(this) + " < " + lessThanExpressionNode.GetRightChild().Accept(this);
     }
 
     @Override
@@ -163,13 +163,13 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
-    public String Visit(GreaterThenEqualsExpressionNode greaterThenEqualsExpressionNode) throws NoException {
-        return greaterThenEqualsExpressionNode.GetLeftChild().Accept(this) + " >= " + greaterThenEqualsExpressionNode.GetRightChild().Accept(this);
+    public String Visit(GreaterThanEqualsExpressionNode greaterThanEqualsExpressionNode) throws NoException {
+        return greaterThanEqualsExpressionNode.GetLeftChild().Accept(this) + " >= " + greaterThanEqualsExpressionNode.GetRightChild().Accept(this);
     }
 
     @Override
-    public String Visit(LessThenEqualsExpressionNode lessThenEqualsExpressionNode) throws NoException {
-        return lessThenEqualsExpressionNode.GetLeftChild().Accept(this) + " <= " + lessThenEqualsExpressionNode.GetRightChild().Accept(this);
+    public String Visit(LessThanEqualsExpressionNode lessThanEqualsExpressionNode) throws NoException {
+        return lessThanEqualsExpressionNode.GetLeftChild().Accept(this) + " <= " + lessThanEqualsExpressionNode.GetRightChild().Accept(this);
     }
 
     @Override

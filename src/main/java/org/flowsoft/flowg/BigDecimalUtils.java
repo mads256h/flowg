@@ -13,23 +13,23 @@ public final class BigDecimalUtils {
         }
     }
 
-    public static Boolean GreaterThenCompare(BigDecimal left, BigDecimal right) {
+    public static Boolean GreaterThan(BigDecimal left, BigDecimal right) {
         return left.compareTo(right) > 0;
     }
 
-    public static Boolean LessThenCompare(BigDecimal left, BigDecimal right) {
+    public static Boolean LessThan(BigDecimal left, BigDecimal right) {
         return left.compareTo(right) < 0;
     }
 
-    public static Boolean EqualsCompare(BigDecimal left, BigDecimal right) {
+    public static Boolean Equals(BigDecimal left, BigDecimal right) {
         return  left.compareTo(right) == 0;
     }
 
-    public static Boolean GreaterThenEqualsCompare(BigDecimal left, BigDecimal right) {
+    public static Boolean GreaterThanEquals(BigDecimal left, BigDecimal right) {
         return left.compareTo(right) >= 0;
     }
 
-    public static Boolean LessThenEqualsCompare(BigDecimal left, BigDecimal right) {
+    public static Boolean LessThanEquals(BigDecimal left, BigDecimal right) {
         return left.compareTo(right) <= 0;
     }
 }

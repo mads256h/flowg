@@ -123,13 +123,13 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
-    public String Visit(GreaterThenExpressionNode greaterThenExpressionNode) throws NoException {
-        return PrintNode(greaterThenExpressionNode, greaterThenExpressionNode.GetLeftChild(), greaterThenExpressionNode.GetRightChild());
+    public String Visit(GreaterThanExpressionNode greaterThanExpressionNode) throws NoException {
+        return PrintNode(greaterThanExpressionNode, greaterThanExpressionNode.GetLeftChild(), greaterThanExpressionNode.GetRightChild());
     }
 
     @Override
-    public String Visit(LessThenExpressionNode lessThenExpressionNode) throws NoException {
-        return PrintNode(lessThenExpressionNode, lessThenExpressionNode.GetLeftChild(), lessThenExpressionNode.GetRightChild());
+    public String Visit(LessThanExpressionNode lessThanExpressionNode) throws NoException {
+        return PrintNode(lessThanExpressionNode, lessThanExpressionNode.GetLeftChild(), lessThanExpressionNode.GetRightChild());
     }
 
     @Override
@@ -138,13 +138,13 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
-    public String Visit(GreaterThenEqualsExpressionNode greaterThenEqualsExpressionNode) throws NoException {
-        return PrintNode(greaterThenEqualsExpressionNode, greaterThenEqualsExpressionNode.GetLeftChild(), greaterThenEqualsExpressionNode.GetRightChild());
+    public String Visit(GreaterThanEqualsExpressionNode greaterThanEqualsExpressionNode) throws NoException {
+        return PrintNode(greaterThanEqualsExpressionNode, greaterThanEqualsExpressionNode.GetLeftChild(), greaterThanEqualsExpressionNode.GetRightChild());
     }
 
     @Override
-    public String Visit(LessThenEqualsExpressionNode lessThenEqualsExpressionNode) throws NoException {
-        return PrintNode(lessThenEqualsExpressionNode, lessThenEqualsExpressionNode.GetLeftChild(), lessThenEqualsExpressionNode.GetRightChild());
+    public String Visit(LessThanEqualsExpressionNode lessThanEqualsExpressionNode) throws NoException {
+        return PrintNode(lessThanEqualsExpressionNode, lessThanEqualsExpressionNode.GetLeftChild(), lessThanEqualsExpressionNode.GetRightChild());
     }
 
     @Override

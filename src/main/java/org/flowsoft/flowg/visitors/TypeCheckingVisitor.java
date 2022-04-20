@@ -258,16 +258,16 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     }
 
     @Override
-    public Type Visit(GreaterThenExpressionNode greaterThenExpressionNode) throws TypeException {
-        var leftType = greaterThenExpressionNode.GetLeftChild().Accept(this);
-        var rightType = greaterThenExpressionNode.GetRightChild().Accept(this);
+    public Type Visit(GreaterThanExpressionNode greaterThanExpressionNode) throws TypeException {
+        var leftType = greaterThanExpressionNode.GetLeftChild().Accept(this);
+        var rightType = greaterThanExpressionNode.GetRightChild().Accept(this);
         return TypePair.TryBothWays(leftType, rightType, GE_LE_EQGE_EQLE_TYPE_MAP);
     }
 
     @Override
-    public Type Visit(LessThenExpressionNode lessThenExpressionNode) throws TypeException {
-        var leftType = lessThenExpressionNode.GetLeftChild().Accept(this);
-        var rightType = lessThenExpressionNode.GetRightChild().Accept(this);
+    public Type Visit(LessThanExpressionNode lessThanExpressionNode) throws TypeException {
+        var leftType = lessThanExpressionNode.GetLeftChild().Accept(this);
+        var rightType = lessThanExpressionNode.GetRightChild().Accept(this);
         return TypePair.TryBothWays(leftType, rightType, GE_LE_EQGE_EQLE_TYPE_MAP);
     }
 
@@ -279,16 +279,16 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     }
 
     @Override
-    public Type Visit(GreaterThenEqualsExpressionNode greaterThenEqualsExpressionNode) throws TypeException {
-        var leftType = greaterThenEqualsExpressionNode.GetLeftChild().Accept(this);
-        var rightType = greaterThenEqualsExpressionNode.GetRightChild().Accept(this);
+    public Type Visit(GreaterThanEqualsExpressionNode greaterThanEqualsExpressionNode) throws TypeException {
+        var leftType = greaterThanEqualsExpressionNode.GetLeftChild().Accept(this);
+        var rightType = greaterThanEqualsExpressionNode.GetRightChild().Accept(this);
         return TypePair.TryBothWays(leftType, rightType, GE_LE_EQGE_EQLE_TYPE_MAP);
     }
 
     @Override
-    public Type Visit(LessThenEqualsExpressionNode lessThenEqualsExpressionNode) throws TypeException {
-        var leftType = lessThenEqualsExpressionNode.GetLeftChild().Accept(this);
-        var rightType = lessThenEqualsExpressionNode.GetRightChild().Accept(this);
+    public Type Visit(LessThanEqualsExpressionNode lessThanEqualsExpressionNode) throws TypeException {
+        var leftType = lessThanEqualsExpressionNode.GetLeftChild().Accept(this);
+        var rightType = lessThanEqualsExpressionNode.GetRightChild().Accept(this);
         return TypePair.TryBothWays(leftType, rightType, GE_LE_EQGE_EQLE_TYPE_MAP);
     }
 
