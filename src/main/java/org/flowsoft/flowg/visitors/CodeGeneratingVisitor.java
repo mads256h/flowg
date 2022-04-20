@@ -304,6 +304,13 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     }
 
     @Override
+    public ExpressionValue Visit(NotExpressionNode notExpressionNode) throws Exception {
+        var childBoolean = notExpressionNode.GetChild().Accept(this).GetBoolean();
+
+        return new ExpressionValue(!childBoolean);
+    }
+
+    @Override
     public ExpressionValue Visit(IdentifierExpressionNode identifierExpressionNode) throws Exception {
         var identifier = identifierExpressionNode.GetChild().GetValue();
         var variableEntry = _symbolTable.LookupVariable(identifier);

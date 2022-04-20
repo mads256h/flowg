@@ -228,6 +228,17 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
         throw new TypeException();
     }
+    
+    @Override
+    public Type Visit(NotExpressionNode notExpressionNode) throws TypeException {
+        var childType = notExpressionNode.GetChild().Accept(this);
+
+        if (childType != Type.Boolean) {
+            throw new TypeException();
+        }
+
+        return Type.Boolean;
+    }
 
     @Override
     public Type Visit(IdentifierExpressionNode identifierExpressionNode) throws TypeException {

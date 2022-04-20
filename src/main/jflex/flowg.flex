@@ -73,6 +73,7 @@ Anything = .
 "*" { return symbol(sym.TIMES); }
 "/" { return symbol(sym.DIVIDE); }
 "^" { return symbol(sym.POWER); }
+"!" { return symbol(sym.NOT); }
 
 ">" { return symbol(sym.GREATER_THAN); }
 "<" { return symbol(sym.LESS_THAN); }

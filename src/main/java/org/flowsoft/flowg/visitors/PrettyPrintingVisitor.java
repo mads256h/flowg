@@ -134,6 +134,11 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     public String Visit(PowerExpressionNode powerExpressionNode) throws NoException {
         return powerExpressionNode.GetLeftChild().Accept(this) + "^" + powerExpressionNode.GetRightChild().Accept(this);
     }
+    
+    @Override
+    public String Visit(NotExpressionNode notExpressionNode) throws NoException {
+        return "!" + notExpressionNode.GetChild().Accept(this);
+    }
 
     @Override
     public String Visit(IdentifierExpressionNode identifierExpressionNode) throws NoException {
