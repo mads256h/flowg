@@ -5,9 +5,7 @@ import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.nodes.*;
 
 import java.util.ArrayList;
-import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
@@ -21,6 +19,23 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         {
             put(new TypePair(Type.Number, Type.Number), Type.Number);
             put(new TypePair(Type.Point, Type.Number), Type.Point);
+        }};
+
+    private final static HashMap<TypePair, Type> GE_LE_EQGE_EQLE_TYPE_MAP = new HashMap<>() {
+        {
+            put(new TypePair(Type.Number, Type.Number), Type.Boolean);
+        }};
+
+    private final static HashMap<TypePair, Type> EQ_TYPE_MAP = new HashMap<>() {
+        {
+           put(new TypePair(Type.Number, Type.Number), Type.Boolean);
+           put(new TypePair(Type.Point, Type.Point), Type.Boolean);
+           put(new TypePair(Type.Boolean, Type.Boolean), Type.Boolean);
+        }};
+
+    private final static HashMap<TypePair, Type> AND_OR_TYPE_MAP = new HashMap<>() {
+        {
+           put(new TypePair(Type.Boolean, Type.Boolean), Type.Boolean);
         }};
 
     private SymbolTable _symbolTable = new SymbolTable(null);
@@ -259,6 +274,55 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         forToNode.GetThirdNode().Accept(this);
 
         return null;
+    }
+
+    @Override
+    public Type Visit(GreaterThanExpressionNode greaterThanExpressionNode) throws TypeException {
+        var leftType = greaterThanExpressionNode.GetLeftChild().Accept(this);
+        var rightType = greaterThanExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, GE_LE_EQGE_EQLE_TYPE_MAP);
+    }
+
+    @Override
+    public Type Visit(LessThanExpressionNode lessThanExpressionNode) throws TypeException {
+        var leftType = lessThanExpressionNode.GetLeftChild().Accept(this);
+        var rightType = lessThanExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, GE_LE_EQGE_EQLE_TYPE_MAP);
+    }
+
+    @Override
+    public Type Visit(EqualsExpressionNode equalsExpressionNode) throws TypeException {
+        var leftType = equalsExpressionNode.GetLeftChild().Accept(this);
+        var rightType = equalsExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, EQ_TYPE_MAP);
+    }
+
+    @Override
+    public Type Visit(GreaterThanEqualsExpressionNode greaterThanEqualsExpressionNode) throws TypeException {
+        var leftType = greaterThanEqualsExpressionNode.GetLeftChild().Accept(this);
+        var rightType = greaterThanEqualsExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, GE_LE_EQGE_EQLE_TYPE_MAP);
+    }
+
+    @Override
+    public Type Visit(LessThanEqualsExpressionNode lessThanEqualsExpressionNode) throws TypeException {
+        var leftType = lessThanEqualsExpressionNode.GetLeftChild().Accept(this);
+        var rightType = lessThanEqualsExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, GE_LE_EQGE_EQLE_TYPE_MAP);
+    }
+
+    @Override
+    public Type Visit(AndExpressionNode andExpressionNode) throws TypeException {
+        var leftType = andExpressionNode.GetLeftChild().Accept(this);
+        var rightType = andExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, AND_OR_TYPE_MAP);
+    }
+
+    @Override
+    public Type Visit(OrExpressionNode orExpressionNode) throws TypeException {
+        var leftType = orExpressionNode.GetLeftChild().Accept(this);
+        var rightType = orExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, AND_OR_TYPE_MAP);
     }
 
     private Type PlusMinusTypeCheckExpr(Type leftType, Type rightType) throws TypeException {

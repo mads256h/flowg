@@ -38,6 +38,14 @@ terminal DIVIDE;
 terminal FOR;
 terminal TO;
 
+terminal GREATER_THAN;
+terminal LESS_THAN;
+terminal EQUALS;
+terminal GREATER_THAN_EQUALS;
+terminal LESS_THAN_EQUALS;
+terminal AND;
+terminal OR;
+
 non terminal StatementListNode program;
 non terminal StatementListNode stmt_list;
 non terminal ArrayList<StatementNode> stmt_list_impl;
@@ -57,6 +65,8 @@ non terminal FunctionCallNode func_call;
 non terminal ReturnNode return;
 non terminal ForToNode for_to;
 
+precedence left AND, OR;
+precedence left EQUALS, GREATER_THAN, LESS_THAN, GREATER_THAN_EQUALS, LESS_THAN_EQUALS;
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE;
 
@@ -149,6 +159,21 @@ expr ::= NUMBER_LITERAL:n
         {: RESULT = new IdentifierExpressionNode(i); :}
         | func_call:c
         {: RESULT = c; :}
+        // Boolean Expressions
+        | expr:b1 GREATER_THAN expr:b2
+        {: RESULT = new GreaterThanExpressionNode(b1, b2); :}
+        | expr:b1 LESS_THAN expr:b2
+        {: RESULT = new LessThanExpressionNode(b1, b2); :}
+        | expr:e1 EQUALS expr:e2
+        {: RESULT = new EqualsExpressionNode(e1, e2); :}
+        | expr:b1 GREATER_THAN_EQUALS expr:b2
+        {: RESULT = new GreaterThanEqualsExpressionNode(b1, b2); :}
+        | expr:b1 LESS_THAN_EQUALS expr:b2
+        {: RESULT = new LessThanEqualsExpressionNode(b1, b2); :}
+        | expr:b1 AND expr:b2
+        {: RESULT = new AndExpressionNode(b1, b2); :}
+        | expr:b1 OR expr:b2
+        {: RESULT = new OrExpressionNode(b1, b2); :}
         ;
 
 func_def ::= TYPE:t IDENTIFIER:i L_PAREN f_param_list:p R_PAREN L_BRACKET stmt_list:l R_BRACKET

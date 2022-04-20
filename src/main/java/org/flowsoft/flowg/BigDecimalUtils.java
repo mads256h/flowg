@@ -12,4 +12,24 @@ public final class BigDecimalUtils {
             return left.divide(right, 100, RoundingMode.HALF_UP);
         }
     }
+
+    public static Boolean GreaterThan(BigDecimal left, BigDecimal right) {
+        return left.compareTo(right) > 0;
+    }
+
+    public static Boolean LessThan(BigDecimal left, BigDecimal right) {
+        return left.compareTo(right) < 0;
+    }
+
+    public static Boolean Equals(BigDecimal left, BigDecimal right) {
+        return  left.compareTo(right) == 0;
+    }
+
+    public static Boolean GreaterThanEquals(BigDecimal left, BigDecimal right) {
+        return left.compareTo(right) >= 0;
+    }
+
+    public static Boolean LessThanEquals(BigDecimal left, BigDecimal right) {
+        return left.compareTo(right) <= 0;
+    }
 }

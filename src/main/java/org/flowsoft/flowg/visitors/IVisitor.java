@@ -24,4 +24,11 @@ public interface IVisitor<T, TException extends Exception> {
     T Visit(ReturnNode returnNode) throws TException;
     T Visit(AssignmentNode assignmentNode) throws TException;
     T Visit(ForToNode forToNode) throws TException;
+    T Visit(GreaterThanExpressionNode greaterThanExpressionNode) throws TException;
+    T Visit(LessThanExpressionNode lessThanExpressionNode) throws TException;
+    T Visit(EqualsExpressionNode equalsExpressionNode) throws TException;
+    T Visit(GreaterThanEqualsExpressionNode greaterThanEqualsExpressionNode) throws TException;
+    T Visit(LessThanEqualsExpressionNode lessThanEqualsExpressionNode) throws TException;
+    T Visit(AndExpressionNode andExpressionNode) throws TException;
+    T Visit(OrExpressionNode orExpressionNode) throws TException;
 }
