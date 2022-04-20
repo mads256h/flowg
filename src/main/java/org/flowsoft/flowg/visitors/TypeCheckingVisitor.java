@@ -77,6 +77,21 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     }
 
     @Override
+    public Type Visit(SqrtNode sqrtNode) throws TypeException {
+        var params = sqrtNode.GetChild().GetChildren();
+        if (params.size() != 1) {
+            throw new TypeException();
+        }
+
+        var type = params.get(0).Accept(this);
+        if (type != Type.Number) {
+            throw new TypeException();
+        }
+
+        return Type.Number;
+    }
+
+    @Override
     public Type Visit(ActualParameterListNode actualParameterListNode) throws TypeException {
         //TODO look up symbol table for expected types
         for (var child : actualParameterListNode.GetChildren()) {
@@ -200,6 +215,18 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         var leftType = divisionExpressionNode.GetLeftChild().Accept(this);
         var rightType = divisionExpressionNode.GetRightChild().Accept(this);
         return TimesDivideTypeCheckExpr(leftType, rightType);
+    }
+
+    @Override
+    public Type Visit(PowerExpressionNode powerExpressionNode) throws TypeException {
+        var leftType = powerExpressionNode.GetLeftChild().Accept(this);
+        var rightType = powerExpressionNode.GetRightChild().Accept(this);
+
+        if (leftType == rightType && leftType == Type.Number) {
+            return Type.Number;
+        }
+
+        throw new TypeException();
     }
 
     @Override

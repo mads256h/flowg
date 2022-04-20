@@ -25,6 +25,11 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
+    public String Visit(SqrtNode sqrtNode) throws NoException {
+        return "sqrt(" + sqrtNode.GetChild().Accept(this) + ")";
+    }
+
+    @Override
     public String Visit(ActualParameterListNode actualParameterListNode) throws NoException {
         var sb = new StringBuilder();
         boolean first = true;
@@ -123,6 +128,11 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     @Override
     public String Visit(DivideExpressionNode divisionExpressionNode) throws NoException {
         return divisionExpressionNode.GetLeftChild().Accept(this) + " / " + divisionExpressionNode.GetRightChild().Accept(this);
+    }
+
+    @Override
+    public String Visit(PowerExpressionNode powerExpressionNode) throws NoException {
+        return powerExpressionNode.GetLeftChild().Accept(this) + "^" + powerExpressionNode.GetRightChild().Accept(this);
     }
 
     @Override

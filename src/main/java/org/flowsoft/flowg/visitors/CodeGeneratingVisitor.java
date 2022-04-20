@@ -1,5 +1,6 @@
 package org.flowsoft.flowg.visitors;
 
+import ch.obermuhlner.math.big.BigDecimalMath;
 import org.flowsoft.flowg.BigDecimalUtils;
 import org.flowsoft.flowg.ReturnException;
 import org.flowsoft.flowg.Type;
@@ -7,6 +8,7 @@ import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.nodes.*;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -194,6 +196,14 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     }
 
     @Override
+    public ExpressionValue Visit(SqrtNode sqrtNode) throws Exception {
+        var parameters = sqrtNode.GetChild().GetChildren();
+        var number = parameters.get(0).Accept(this).GetNumber();
+
+        return new ExpressionValue(number.sqrt(new MathContext(100)));
+    }
+
+    @Override
     public ExpressionValue Visit(ActualParameterListNode actualParameterListNode) throws Exception {
         for (var child : actualParameterListNode.GetChildren()) {
             child.Accept(this);
@@ -283,6 +293,14 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         var rightValue = divisionExpressionNode.GetRightChild().Accept(this);
 
         return TryBoth(leftValue.GetType(), rightValue.GetType(), DIVIDE_MAP).apply(leftValue, rightValue);
+    }
+
+    @Override
+    public ExpressionValue Visit(PowerExpressionNode powerExpressionNode) throws Exception {
+        var leftValue = powerExpressionNode.GetLeftChild().Accept(this).GetNumber();
+        var rightValue = powerExpressionNode.GetRightChild().Accept(this).GetNumber();
+
+        return new ExpressionValue(BigDecimalMath.pow(leftValue, rightValue, new MathContext(100)));
     }
 
     @Override

@@ -36,6 +36,11 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
+    public String Visit(SqrtNode sqrtNode) throws NoException {
+        return PrintNode(sqrtNode, sqrtNode.GetChild());
+    }
+
+    @Override
     public String Visit(ActualParameterListNode actualParameterListNode) throws NoException {
         var array = actualParameterListNode.GetChildren().toArray(new ExpressionNode[0]);
 
@@ -101,6 +106,11 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
 
     @Override
     public String Visit(DivideExpressionNode divisionExpressionNode) throws NoException { return PrintNode(divisionExpressionNode, divisionExpressionNode.GetLeftChild(), divisionExpressionNode.GetRightChild()); }
+
+    @Override
+    public String Visit(PowerExpressionNode powerExpressionNode) throws NoException {
+        return PrintNode(powerExpressionNode, powerExpressionNode.GetLeftChild(), powerExpressionNode.GetRightChild());
+    }
 
     @Override
     public String Visit(IdentifierExpressionNode identifierExpressionNode) throws NoException {
