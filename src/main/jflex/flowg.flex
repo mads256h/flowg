@@ -43,6 +43,7 @@ Anything = .
 
 "return" { return symbol(sym.RETURN); }
 "move" { return symbol(sym.MOVE); }
+"sqrt" { return symbol(sym.SQRT); }
 
 "for" { return symbol(sym.FOR); }
 "to" { return symbol(sym.TO); }
@@ -71,6 +72,7 @@ Anything = .
 "-" { return symbol(sym.MINUS); }
 "*" { return symbol(sym.TIMES); }
 "/" { return symbol(sym.DIVIDE); }
+"^" { return symbol(sym.POWER); }
 
 ">" { return symbol(sym.GREATER_THAN); }
 "<" { return symbol(sym.LESS_THAN); }
