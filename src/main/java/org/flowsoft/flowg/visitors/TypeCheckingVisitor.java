@@ -5,6 +5,7 @@ import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.nodes.*;
 import org.flowsoft.flowg.nodes.base.UnaryNode;
 import org.flowsoft.flowg.nodes.controlflow.ForToNode;
+import org.flowsoft.flowg.nodes.controlflow.IfElseNode;
 import org.flowsoft.flowg.nodes.controlflow.ReturnNode;
 import org.flowsoft.flowg.nodes.functions.*;
 import org.flowsoft.flowg.nodes.math.functions.*;
@@ -350,6 +351,23 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
         if (type != _functionReturnType) {
             throw new TypeException();
+        }
+
+        return null;
+    }
+
+    @Override
+    public Type Visit(IfElseNode ifElseNode) throws TypeException {
+        var expressionType = ifElseNode.GetFirstNode().Accept(this);
+
+        if (expressionType != Type.Boolean) {
+            throw new TypeException();
+        }
+
+        ifElseNode.GetSecondNode().Accept(this);
+
+        if (ifElseNode.GetThirdNode() != null) {
+            ifElseNode.GetThirdNode().Accept(this);
         }
 
         return null;

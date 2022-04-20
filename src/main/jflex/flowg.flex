@@ -86,6 +86,9 @@ Anything = .
 "for" { return symbol("for", sym.FOR); }
 "to" { return symbol("to", sym.TO); }
 "return" { return symbol("return", sym.RETURN); }
+"if" { return symbol("if", sym.IF); }
+"else" { return symbol("else", sym.ELSE); }
+
 
 {Identifier} { return symbol("identifier", sym.IDENTIFIER, new IdentifierNode(yytext())); }
 

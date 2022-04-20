@@ -2,6 +2,7 @@ package org.flowsoft.flowg.visitors;
 
 import org.flowsoft.flowg.nodes.*;
 import org.flowsoft.flowg.nodes.controlflow.ForToNode;
+import org.flowsoft.flowg.nodes.controlflow.IfElseNode;
 import org.flowsoft.flowg.nodes.controlflow.ReturnNode;
 import org.flowsoft.flowg.nodes.functions.*;
 import org.flowsoft.flowg.nodes.math.functions.*;
@@ -54,6 +55,7 @@ public interface IVisitor<T, TException extends Exception> {
     // Control flow
     T Visit(ForToNode forToNode) throws TException;
     T Visit(ReturnNode returnNode) throws TException;
+    T Visit(IfElseNode ifElseNode) throws TException;
 
     T Visit(TypeNode typeNode) throws TException;
     T Visit(IdentifierNode identifierNode) throws TException;
