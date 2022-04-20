@@ -182,6 +182,16 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     }
 
     @Override
+    public ExpressionValue Visit(GCodeFuncNode gCodeFuncNode) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ExpressionValue Visit(GCodeCodeNode gCodeCodeNode) throws Exception {
+        return null;
+    }
+
+    @Override
     public ExpressionValue Visit(TypeNode typeNode) throws Exception {
         throw new RuntimeException("This should never be visited");
     }

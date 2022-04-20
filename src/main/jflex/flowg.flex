@@ -32,13 +32,14 @@ Number = [0-9]+(\.[0-9]+)?
 Whitespace = [\ \n]
 NewLine = \n
 Comment = \/\/[^\n]*
+GCodeCode = [^}]*
 Anything = .
 
 %%
 
 {Type} { return symbol(sym.TYPE, new TypeNode(TypeHelper.StringToType(yytext()))); }
 
-"true" { return symbol(sym.BOOLEAN_LITERAL, new BooleanLiteralNode(true)); }
+"true" { return symbol(sym.BOOLEAN_LITEAL, new BooleanLiteralNode(true)); }
 "false" { return symbol(sym.BOOLEAN_LITERAL, new BooleanLiteralNode(false)); }
 
 "return" { return symbol(sym.RETURN); }
@@ -47,7 +48,11 @@ Anything = .
 "for" { return symbol(sym.FOR); }
 "to" { return symbol(sym.TO); }
 
+"gcode" { return symbol(sym.GCODE); }
+
 {Identifier} { return symbol(sym.IDENTIFIER, new IdentifierNode(yytext())); }
+
+{GCodeCode} { return symbol(sym.GCODECODE, new GCodeCodeNode(yytext())); }
 
 {Number} { return symbol(sym.NUMBER_LITERAL, new NumberLiteralNode(new BigDecimal(yytext()))); }
 

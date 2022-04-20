@@ -127,6 +127,16 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     }
 
     @Override
+    public Type Visit(GCodeFuncNode gCodeFuncNode) throws TypeException {
+        return null;
+    }
+
+    @Override
+    public Type Visit(GCodeCodeNode gCodeCodeNode) throws TypeException {
+        return null;
+    }
+
+    @Override
     public Type Visit(TypeNode typeNode) {
         return typeNode.GetValue();
     }

@@ -10,6 +10,8 @@ public interface IVisitor<T, TException extends Exception> {
     T Visit(FormalParameterNode formalParameterNode) throws TException;
     T Visit(DeclarationNode declarationNode) throws TException;
     T Visit(FunctionDefinitionNode functionDefinitionNode) throws TException;
+    T Visit(GCodeFuncNode gCodeFuncNode) throws TException;
+    T Visit(GCodeCodeNode gCodeCodeNode) throws TException;
     T Visit(TypeNode typeNode) throws TException;
     T Visit(IdentifierNode identifierNode) throws TException;
     T Visit(NumberLiteralNode numberLiteralNode) throws TException;
@@ -24,4 +26,5 @@ public interface IVisitor<T, TException extends Exception> {
     T Visit(ReturnNode returnNode) throws TException;
     T Visit(AssignmentNode assignmentNode) throws TException;
     T Visit(ForToNode forToNode) throws TException;
+
 }

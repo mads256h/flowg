@@ -10,6 +10,8 @@ terminal TypeNode TYPE;
 
 terminal IdentifierNode IDENTIFIER;
 
+terminal GCodeCodeNode GCODECODE;
+
 terminal NumberLiteralNode NUMBER_LITERAL;
 terminal BooleanLiteralNode BOOLEAN_LITERAL;
 
@@ -37,6 +39,7 @@ terminal TIMES;
 terminal DIVIDE;
 terminal FOR;
 terminal TO;
+terminal GCODE;
 
 non terminal StatementListNode program;
 non terminal StatementListNode stmt_list;
@@ -53,6 +56,7 @@ non terminal FormalParameterNode f_param;
 non terminal ExpressionNode expr;
 non terminal PointNode point;
 non terminal FunctionDefinitionNode func_def;
+non terminal GCodeFuncNode gcode_func;
 non terminal FunctionCallNode func_call;
 non terminal ReturnNode return;
 non terminal ForToNode for_to;
@@ -93,7 +97,11 @@ stmt ::=decl:d
         {: RESULT = a; :}
         |
         for_to:f
-        {: RESULT = f; :};
+        {: RESULT = f; :}
+        |
+        gcode_func:f
+        {: RESULT = f; :}
+        ;
 
 decl ::= TYPE:t IDENTIFIER:i ASSIGNMENT expr:e
         {: RESULT = new DeclarationNode(t, i, e); :};
@@ -153,6 +161,9 @@ expr ::= NUMBER_LITERAL:n
 
 func_def ::= TYPE:t IDENTIFIER:i L_PAREN f_param_list:p R_PAREN L_BRACKET stmt_list:l R_BRACKET
         {: RESULT = new FunctionDefinitionNode(t, i, p, l); :};
+
+gcode_func   ::= GCODE IDENTIFIER:i  L_PAREN f_param_list:p R_PAREN L_BRACKET GCODECODE:g R_BRACKET
+        {: RESULT = new GCodeFuncNode(i, p, g); :};
 
 func_call ::= IDENTIFIER:i L_PAREN a_param_list:p R_PAREN
         {: RESULT = new FunctionCallNode(i, p); :};
