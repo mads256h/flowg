@@ -113,6 +113,11 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
+    public String Visit(NotExpressionNode notExpressionNode) throws NoException {
+        return PrintNode(notExpressionNode, notExpressionNode.GetChild());
+    }
+
+    @Override
     public String Visit(IdentifierExpressionNode identifierExpressionNode) throws NoException {
         return PrintNode(identifierExpressionNode, identifierExpressionNode.GetChild());
     }

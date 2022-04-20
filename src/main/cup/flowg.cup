@@ -39,6 +39,7 @@ terminal DIVIDE;
 terminal POWER;
 terminal FOR;
 terminal TO;
+terminal NOT;
 
 terminal GREATER_THAN;
 terminal LESS_THAN;
@@ -166,6 +167,8 @@ expr ::= NUMBER_LITERAL:n
         {: RESULT = new PowerExpressionNode(e1, e2); :}
         | IDENTIFIER:i
         {: RESULT = new IdentifierExpressionNode(i); :}
+        | NOT expr:e
+        {: RESULT = new NotExpressionNode(e); :}
         | func_call:c
         {: RESULT = c; :}
         | sqrt:s
