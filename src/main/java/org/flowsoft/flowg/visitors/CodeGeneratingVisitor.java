@@ -111,7 +111,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         {
             put(new TypePair(Type.Number, Type.Number), (left, right) -> {
                 try {
-                    return new ExpressionValue(BigDecimalUtils.NumberCompare("EQ", left.GetNumber(), right.GetNumber()));
+                    return new ExpressionValue(BigDecimalUtils.EqualsCompare(left.GetNumber(), right.GetNumber()));
                 } catch (TypeException e) {
                     e.printStackTrace();
                     assert(false);
@@ -352,42 +352,42 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     }
 
     @Override
-    public ExpressionValue Visit(GeExpressionNode geExpressionNode) throws Exception {
-        var leftNumber = geExpressionNode.GetLeftChild().Accept(this).GetNumber();
-        var rightNumber = geExpressionNode.GetRightChild().Accept(this).GetNumber();
-        return new ExpressionValue(BigDecimalUtils.NumberCompare("GE", leftNumber, rightNumber));
+    public ExpressionValue Visit(GreaterThenExpressionNode greaterThenExpressionNode) throws Exception {
+        var leftNumber = greaterThenExpressionNode.GetLeftChild().Accept(this).GetNumber();
+        var rightNumber = greaterThenExpressionNode.GetRightChild().Accept(this).GetNumber();
+        return new ExpressionValue(BigDecimalUtils.GreaterThenCompare(leftNumber, rightNumber));
     }
 
     @Override
-    public ExpressionValue Visit(LeExpressionNode leExpressionNode) throws Exception {
-        var leftNumber = leExpressionNode.GetLeftChild().Accept(this).GetNumber();
-        var rightNumber = leExpressionNode.GetRightChild().Accept(this).GetNumber();
-        return new ExpressionValue(BigDecimalUtils.NumberCompare("LE", leftNumber, rightNumber));
+    public ExpressionValue Visit(LessThenExpressionNode lessThenExpressionNode) throws Exception {
+        var leftNumber = lessThenExpressionNode.GetLeftChild().Accept(this).GetNumber();
+        var rightNumber = lessThenExpressionNode.GetRightChild().Accept(this).GetNumber();
+        return new ExpressionValue(BigDecimalUtils.LessThenCompare( leftNumber, rightNumber));
     }
 
     @Override
-    public ExpressionValue Visit(EqExpressionNode eqExpressionNode) throws Exception {
-        var leftType = eqExpressionNode.GetLeftChild().Accept(this).GetType();
-        var rightType = eqExpressionNode.GetRightChild().Accept(this).GetType();
+    public ExpressionValue Visit(EqualsExpressionNode equalsExpressionNode) throws Exception {
+        var leftType = equalsExpressionNode.GetLeftChild().Accept(this).GetType();
+        var rightType = equalsExpressionNode.GetRightChild().Accept(this).GetType();
 
-        var leftValue = eqExpressionNode.GetLeftChild().Accept(this);
-        var rightValue = eqExpressionNode.GetRightChild().Accept(this);
+        var leftValue = equalsExpressionNode.GetLeftChild().Accept(this);
+        var rightValue = equalsExpressionNode.GetRightChild().Accept(this);
 
         return TryBoth(leftType, rightType, EQ_MAP).apply(leftValue, rightValue);
     }
 
     @Override
-    public ExpressionValue Visit(EqGeExpressionNode eqGeExpressionNode) throws Exception {
-        var leftNumber = eqGeExpressionNode.GetLeftChild().Accept(this).GetNumber();
-        var rightNumber = eqGeExpressionNode.GetRightChild().Accept(this).GetNumber();
-        return new ExpressionValue(BigDecimalUtils.NumberCompare("EQGE", leftNumber, rightNumber));
+    public ExpressionValue Visit(GreaterThenEqualsExpressionNode greaterThenEqualsExpressionNode) throws Exception {
+        var leftNumber = greaterThenEqualsExpressionNode.GetLeftChild().Accept(this).GetNumber();
+        var rightNumber = greaterThenEqualsExpressionNode.GetRightChild().Accept(this).GetNumber();
+        return new ExpressionValue(BigDecimalUtils.GreaterThenEqualsCompare(leftNumber, rightNumber));
     }
 
     @Override
-    public ExpressionValue Visit(EqLeExpressionNode eqLeExpressionNode) throws Exception {
-        var leftNumber = eqLeExpressionNode.GetLeftChild().Accept(this).GetNumber();
-        var rightNumber = eqLeExpressionNode.GetRightChild().Accept(this).GetNumber();
-        return new ExpressionValue(BigDecimalUtils.NumberCompare("EQLE", leftNumber, rightNumber));
+    public ExpressionValue Visit(LessThenEqualsExpressionNode lessThenEqualsExpressionNode) throws Exception {
+        var leftNumber = lessThenEqualsExpressionNode.GetLeftChild().Accept(this).GetNumber();
+        var rightNumber = lessThenEqualsExpressionNode.GetRightChild().Accept(this).GetNumber();
+        return new ExpressionValue(BigDecimalUtils.LessThenEqualsCompare(leftNumber, rightNumber));
     }
 
     @Override
@@ -395,11 +395,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         var leftBool = andExpressionNode.GetLeftChild().Accept(this).GetBoolean();
         var rightBool = andExpressionNode.GetRightChild().Accept(this).GetBoolean();
 
-        if (leftBool && rightBool) {
-            return new ExpressionValue(true);
-        }
-
-        return new ExpressionValue(false);
+        return new ExpressionValue(leftBool && rightBool);
     }
 
     @Override
@@ -407,11 +403,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         var leftBool = orExpressionNode.GetLeftChild().Accept(this).GetBoolean();
         var rightBool = orExpressionNode.GetRightChild().Accept(this).GetBoolean();
 
-        if (leftBool || rightBool) {
-            return new ExpressionValue(true);
-        }
-
-        return new ExpressionValue(false);
+        return new ExpressionValue(leftBool || rightBool);
     }
 
     private static BiFunction<ExpressionValue, ExpressionValue, ExpressionValue> TryBoth(Type left, Type right, Map<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> map) throws TypeException {

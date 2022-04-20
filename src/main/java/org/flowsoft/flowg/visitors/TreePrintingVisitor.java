@@ -123,28 +123,28 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
-    public String Visit(GeExpressionNode geExpressionNode) throws NoException {
-        return PrintNode(geExpressionNode, geExpressionNode.GetLeftChild(), geExpressionNode.GetRightChild());
+    public String Visit(GreaterThenExpressionNode greaterThenExpressionNode) throws NoException {
+        return PrintNode(greaterThenExpressionNode, greaterThenExpressionNode.GetLeftChild(), greaterThenExpressionNode.GetRightChild());
     }
 
     @Override
-    public String Visit(LeExpressionNode leExpressionNode) throws NoException {
-        return PrintNode(leExpressionNode, leExpressionNode.GetLeftChild(), leExpressionNode.GetRightChild());
+    public String Visit(LessThenExpressionNode lessThenExpressionNode) throws NoException {
+        return PrintNode(lessThenExpressionNode, lessThenExpressionNode.GetLeftChild(), lessThenExpressionNode.GetRightChild());
     }
 
     @Override
-    public String Visit(EqExpressionNode eqExpressionNode) throws NoException {
-        return PrintNode(eqExpressionNode, eqExpressionNode.GetLeftChild(), eqExpressionNode.GetRightChild());
+    public String Visit(EqualsExpressionNode equalsExpressionNode) throws NoException {
+        return PrintNode(equalsExpressionNode, equalsExpressionNode.GetLeftChild(), equalsExpressionNode.GetRightChild());
     }
 
     @Override
-    public String Visit(EqGeExpressionNode eqGeExpressionNode) throws NoException {
-        return PrintNode(eqGeExpressionNode, eqGeExpressionNode.GetLeftChild(), eqGeExpressionNode.GetRightChild());
+    public String Visit(GreaterThenEqualsExpressionNode greaterThenEqualsExpressionNode) throws NoException {
+        return PrintNode(greaterThenEqualsExpressionNode, greaterThenEqualsExpressionNode.GetLeftChild(), greaterThenEqualsExpressionNode.GetRightChild());
     }
 
     @Override
-    public String Visit(EqLeExpressionNode eqLeExpressionNode) throws NoException {
-        return PrintNode(eqLeExpressionNode, eqLeExpressionNode.GetLeftChild(), eqLeExpressionNode.GetRightChild());
+    public String Visit(LessThenEqualsExpressionNode lessThenEqualsExpressionNode) throws NoException {
+        return PrintNode(lessThenEqualsExpressionNode, lessThenEqualsExpressionNode.GetLeftChild(), lessThenEqualsExpressionNode.GetRightChild());
     }
 
     @Override

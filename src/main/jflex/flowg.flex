@@ -71,11 +71,11 @@ Anything = .
 "*" { return symbol(sym.TIMES); }
 "/" { return symbol(sym.DIVIDE); }
 
-">" { return symbol(sym.GE); }
-"<" { return symbol(sym.LE); }
-"==" { return symbol(sym.EQ); }
-">=" { return symbol(sym.EQGE); }
-"<=" { return symbol(sym.EQLE); }
+">" { return symbol(sym.GREATER_THEN); }
+"<" { return symbol(sym.LESS_THEN); }
+"==" { return symbol(sym.EQUALS); }
+">=" { return symbol(sym.GREATER_THEN_EQUALS); }
+"<=" { return symbol(sym.LESS_THEN_EQUALS); }
 "&&" { return symbol(sym.AND); }
 "||" { return symbol(sym.OR); }
 
