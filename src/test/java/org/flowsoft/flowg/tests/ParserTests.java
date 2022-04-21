@@ -6,6 +6,9 @@ import static org.junit.Assert.assertThrows;
 import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.Yylex;
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.base.INode;
+import org.flowsoft.flowg.nodes.functions.*;
+import org.flowsoft.flowg.nodes.math.operators.PlusExpressionNode;
 import org.flowsoft.flowg.parser;
 import org.flowsoft.flowg.visitors.PrettyPrintingVisitor;
 import org.junit.experimental.theories.DataPoints;
@@ -50,7 +53,7 @@ public class ParserTests {
             new TextAstPair(
                     "number hello = 2;",
                     new StatementListNode(
-                            new ArrayList<StatementNode>() {
+                            new ArrayList<>() {
                                 {
                                     add(new DeclarationNode(new TypeNode(Type.Number), new IdentifierNode("hello"), new NumberLiteralNode(new BigDecimal(2))));
                                 }

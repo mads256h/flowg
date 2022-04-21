@@ -1,5 +1,6 @@
 package org.flowsoft.flowg.visitors;
 
+import org.flowsoft.flowg.Point;
 import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.TypeException;
 
@@ -73,17 +74,10 @@ public class ExpressionValue {
         var str = "Type: " + _type + " Value: ";
         switch (_type) {
 
-            case Void -> {
-            }
-            case Number -> {
-                str += _number;
-            }
-            case Boolean -> {
-                str += _boolean;
-            }
-            case Point -> {
-                str += _point.toString();
-            }
+            case Void -> {}
+            case Number -> str += _number;
+            case Boolean -> str += _boolean;
+            case Point -> str += _point.toString();
         }
 
         return str;

@@ -1,12 +1,15 @@
 package org.flowsoft.flowg.visitors;
 
 import ch.obermuhlner.math.big.BigDecimalMath;
-import org.flowsoft.flowg.BigDecimalUtils;
-import org.flowsoft.flowg.ReturnException;
-import org.flowsoft.flowg.Type;
-import org.flowsoft.flowg.TypeException;
+import org.flowsoft.flowg.*;
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.controlflow.ForToNode;
+import org.flowsoft.flowg.nodes.controlflow.ReturnNode;
+import org.flowsoft.flowg.nodes.functions.*;
 import org.flowsoft.flowg.nodes.math.functions.*;
+import org.flowsoft.flowg.nodes.math.operators.*;
+import org.flowsoft.flowg.symboltables.RuntimeSymbolTable;
+import org.flowsoft.flowg.symboltables.SymbolTable;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -226,14 +229,14 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
         _currentPosition = point;
 
-        var decimalSeperator = new DecimalFormatSymbols();
-        decimalSeperator.setDecimalSeparator('.');
+        var decimalSeparator = new DecimalFormatSymbols();
+        decimalSeparator.setDecimalSeparator('.');
 
         var df = new DecimalFormat();
         df.setMaximumFractionDigits(5);
         df.setMinimumFractionDigits(0);
         df.setGroupingUsed(false);
-        df.setDecimalFormatSymbols(decimalSeperator);
+        df.setDecimalFormatSymbols(decimalSeparator);
 
         _stringBuilder
                 .append("G1")
@@ -476,7 +479,6 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     @Override
     public ExpressionValue Visit(ForToNode forToNode) throws Exception {
         var declNode = forToNode.GetFirstNode();
-        var declType = declNode.GetFirstNode().GetValue();
         var declIdentifier = declNode.GetSecondNode().GetValue();
         var declValue = declNode.GetThirdNode().Accept(this).GetNumber();
 

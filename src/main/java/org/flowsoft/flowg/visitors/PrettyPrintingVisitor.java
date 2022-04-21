@@ -3,7 +3,12 @@ package org.flowsoft.flowg.visitors;
 import org.flowsoft.flowg.NoException;
 import org.flowsoft.flowg.TypeHelper;
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.base.UnaryNode;
+import org.flowsoft.flowg.nodes.controlflow.ForToNode;
+import org.flowsoft.flowg.nodes.controlflow.ReturnNode;
+import org.flowsoft.flowg.nodes.functions.*;
 import org.flowsoft.flowg.nodes.math.functions.*;
+import org.flowsoft.flowg.nodes.math.operators.*;
 
 public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     @Override
@@ -11,8 +16,8 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
         var children = statementListNode.GetChildren();
         StringBuilder str = new StringBuilder();
 
-        for (int i = 0; i < children.size(); i++) {
-            str.append(children.get(i).Accept(this));
+        for (var child : children) {
+            str.append(child.Accept(this));
             str.append(";\n");
         }
 

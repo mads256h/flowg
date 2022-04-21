@@ -1,7 +1,6 @@
 package org.flowsoft.flowg;
 
-import java_cup.runtime.Symbol;
-import org.flowsoft.flowg.nodes.Node;
+import org.flowsoft.flowg.nodes.base.Node;
 import org.flowsoft.flowg.visitors.CodeGeneratingVisitor;
 import org.flowsoft.flowg.visitors.PrettyPrintingVisitor;
 import org.flowsoft.flowg.visitors.TreePrintingVisitor;

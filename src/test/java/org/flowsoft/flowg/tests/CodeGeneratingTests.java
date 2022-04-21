@@ -1,8 +1,13 @@
 package org.flowsoft.flowg.tests;
 
 import org.flowsoft.flowg.BigDecimalUtils;
+import org.flowsoft.flowg.Point;
 import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.base.INode;
+import org.flowsoft.flowg.nodes.functions.*;
+import org.flowsoft.flowg.nodes.math.operators.*;
+import org.flowsoft.flowg.symboltables.SymbolTable;
 import org.flowsoft.flowg.visitors.*;
 import org.junit.Test;
 import org.junit.experimental.theories.*;
@@ -433,7 +438,7 @@ public class CodeGeneratingTests {
         var actual = value.GetNumber();
 
         assertThat(value.GetType()).isEqualTo(Type.Number);
-        assertTrue(actual.compareTo(expected) == 0);
+        assertTrue(BigDecimalUtils.Equals(actual, expected));
     }
 
     @Theory
@@ -478,7 +483,7 @@ public class CodeGeneratingTests {
 
         var symbolTable = codeGen.GetSymbolTable();
 
-        assertTrue(symbolTable.LookupVariable("x").GetNumber().compareTo(new BigDecimal("4")) == 0);
+        assertTrue(BigDecimalUtils.Equals(symbolTable.LookupVariable("x").GetNumber(), new BigDecimal("4")));
     }
 
     @Test
@@ -540,6 +545,12 @@ public class CodeGeneratingTests {
 
 
         var symbolTable = typeChecker.GetSymbolTable();
+
+        // Lookups throw if the symbol does not exist.
+        var funcSymbolTable = symbolTable.LookupFunction("test").GetSymbolTable();
+        funcSymbolTable.LookupVariable("x");
+        funcSymbolTable.LookupVariable("y");
+        funcSymbolTable.LookupVariable("z");
 
         assertThat(codeGen.GetCode()).isEqualTo("G0 X2 Y4 Z6\n");
     }

@@ -9,6 +9,7 @@ public final class BigDecimalUtils {
 
     public static BigDecimal Divide(BigDecimal left, BigDecimal right) {
         try {
+            //noinspection BigDecimalMethodWithoutRoundingCalled
             return left.divide(right);
         }
         catch (ArithmeticException e) {

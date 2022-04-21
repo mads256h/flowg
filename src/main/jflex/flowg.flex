@@ -2,6 +2,7 @@ package org.flowsoft.flowg;
 
 import java_cup.runtime.Symbol;
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.base.INode;
 import java.math.BigDecimal;
 %%
 
@@ -16,12 +17,13 @@ import java.math.BigDecimal;
 %debug
 
 %{
-  private Symbol symbol(int type) {
-    return new Symbol(type, yyline, yycolumn);
-  }
-  private Symbol symbol(int type, INode value) {
-    return new Symbol(type, yyline, yycolumn, value);
-  }
+    private Symbol symbol(int type) {
+      return new Symbol(type, yyline, yycolumn);
+    }
+
+    private Symbol symbol(int type, INode value) {
+      return new Symbol(type, yyline, yycolumn, value);
+    }
 %}
 
 
@@ -29,7 +31,7 @@ import java.math.BigDecimal;
 Type = "number"|"bool"|"point"|"void"
 Identifier = [a-zA-Z][a-zA-Z0-9]*
 Number = [0-9]+(\.[0-9]+)?
-Whitespace = [\ \n]
+Whitespace = [\ \r\n]
 NewLine = \n
 Comment = \/\/[^\n]*
 Anything = .
@@ -38,10 +40,11 @@ Anything = .
 
 {Type} { return symbol(sym.TYPE, new TypeNode(TypeHelper.StringToType(yytext()))); }
 
+// Boolean literals
 "true" { return symbol(sym.BOOLEAN_LITERAL, new BooleanLiteralNode(true)); }
 "false" { return symbol(sym.BOOLEAN_LITERAL, new BooleanLiteralNode(false)); }
 
-"return" { return symbol(sym.RETURN); }
+// Builtin functions
 "move" { return symbol(sym.MOVE); }
 "line" { return symbol(sym.LINE); }
 
@@ -54,8 +57,10 @@ Anything = .
 "arccos" { return symbol(sym.ARCCOS); }
 "arctan" { return symbol(sym.ARCTAN); }
 
+// Control flow
 "for" { return symbol(sym.FOR); }
 "to" { return symbol(sym.TO); }
+"return" { return symbol(sym.RETURN); }
 
 {Identifier} { return symbol(sym.IDENTIFIER, new IdentifierNode(yytext())); }
 
@@ -77,13 +82,15 @@ Anything = .
 "=" { return symbol(sym.ASSIGNMENT); }
 ";" { return symbol(sym.SEMICOLON); }
 "," { return symbol(sym.COMMA); }
+
+// Arithmic operators
 "+" { return symbol(sym.PLUS); }
 "-" { return symbol(sym.MINUS); }
 "*" { return symbol(sym.TIMES); }
 "/" { return symbol(sym.DIVIDE); }
 "^" { return symbol(sym.POWER); }
-"!" { return symbol(sym.NOT); }
 
+// Boolean operators
 ">" { return symbol(sym.GREATER_THAN); }
 "<" { return symbol(sym.LESS_THAN); }
 "==" { return symbol(sym.EQUALS); }
@@ -91,6 +98,7 @@ Anything = .
 "<=" { return symbol(sym.LESS_THAN_EQUALS); }
 "&&" { return symbol(sym.AND); }
 "||" { return symbol(sym.OR); }
+"!" { return symbol(sym.NOT); }
 
 // This catches any error.
 // Never match this symbol unless it is to report is as an error!

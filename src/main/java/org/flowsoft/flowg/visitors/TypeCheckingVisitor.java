@@ -3,7 +3,13 @@ package org.flowsoft.flowg.visitors;
 import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.base.UnaryNode;
+import org.flowsoft.flowg.nodes.controlflow.ForToNode;
+import org.flowsoft.flowg.nodes.controlflow.ReturnNode;
+import org.flowsoft.flowg.nodes.functions.*;
 import org.flowsoft.flowg.nodes.math.functions.*;
+import org.flowsoft.flowg.nodes.math.operators.*;
+import org.flowsoft.flowg.symboltables.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.HashMap;

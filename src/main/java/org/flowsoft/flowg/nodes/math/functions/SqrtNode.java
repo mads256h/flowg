@@ -1,8 +1,8 @@
 package org.flowsoft.flowg.nodes.math.functions;
 
-import org.flowsoft.flowg.nodes.ActualParameterListNode;
-import org.flowsoft.flowg.nodes.ExpressionNode;
-import org.flowsoft.flowg.nodes.UnaryNode;
+import org.flowsoft.flowg.nodes.functions.ActualParameterListNode;
+import org.flowsoft.flowg.nodes.base.ExpressionNode;
+import org.flowsoft.flowg.nodes.base.UnaryNode;
 import org.flowsoft.flowg.visitors.IVisitor;
 
 public class SqrtNode extends UnaryNode<ActualParameterListNode> implements ExpressionNode {

@@ -1,5 +1,6 @@
 package org.flowsoft.flowg.nodes;
 
+import org.flowsoft.flowg.nodes.base.NullaryNode;
 import org.flowsoft.flowg.visitors.IVisitor;
 import org.flowsoft.flowg.Type;
 
