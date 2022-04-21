@@ -61,4 +61,5 @@ public interface IVisitor<T, TException extends Exception> {
     T Visit(NumberLiteralNode numberLiteralNode) throws TException;
     T Visit(BooleanLiteralNode booleanLiteralNode) throws TException;
     T Visit(PointNode pointNode) throws TException;
+    T Visit(PointEntryNode pointEntryNode) throws TException;
 }

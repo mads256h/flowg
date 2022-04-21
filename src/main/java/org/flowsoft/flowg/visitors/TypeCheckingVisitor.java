@@ -247,6 +247,22 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     }
 
     @Override
+    public Type Visit(PointEntryNode pointEntryNode) throws TypeException {
+        var expressionType = pointEntryNode.GetLeftChild().Accept(this);
+        var identifier = pointEntryNode.GetRightChild().GetValue();
+
+        if (expressionType != Type.Point) {
+            throw new TypeException();
+        }
+
+        if (!(identifier.equals("x") || identifier.equals("y") || identifier.equals("z"))) {
+            throw new TypeException();
+        }
+
+        return Type.Number;
+    }
+
+    @Override
     public Type Visit(PlusExpressionNode plusExpressionNode) throws TypeException {
         var leftType = plusExpressionNode.GetLeftChild().Accept(this);
         var rightType = plusExpressionNode.GetRightChild().Accept(this);

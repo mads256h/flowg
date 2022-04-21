@@ -47,6 +47,7 @@ terminal R_SQUARE_BRACKET;
 terminal ASSIGNMENT;
 terminal SEMICOLON;
 terminal COMMA;
+terminal DOT;
 
 // Arithmic operators
 terminal PLUS;
@@ -104,16 +105,19 @@ non terminal FormalParameterNode f_param;
 
 non terminal ExpressionNode expr;
 non terminal PointNode point;
+non terminal PointEntryNode point_entry;
 
 // Control flow
 non terminal ForToNode for_to;
 non terminal ReturnNode return;
 
+precedence left NOT;
 precedence left AND, OR;
 precedence left EQUALS, GREATER_THAN, LESS_THAN, GREATER_THAN_EQUALS, LESS_THAN_EQUALS;
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE;
 precedence left POWER;
+precedence left DOT;
 
 start with program;
 
@@ -217,6 +221,10 @@ expr ::=
         | point:p
         {: RESULT = p; :}
 
+        // Point entry
+        | point_entry:e
+        {: RESULT = e; :}
+
         // Arithmic operators
         | expr:e1 PLUS expr:e2
         {: RESULT = new PlusExpressionNode(e1, e2); :}
@@ -293,3 +301,6 @@ arctan ::= ARCTAN L_PAREN a_param_list:p R_PAREN
 
 point ::= L_SQUARE_BRACKET expr:e1 COMMA expr:e2 COMMA expr:e3 R_SQUARE_BRACKET
         {: RESULT = new PointNode(e1, e2, e3); :};
+
+point_entry ::= expr:e DOT IDENTIFIER:i
+        {: RESULT = new PointEntryNode(e, i); :};

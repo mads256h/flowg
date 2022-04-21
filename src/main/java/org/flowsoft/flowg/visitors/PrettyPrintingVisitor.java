@@ -156,6 +156,11 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
+    public String Visit(PointEntryNode pointEntryNode) throws NoException {
+        return pointEntryNode.GetLeftChild().Accept(this) + "." + pointEntryNode.GetRightChild().Accept(this);
+    }
+
+    @Override
     public String Visit(PlusExpressionNode plusExpressionNode) throws NoException {
         return plusExpressionNode.GetLeftChild().Accept(this) + " + " + plusExpressionNode.GetRightChild().Accept(this);
     }

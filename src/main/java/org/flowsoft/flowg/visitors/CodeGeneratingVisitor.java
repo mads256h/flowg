@@ -366,6 +366,19 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     }
 
     @Override
+    public ExpressionValue Visit(PointEntryNode pointEntryNode) throws Exception {
+        var point = pointEntryNode.GetLeftChild().Accept(this).GetPoint();
+        var entry = pointEntryNode.GetRightChild().GetValue();
+
+        return new ExpressionValue(switch (entry) {
+            case "x" -> point.GetX();
+            case "y" -> point.GetY();
+            case "z" -> point.GetZ();
+            default -> throw new IllegalArgumentException();
+        });
+    }
+
+    @Override
     public ExpressionValue Visit(PlusExpressionNode plusExpressionNode) throws Exception {
         var leftValue = plusExpressionNode.GetLeftChild().Accept(this);
         var rightValue = plusExpressionNode.GetRightChild().Accept(this);

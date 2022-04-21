@@ -82,6 +82,7 @@ Anything = .
 "=" { return symbol(sym.ASSIGNMENT); }
 ";" { return symbol(sym.SEMICOLON); }
 "," { return symbol(sym.COMMA); }
+"." { return symbol(sym.DOT); }
 
 // Arithmic operators
 "+" { return symbol(sym.PLUS); }
