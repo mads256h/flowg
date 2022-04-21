@@ -541,6 +541,6 @@ public class CodeGeneratingTests {
 
         var symbolTable = typeChecker.GetSymbolTable();
 
-        assertThat(codeGen.GetCode()).isEqualTo("G1 E0 X2 Y4 Z6\n");
+        assertThat(codeGen.GetCode()).isEqualTo("G0 X2 Y4 Z6\n");
     }
 }

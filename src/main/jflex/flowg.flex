@@ -43,6 +43,7 @@ Anything = .
 
 "return" { return symbol(sym.RETURN); }
 "move" { return symbol(sym.MOVE); }
+"line" { return symbol(sym.LINE); }
 "sqrt" { return symbol(sym.SQRT); }
 
 "for" { return symbol(sym.FOR); }

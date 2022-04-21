@@ -79,6 +79,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     @Override
     public Type Visit(SqrtNode sqrtNode) throws TypeException {
         var params = sqrtNode.GetChild().GetChildren();
+
         if (params.size() != 1) {
             throw new TypeException();
         }
@@ -89,6 +90,21 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         }
 
         return Type.Number;
+    }
+
+    @Override
+    public Type Visit(LineNode lineNode) throws TypeException {
+        var params = lineNode.GetChild().GetChildren();
+        if (params.size() != 1) {
+            throw new TypeException();
+        }
+
+        var type = params.get(0).Accept(this);
+        if (type != Type.Point) {
+            throw new TypeException();
+        }
+
+        return Type.Void;
     }
 
     @Override
