@@ -44,7 +44,15 @@ Anything = .
 "return" { return symbol(sym.RETURN); }
 "move" { return symbol(sym.MOVE); }
 "line" { return symbol(sym.LINE); }
+
+// Math builtins
 "sqrt" { return symbol(sym.SQRT); }
+"sin" { return symbol(sym.SIN); }
+"cos" { return symbol(sym.COS); }
+"tan" { return symbol(sym.TAN); }
+"arcsin" { return symbol(sym.ARCSIN); }
+"arccos" { return symbol(sym.ARCCOS); }
+"arctan" { return symbol(sym.ARCTAN); }
 
 "for" { return symbol(sym.FOR); }
 "to" { return symbol(sym.TO); }

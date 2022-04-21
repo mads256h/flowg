@@ -6,6 +6,7 @@ import org.flowsoft.flowg.ReturnException;
 import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.math.functions.*;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -250,7 +251,55 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         var parameters = sqrtNode.GetChild().GetChildren();
         var number = parameters.get(0).Accept(this).GetNumber();
 
-        return new ExpressionValue(number.sqrt(new MathContext(100)));
+        return new ExpressionValue(number.sqrt(BigDecimalUtils.DEFAULT_MATH_CONTEXT));
+    }
+
+    @Override
+    public ExpressionValue Visit(SinNode sinNode) throws Exception {
+        var parameters = sinNode.GetChild().GetChildren();
+        var number = parameters.get(0).Accept(this).GetNumber();
+
+        return new ExpressionValue(BigDecimalMath.sin(number, BigDecimalUtils.DEFAULT_MATH_CONTEXT));
+    }
+
+    @Override
+    public ExpressionValue Visit(CosNode cosNode) throws Exception {
+        var parameters = cosNode.GetChild().GetChildren();
+        var number = parameters.get(0).Accept(this).GetNumber();
+
+        return new ExpressionValue(BigDecimalMath.cos(number, BigDecimalUtils.DEFAULT_MATH_CONTEXT));
+    }
+
+    @Override
+    public ExpressionValue Visit(TanNode tanNode) throws Exception {
+        var parameters = tanNode.GetChild().GetChildren();
+        var number = parameters.get(0).Accept(this).GetNumber();
+
+        return new ExpressionValue(BigDecimalMath.tan(number, BigDecimalUtils.DEFAULT_MATH_CONTEXT));
+    }
+
+    @Override
+    public ExpressionValue Visit(ArcsinNode arcsinNode) throws Exception {
+        var parameters = arcsinNode.GetChild().GetChildren();
+        var number = parameters.get(0).Accept(this).GetNumber();
+
+        return new ExpressionValue(BigDecimalMath.asin(number, BigDecimalUtils.DEFAULT_MATH_CONTEXT));
+    }
+
+    @Override
+    public ExpressionValue Visit(ArccosNode arccosNode) throws Exception {
+        var parameters = arccosNode.GetChild().GetChildren();
+        var number = parameters.get(0).Accept(this).GetNumber();
+
+        return new ExpressionValue(BigDecimalMath.acos(number, BigDecimalUtils.DEFAULT_MATH_CONTEXT));
+    }
+
+    @Override
+    public ExpressionValue Visit(ArctanNode arctanNode) throws Exception {
+        var parameters = arctanNode.GetChild().GetChildren();
+        var number = parameters.get(0).Accept(this).GetNumber();
+
+        return new ExpressionValue(BigDecimalMath.atan(number, BigDecimalUtils.DEFAULT_MATH_CONTEXT));
     }
 
     @Override

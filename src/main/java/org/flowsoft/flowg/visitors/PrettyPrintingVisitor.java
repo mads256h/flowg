@@ -3,6 +3,7 @@ package org.flowsoft.flowg.visitors;
 import org.flowsoft.flowg.NoException;
 import org.flowsoft.flowg.TypeHelper;
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.math.functions.*;
 
 public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     @Override
@@ -19,9 +20,13 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
         return str.toString();
     }
 
+    private String BuiltinFunctionPrinter(String funcName, UnaryNode<ActualParameterListNode> funcNode) throws NoException {
+        return funcName + "(" + funcNode.GetChild().Accept(this) + ")";
+    }
+
     @Override
     public String Visit(MoveNode moveNode) throws NoException {
-        return "move(" + moveNode.GetChild().Accept(this) + ")";
+        return BuiltinFunctionPrinter("move", moveNode);
     }
 
     @Override
@@ -31,7 +36,37 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
 
     @Override
     public String Visit(SqrtNode sqrtNode) throws NoException {
-        return "sqrt(" + sqrtNode.GetChild().Accept(this) + ")";
+        return BuiltinFunctionPrinter("sqrt", sqrtNode);
+    }
+
+    @Override
+    public String Visit(SinNode sinNode) throws NoException {
+        return BuiltinFunctionPrinter("sin", sinNode);
+    }
+
+    @Override
+    public String Visit(CosNode cosNode) throws NoException {
+        return BuiltinFunctionPrinter("cos", cosNode);
+    }
+
+    @Override
+    public String Visit(TanNode tanNode) throws NoException {
+        return BuiltinFunctionPrinter("tan", tanNode);
+    }
+
+    @Override
+    public String Visit(ArcsinNode arcsinNode) throws NoException {
+        return BuiltinFunctionPrinter("arcsin", arcsinNode);
+    }
+
+    @Override
+    public String Visit(ArccosNode arccosNode) throws NoException {
+        return BuiltinFunctionPrinter("arccos", arccosNode);
+    }
+
+    @Override
+    public String Visit(ArctanNode arctanNode) throws NoException {
+        return BuiltinFunctionPrinter("arctan", arctanNode);
     }
 
     @Override

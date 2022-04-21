@@ -3,6 +3,7 @@ package org.flowsoft.flowg.visitors;
 import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.math.functions.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,9 +78,23 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     }
 
     @Override
-    public Type Visit(SqrtNode sqrtNode) throws TypeException {
-        var params = sqrtNode.GetChild().GetChildren();
+    public Type Visit(LineNode lineNode) throws TypeException {
+        var params = lineNode.GetChild().GetChildren();
+        if (params.size() != 1) {
+            throw new TypeException();
+        }
 
+        var type = params.get(0).Accept(this);
+        if (type != Type.Point) {
+            throw new TypeException();
+        }
+
+        return Type.Void;
+    }
+
+    // Handles builtin function typechecking on the form number func(number)
+    private Type TypeCheckMathFunc(UnaryNode<ActualParameterListNode> funcNode) throws TypeException {
+        var params = funcNode.GetChild().GetChildren();
         if (params.size() != 1) {
             throw new TypeException();
         }
@@ -93,18 +108,38 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     }
 
     @Override
-    public Type Visit(LineNode lineNode) throws TypeException {
-        var params = lineNode.GetChild().GetChildren();
-        if (params.size() != 1) {
-            throw new TypeException();
-        }
+    public Type Visit(SqrtNode sqrtNode) throws TypeException {
+        return TypeCheckMathFunc(sqrtNode);
+    }
 
-        var type = params.get(0).Accept(this);
-        if (type != Type.Point) {
-            throw new TypeException();
-        }
+    @Override
+    public Type Visit(SinNode sinNode) throws TypeException {
+        return TypeCheckMathFunc(sinNode);
+    }
 
-        return Type.Void;
+    @Override
+    public Type Visit(CosNode cosNode) throws TypeException {
+        return TypeCheckMathFunc(cosNode);
+    }
+
+    @Override
+    public Type Visit(TanNode tanNode) throws TypeException {
+        return TypeCheckMathFunc(tanNode);
+    }
+
+    @Override
+    public Type Visit(ArcsinNode arcsinNode) throws TypeException {
+        return TypeCheckMathFunc(arcsinNode);
+    }
+
+    @Override
+    public Type Visit(ArccosNode arccosNode) throws TypeException {
+        return TypeCheckMathFunc(arccosNode);
+    }
+
+    @Override
+    public Type Visit(ArctanNode arctanNode) throws TypeException {
+        return TypeCheckMathFunc(arctanNode);
     }
 
     @Override

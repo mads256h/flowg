@@ -1,12 +1,22 @@
 package org.flowsoft.flowg.visitors;
 
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.math.functions.*;
 
 public interface IVisitor<T, TException extends Exception> {
     T Visit(StatementListNode statementListNode) throws TException;
     T Visit(MoveNode moveNode) throws TException;
     T Visit(LineNode lineNode) throws TException;
+
+    // Math builtins
     T Visit(SqrtNode sqrtNode) throws TException;
+    T Visit(SinNode sinNode) throws TException;
+    T Visit(CosNode cosNode) throws TException;
+    T Visit(TanNode tanNode) throws TException;
+    T Visit(ArcsinNode arcsinNode) throws TException;
+    T Visit(ArccosNode arccosNode) throws TException;
+    T Visit(ArctanNode arctanNode) throws TException;
+
     T Visit(ActualParameterListNode actualParameterListNode) throws TException;
     T Visit(FormalParameterListNode formalParameterListNode) throws TException;
     T Visit(FormalParameterNode formalParameterNode) throws TException;

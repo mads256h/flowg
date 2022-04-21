@@ -2,6 +2,7 @@ package org.flowsoft.flowg.visitors;
 
 import org.flowsoft.flowg.NoException;
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.math.functions.*;
 
 public class TreePrintingVisitor implements IVisitor<String, NoException> {
 
@@ -43,6 +44,36 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     @Override
     public String Visit(SqrtNode sqrtNode) throws NoException {
         return PrintNode(sqrtNode, sqrtNode.GetChild());
+    }
+
+    @Override
+    public String Visit(SinNode sinNode) throws NoException {
+        return PrintNode(sinNode, sinNode.GetChild());
+    }
+
+    @Override
+    public String Visit(CosNode cosNode) throws NoException {
+        return PrintNode(cosNode, cosNode.GetChild());
+    }
+
+    @Override
+    public String Visit(TanNode tanNode) throws NoException {
+        return PrintNode(tanNode, tanNode.GetChild());
+    }
+
+    @Override
+    public String Visit(ArcsinNode arcsinNode) throws NoException {
+        return PrintNode(arcsinNode, arcsinNode.GetChild());
+    }
+
+    @Override
+    public String Visit(ArccosNode arccosNode) throws NoException {
+        return PrintNode(arccosNode, arccosNode.GetChild());
+    }
+
+    @Override
+    public String Visit(ArctanNode arctanNode) throws NoException {
+        return PrintNode(arctanNode, arctanNode.GetChild());
     }
 
     @Override
