@@ -39,7 +39,7 @@ Anything = .
 
 {Type} { return symbol(sym.TYPE, new TypeNode(TypeHelper.StringToType(yytext()))); }
 
-"true" { return symbol(sym.BOOLEAN_LITEAL, new BooleanLiteralNode(true)); }
+"true" { return symbol(sym.BOOLEAN_LITERAL, new BooleanLiteralNode(true)); }
 "false" { return symbol(sym.BOOLEAN_LITERAL, new BooleanLiteralNode(false)); }
 
 "return" { return symbol(sym.RETURN); }
