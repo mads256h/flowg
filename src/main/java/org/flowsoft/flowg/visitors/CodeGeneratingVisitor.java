@@ -1,5 +1,6 @@
 package org.flowsoft.flowg.visitors;
 
+import ch.obermuhlner.math.big.BigDecimalMath;
 import org.flowsoft.flowg.BigDecimalUtils;
 import org.flowsoft.flowg.ReturnException;
 import org.flowsoft.flowg.Type;
@@ -7,6 +8,9 @@ import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.nodes.*;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.math.MathContext;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -108,9 +112,56 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         }
     };
 
+    private final static HashMap<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> EQ_MAP = new HashMap<>() {
+        {
+            put(new TypePair(Type.Number, Type.Number), (left, right) -> {
+                try {
+                    return new ExpressionValue(BigDecimalUtils.Equals(left.GetNumber(), right.GetNumber()));
+                } catch (TypeException e) {
+                    e.printStackTrace();
+                    assert(false);
+                    return null;
+                }
+            });
+            put(new TypePair(Type.Point, Type.Point), (left, right) -> {
+                try {
+                    if (left.GetPoint().equals(right.GetPoint())) {
+                        return new ExpressionValue(true);
+                    } else {
+                        return new ExpressionValue(false);
+                    }
+                } catch (TypeException e) {
+                    e.printStackTrace();
+                    assert(false);
+                    return null;
+                }
+            });
+            put(new TypePair(Type.Boolean, Type.Boolean), (left, right) -> {
+                try {
+                    var boolLeft = left.GetBoolean();
+                    var boolRight = right.GetBoolean();
+
+                    if (boolLeft == boolRight) {
+                        return new ExpressionValue(true);
+                    } else {
+                        return new ExpressionValue(false);
+                    }
+
+                } catch (TypeException e) {
+                    e.printStackTrace();
+                    assert(false);
+                    return null;
+                }
+            });
+        }
+    };
+
     private RuntimeSymbolTable _symbolTable;
 
     private final StringBuilder _stringBuilder = new StringBuilder();
+
+    private Point _currentPosition = new Point(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+    private BigDecimal _currentExtrusion = new BigDecimal("0");
 
     public CodeGeneratingVisitor(SymbolTable symbolTable) {
         _symbolTable = new RuntimeSymbolTable(symbolTable, null);
@@ -136,17 +187,70 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     public ExpressionValue Visit(MoveNode moveNode) throws Exception {
         var parameters = moveNode.GetChild().GetChildren();
         var point = parameters.get(0).Accept(this).GetPoint();
+        _currentPosition = point;
 
         _stringBuilder
-                .append("G1")
+                .append("G0")
                 // Don't extrude anything we are moving :)
-                .append(" E0")
                 .append(" X").append(point.GetX())
                 .append(" Y").append(point.GetY())
                 .append(" Z").append(point.GetZ())
                 .append('\n');
 
         return new ExpressionValue(Type.Void);
+    }
+
+    @Override
+    public ExpressionValue Visit(LineNode lineNode) throws Exception {
+        var parameters = lineNode.GetChild().GetChildren();
+        var point = parameters.get(0).Accept(this).GetPoint();
+
+        // All distances in mm
+        var distance = point.Distance(_currentPosition);
+        var filamentDiameter = new BigDecimal("2.85");
+        var nozzleDiameter = new BigDecimal("0.4");
+        var layerHeight = new BigDecimal("0.1");
+
+        var pi = new BigDecimal(Math.PI);
+        var filamentRadius = BigDecimalUtils.Divide(filamentDiameter, new BigDecimal(2));
+
+
+        var filamentVolumeNeeded = distance.multiply(nozzleDiameter).multiply(layerHeight);
+
+        // PI * r²
+        var filamentArea = pi.multiply(filamentRadius.pow(2));
+
+        var filamentMm = BigDecimalUtils.Divide(filamentVolumeNeeded, filamentArea);
+        _currentExtrusion = _currentExtrusion.add(filamentMm);
+
+        _currentPosition = point;
+
+        var decimalSeperator = new DecimalFormatSymbols();
+        decimalSeperator.setDecimalSeparator('.');
+
+        var df = new DecimalFormat();
+        df.setMaximumFractionDigits(5);
+        df.setMinimumFractionDigits(0);
+        df.setGroupingUsed(false);
+        df.setDecimalFormatSymbols(decimalSeperator);
+
+        _stringBuilder
+                .append("G1")
+                .append(" E").append(df.format(_currentExtrusion))
+                .append(" X").append(point.GetX())
+                .append(" Y").append(point.GetY())
+                .append(" Z").append(point.GetZ())
+                .append('\n');
+
+        return new ExpressionValue(Type.Void);
+    }
+
+    @Override
+    public ExpressionValue Visit(SqrtNode sqrtNode) throws Exception {
+        var parameters = sqrtNode.GetChild().GetChildren();
+        var number = parameters.get(0).Accept(this).GetNumber();
+
+        return new ExpressionValue(number.sqrt(new MathContext(100)));
     }
 
     @Override
@@ -252,6 +356,21 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     }
 
     @Override
+    public ExpressionValue Visit(PowerExpressionNode powerExpressionNode) throws Exception {
+        var leftValue = powerExpressionNode.GetLeftChild().Accept(this).GetNumber();
+        var rightValue = powerExpressionNode.GetRightChild().Accept(this).GetNumber();
+
+        return new ExpressionValue(BigDecimalMath.pow(leftValue, rightValue, new MathContext(100)));
+    }
+
+    @Override
+    public ExpressionValue Visit(NotExpressionNode notExpressionNode) throws Exception {
+        var childBoolean = notExpressionNode.GetChild().Accept(this).GetBoolean();
+
+        return new ExpressionValue(!childBoolean);
+    }
+
+    @Override
     public ExpressionValue Visit(IdentifierExpressionNode identifierExpressionNode) throws Exception {
         var identifier = identifierExpressionNode.GetChild().GetValue();
         var variableEntry = _symbolTable.LookupVariable(identifier);
@@ -336,6 +455,61 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         }
 
         return null;
+    }
+
+    @Override
+    public ExpressionValue Visit(GreaterThanExpressionNode greaterThanExpressionNode) throws Exception {
+        var leftNumber = greaterThanExpressionNode.GetLeftChild().Accept(this).GetNumber();
+        var rightNumber = greaterThanExpressionNode.GetRightChild().Accept(this).GetNumber();
+        return new ExpressionValue(BigDecimalUtils.GreaterThan(leftNumber, rightNumber));
+    }
+
+    @Override
+    public ExpressionValue Visit(LessThanExpressionNode lessThanExpressionNode) throws Exception {
+        var leftNumber = lessThanExpressionNode.GetLeftChild().Accept(this).GetNumber();
+        var rightNumber = lessThanExpressionNode.GetRightChild().Accept(this).GetNumber();
+        return new ExpressionValue(BigDecimalUtils.LessThan( leftNumber, rightNumber));
+    }
+
+    @Override
+    public ExpressionValue Visit(EqualsExpressionNode equalsExpressionNode) throws Exception {
+        var leftType = equalsExpressionNode.GetLeftChild().Accept(this).GetType();
+        var rightType = equalsExpressionNode.GetRightChild().Accept(this).GetType();
+
+        var leftValue = equalsExpressionNode.GetLeftChild().Accept(this);
+        var rightValue = equalsExpressionNode.GetRightChild().Accept(this);
+
+        return TryBoth(leftType, rightType, EQ_MAP).apply(leftValue, rightValue);
+    }
+
+    @Override
+    public ExpressionValue Visit(GreaterThanEqualsExpressionNode greaterThanEqualsExpressionNode) throws Exception {
+        var leftNumber = greaterThanEqualsExpressionNode.GetLeftChild().Accept(this).GetNumber();
+        var rightNumber = greaterThanEqualsExpressionNode.GetRightChild().Accept(this).GetNumber();
+        return new ExpressionValue(BigDecimalUtils.GreaterThanEquals(leftNumber, rightNumber));
+    }
+
+    @Override
+    public ExpressionValue Visit(LessThanEqualsExpressionNode lessThanEqualsExpressionNode) throws Exception {
+        var leftNumber = lessThanEqualsExpressionNode.GetLeftChild().Accept(this).GetNumber();
+        var rightNumber = lessThanEqualsExpressionNode.GetRightChild().Accept(this).GetNumber();
+        return new ExpressionValue(BigDecimalUtils.LessThanEquals(leftNumber, rightNumber));
+    }
+
+    @Override
+    public ExpressionValue Visit(AndExpressionNode andExpressionNode) throws Exception {
+        var leftBool = andExpressionNode.GetLeftChild().Accept(this).GetBoolean();
+        var rightBool = andExpressionNode.GetRightChild().Accept(this).GetBoolean();
+
+        return new ExpressionValue(leftBool && rightBool);
+    }
+
+    @Override
+    public ExpressionValue Visit(OrExpressionNode orExpressionNode) throws Exception {
+        var leftBool = orExpressionNode.GetLeftChild().Accept(this).GetBoolean();
+        var rightBool = orExpressionNode.GetRightChild().Accept(this).GetBoolean();
+
+        return new ExpressionValue(leftBool || rightBool);
     }
 
     private static BiFunction<ExpressionValue, ExpressionValue, ExpressionValue> TryBoth(Type left, Type right, Map<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> map) throws TypeException {

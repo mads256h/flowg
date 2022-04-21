@@ -25,6 +25,16 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
+    public String Visit(LineNode lineNode) throws NoException {
+        return "line(" + lineNode.GetChild().Accept(this) + ")";
+    }
+
+    @Override
+    public String Visit(SqrtNode sqrtNode) throws NoException {
+        return "sqrt(" + sqrtNode.GetChild().Accept(this) + ")";
+    }
+
+    @Override
     public String Visit(ActualParameterListNode actualParameterListNode) throws NoException {
         var sb = new StringBuilder();
         boolean first = true;
@@ -136,6 +146,16 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
+    public String Visit(PowerExpressionNode powerExpressionNode) throws NoException {
+        return powerExpressionNode.GetLeftChild().Accept(this) + "^" + powerExpressionNode.GetRightChild().Accept(this);
+    }
+    
+    @Override
+    public String Visit(NotExpressionNode notExpressionNode) throws NoException {
+        return "!" + notExpressionNode.GetChild().Accept(this);
+    }
+
+    @Override
     public String Visit(IdentifierExpressionNode identifierExpressionNode) throws NoException {
         return identifierExpressionNode.GetChild().Accept(this);
     }
@@ -161,5 +181,40 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     @Override
     public String Visit(ForToNode forToNode) throws NoException {
         return "for (" + forToNode.GetFirstNode().Accept(this) + " to " + forToNode.GetSecondNode().Accept(this) + ") {\n" + forToNode.GetThirdNode().Accept(this) + "}";
+    }
+
+    @Override
+    public String Visit(GreaterThanExpressionNode greaterThanExpressionNode) throws NoException {
+        return greaterThanExpressionNode.GetLeftChild().Accept(this) + " > " + greaterThanExpressionNode.GetRightChild().Accept(this);
+    }
+
+    @Override
+    public String Visit(LessThanExpressionNode lessThanExpressionNode) throws NoException {
+        return lessThanExpressionNode.GetLeftChild().Accept(this) + " < " + lessThanExpressionNode.GetRightChild().Accept(this);
+    }
+
+    @Override
+    public String Visit(EqualsExpressionNode equalsExpressionNode) throws NoException {
+        return equalsExpressionNode.GetLeftChild().Accept(this) + " == " + equalsExpressionNode.GetRightChild().Accept(this);
+    }
+
+    @Override
+    public String Visit(GreaterThanEqualsExpressionNode greaterThanEqualsExpressionNode) throws NoException {
+        return greaterThanEqualsExpressionNode.GetLeftChild().Accept(this) + " >= " + greaterThanEqualsExpressionNode.GetRightChild().Accept(this);
+    }
+
+    @Override
+    public String Visit(LessThanEqualsExpressionNode lessThanEqualsExpressionNode) throws NoException {
+        return lessThanEqualsExpressionNode.GetLeftChild().Accept(this) + " <= " + lessThanEqualsExpressionNode.GetRightChild().Accept(this);
+    }
+
+    @Override
+    public String Visit(AndExpressionNode andExpressionNode) throws NoException {
+        return andExpressionNode.GetLeftChild().Accept(this) + " && " + andExpressionNode.GetRightChild().Accept(this);
+    }
+
+    @Override
+    public String Visit(OrExpressionNode orExpressionNode) throws NoException {
+        return orExpressionNode.GetLeftChild().Accept(this) + " || " + orExpressionNode.GetRightChild().Accept(this);
     }
 }

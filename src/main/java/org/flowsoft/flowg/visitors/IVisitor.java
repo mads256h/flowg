@@ -5,6 +5,8 @@ import org.flowsoft.flowg.nodes.*;
 public interface IVisitor<T, TException extends Exception> {
     T Visit(StatementListNode statementListNode) throws TException;
     T Visit(MoveNode moveNode) throws TException;
+    T Visit(LineNode lineNode) throws TException;
+    T Visit(SqrtNode sqrtNode) throws TException;
     T Visit(ActualParameterListNode actualParameterListNode) throws TException;
     T Visit(FormalParameterListNode formalParameterListNode) throws TException;
     T Visit(FormalParameterNode formalParameterNode) throws TException;
@@ -21,10 +23,19 @@ public interface IVisitor<T, TException extends Exception> {
     T Visit(MinusExpressionNode minusExpressionNode) throws TException;
     T Visit(TimesExpressionNode multiplyExpressionNode) throws TException;
     T Visit(DivideExpressionNode divisionExpressionNode) throws TException;
+    T Visit(PowerExpressionNode powerExpressionNode) throws TException;
+    T Visit(NotExpressionNode notExpressionNode) throws TException;
     T Visit(IdentifierExpressionNode identifierExpressionNode) throws TException;
     T Visit(FunctionCallNode functionCallNode) throws TException;
     T Visit(ReturnNode returnNode) throws TException;
     T Visit(AssignmentNode assignmentNode) throws TException;
     T Visit(ForToNode forToNode) throws TException;
 
+    T Visit(GreaterThanExpressionNode greaterThanExpressionNode) throws TException;
+    T Visit(LessThanExpressionNode lessThanExpressionNode) throws TException;
+    T Visit(EqualsExpressionNode equalsExpressionNode) throws TException;
+    T Visit(GreaterThanEqualsExpressionNode greaterThanEqualsExpressionNode) throws TException;
+    T Visit(LessThanEqualsExpressionNode lessThanEqualsExpressionNode) throws TException;
+    T Visit(AndExpressionNode andExpressionNode) throws TException;
+    T Visit(OrExpressionNode orExpressionNode) throws TException;
 }

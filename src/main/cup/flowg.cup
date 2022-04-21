@@ -16,6 +16,8 @@ terminal NumberLiteralNode NUMBER_LITERAL;
 terminal BooleanLiteralNode BOOLEAN_LITERAL;
 
 terminal MOVE;
+terminal LINE;
+terminal SQRT;
 terminal RETURN;
 
 // ()
@@ -37,9 +39,19 @@ terminal PLUS;
 terminal MINUS;
 terminal TIMES;
 terminal DIVIDE;
+terminal POWER;
 terminal FOR;
 terminal TO;
 terminal GCODE;
+terminal NOT;
+
+terminal GREATER_THAN;
+terminal LESS_THAN;
+terminal EQUALS;
+terminal GREATER_THAN_EQUALS;
+terminal LESS_THAN_EQUALS;
+terminal AND;
+terminal OR;
 
 non terminal StatementListNode program;
 non terminal StatementListNode stmt_list;
@@ -48,6 +60,8 @@ non terminal StatementNode stmt;
 non terminal DeclarationNode decl;
 non terminal AssignmentNode assign;
 non terminal MoveNode move;
+non terminal LineNode line;
+non terminal SqrtNode sqrt;
 non terminal ActualParameterListNode a_param_list;
 non terminal ArrayList<ExpressionNode> a_param_list_impl;
 non terminal FormalParameterListNode f_param_list;
@@ -61,8 +75,11 @@ non terminal FunctionCallNode func_call;
 non terminal ReturnNode return;
 non terminal ForToNode for_to;
 
+precedence left AND, OR;
+precedence left EQUALS, GREATER_THAN, LESS_THAN, GREATER_THAN_EQUALS, LESS_THAN_EQUALS;
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE;
+precedence left POWER;
 
 start with program;
 
@@ -83,6 +100,9 @@ stmt ::=decl:d
         |
         move:m
         {: RESULT = m; :}
+        |
+        line:l
+        {: RESULT = l; :}
         |
         func_def:d
         {: RESULT = d; :}
@@ -111,6 +131,12 @@ assign ::= IDENTIFIER:i ASSIGNMENT expr:e
 
 move ::= MOVE L_PAREN a_param_list:p R_PAREN
         {: RESULT = new MoveNode(p); :};
+
+line ::= LINE L_PAREN a_param_list:p R_PAREN
+        {: RESULT = new LineNode(p); :};
+
+sqrt ::= SQRT L_PAREN a_param_list:p R_PAREN
+        {: RESULT = new SqrtNode(p); :};
 
 a_param_list ::= a_param_list_impl:l
         {: RESULT = new ActualParameterListNode(l); :};
@@ -153,10 +179,31 @@ expr ::= NUMBER_LITERAL:n
         {: RESULT = new TimesExpressionNode(e1, e2); :}
         | expr:e1 DIVIDE expr:e2
         {: RESULT = new DivideExpressionNode(e1, e2); :}
+        | expr:e1 POWER expr:e2
+        {: RESULT = new PowerExpressionNode(e1, e2); :}
         | IDENTIFIER:i
         {: RESULT = new IdentifierExpressionNode(i); :}
+        | NOT expr:e
+        {: RESULT = new NotExpressionNode(e); :}
         | func_call:c
         {: RESULT = c; :}
+        | sqrt:s
+        {: RESULT = s; :}
+        // Boolean Expressions
+        | expr:b1 GREATER_THAN expr:b2
+        {: RESULT = new GreaterThanExpressionNode(b1, b2); :}
+        | expr:b1 LESS_THAN expr:b2
+        {: RESULT = new LessThanExpressionNode(b1, b2); :}
+        | expr:e1 EQUALS expr:e2
+        {: RESULT = new EqualsExpressionNode(e1, e2); :}
+        | expr:b1 GREATER_THAN_EQUALS expr:b2
+        {: RESULT = new GreaterThanEqualsExpressionNode(b1, b2); :}
+        | expr:b1 LESS_THAN_EQUALS expr:b2
+        {: RESULT = new LessThanEqualsExpressionNode(b1, b2); :}
+        | expr:b1 AND expr:b2
+        {: RESULT = new AndExpressionNode(b1, b2); :}
+        | expr:b1 OR expr:b2
+        {: RESULT = new OrExpressionNode(b1, b2); :}
         ;
 
 func_def ::= TYPE:t IDENTIFIER:i L_PAREN f_param_list:p R_PAREN L_BRACKET stmt_list:l R_BRACKET

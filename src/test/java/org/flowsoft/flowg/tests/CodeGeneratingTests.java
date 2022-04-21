@@ -3,10 +3,7 @@ package org.flowsoft.flowg.tests;
 import org.flowsoft.flowg.BigDecimalUtils;
 import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.nodes.*;
-import org.flowsoft.flowg.visitors.CodeGeneratingVisitor;
-import org.flowsoft.flowg.visitors.Point;
-import org.flowsoft.flowg.visitors.SymbolTable;
-import org.flowsoft.flowg.visitors.TypeCheckingVisitor;
+import org.flowsoft.flowg.visitors.*;
 import org.junit.Test;
 import org.junit.experimental.theories.*;
 import org.junit.runner.RunWith;
@@ -201,6 +198,232 @@ public class CodeGeneratingTests {
             )
     };
 
+    @DataPoints("bool")
+    public static final Thing<Boolean>[] BOOL_EXPR_THING = new Thing[] {
+            new Thing<>(
+                    true,
+                    new GreaterThanExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("1")),
+                            new NumberLiteralNode(new BigDecimal("0"))
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new GreaterThanExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("0")),
+                            new NumberLiteralNode(new BigDecimal("1"))
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new LessThanExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("0")),
+                            new NumberLiteralNode(new BigDecimal("1"))
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new LessThanExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("1")),
+                            new NumberLiteralNode(new BigDecimal("0"))
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new GreaterThanEqualsExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("0")),
+                            new NumberLiteralNode(new BigDecimal("0"))
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new GreaterThanEqualsExpressionNode(
+                            new NumberLiteralNode(new BigDecimal('1')),
+                            new NumberLiteralNode(new BigDecimal('0'))
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new GreaterThanEqualsExpressionNode(
+                            new NumberLiteralNode(new BigDecimal('0')),
+                            new NumberLiteralNode(new BigDecimal('1'))
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new LessThanEqualsExpressionNode(
+                            new NumberLiteralNode(new BigDecimal('0')),
+                            new NumberLiteralNode(new BigDecimal('0'))
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new LessThanEqualsExpressionNode(
+                            new NumberLiteralNode(new BigDecimal('0')),
+                            new NumberLiteralNode(new BigDecimal('1'))
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new LessThanEqualsExpressionNode(
+                            new NumberLiteralNode(new BigDecimal('1')),
+                            new NumberLiteralNode(new BigDecimal('0'))
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new AndExpressionNode(
+                            new BooleanLiteralNode(true),
+                            new BooleanLiteralNode(true)
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new AndExpressionNode(
+                            new BooleanLiteralNode(false),
+                            new BooleanLiteralNode(true)
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new AndExpressionNode(
+                            new BooleanLiteralNode(true),
+                            new BooleanLiteralNode(false)
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new OrExpressionNode(
+                            new BooleanLiteralNode(true),
+                            new BooleanLiteralNode(true)
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new OrExpressionNode(
+                            new BooleanLiteralNode(false),
+                            new BooleanLiteralNode(false)
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new OrExpressionNode(
+                            new BooleanLiteralNode(false),
+                            new BooleanLiteralNode(true)
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new OrExpressionNode(
+                            new BooleanLiteralNode(true),
+                            new BooleanLiteralNode(false)
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new EqualsExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("1")),
+                            new NumberLiteralNode(new BigDecimal("1"))
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new EqualsExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("0")),
+                            new NumberLiteralNode(new BigDecimal("0"))
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new EqualsExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("-1")),
+                            new NumberLiteralNode(new BigDecimal("-1"))
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new EqualsExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("1")),
+                            new NumberLiteralNode(new BigDecimal("0"))
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new EqualsExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("0")),
+                            new NumberLiteralNode(new BigDecimal("1"))
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new EqualsExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("-1")),
+                            new NumberLiteralNode(new BigDecimal("1"))
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new EqualsExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("1")),
+                            new NumberLiteralNode(new BigDecimal("-1"))
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new EqualsExpressionNode(
+                            new PointNode(
+                                    new NumberLiteralNode(new BigDecimal("1")),
+                                    new NumberLiteralNode(new BigDecimal("2")),
+                                    new NumberLiteralNode(new BigDecimal("3"))),
+                            new PointNode(
+                                    new NumberLiteralNode(new BigDecimal("1")),
+                                    new NumberLiteralNode(new BigDecimal("2")),
+                                    new NumberLiteralNode(new BigDecimal("3")))
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new EqualsExpressionNode(
+                            new PointNode(
+                                    new NumberLiteralNode(new BigDecimal("1")),
+                                    new NumberLiteralNode(new BigDecimal("2")),
+                                    new NumberLiteralNode(new BigDecimal("3"))),
+                            new PointNode(
+                                    new NumberLiteralNode(new BigDecimal("3")),
+                                    new NumberLiteralNode(new BigDecimal("2")),
+                                    new NumberLiteralNode(new BigDecimal("1")))
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new EqualsExpressionNode(
+                            new BooleanLiteralNode(true),
+                            new BooleanLiteralNode(true)
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new EqualsExpressionNode(
+                            new BooleanLiteralNode(false),
+                            new BooleanLiteralNode(false)
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new EqualsExpressionNode(
+                            new BooleanLiteralNode(false),
+                            new BooleanLiteralNode(true)
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new EqualsExpressionNode(
+                            new BooleanLiteralNode(true),
+                            new BooleanLiteralNode(false)
+                    )
+            ),
+    };
+
     @Theory
     public void TestExpressionNumberSuccess(@FromDataPoints("number") Thing<BigDecimal> thing) throws Exception {
         var node = thing.GetNode();
@@ -222,6 +445,18 @@ public class CodeGeneratingTests {
         var actual = value.GetPoint();
 
         assertThat(value.GetType()).isEqualTo(Type.Point);
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Theory
+    public void TestExpressionBooleanSuccess(@FromDataPoints("bool") Thing<Boolean> thing) throws Exception {
+        var node = thing.GetNode();
+        var expected = thing.GetExpected();
+
+        var value = node.Accept(new CodeGeneratingVisitor(new SymbolTable(null)));
+        var actual = value.GetBoolean();
+
+        assertThat(value.GetType()).isEqualTo(Type.Boolean);
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -306,6 +541,6 @@ public class CodeGeneratingTests {
 
         var symbolTable = typeChecker.GetSymbolTable();
 
-        assertThat(codeGen.GetCode()).isEqualTo("G1 E0 X2 Y4 Z6\n");
+        assertThat(codeGen.GetCode()).isEqualTo("G0 X2 Y4 Z6\n");
     }
 }

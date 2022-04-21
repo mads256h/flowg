@@ -5,9 +5,7 @@ import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.nodes.*;
 
 import java.util.ArrayList;
-import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
@@ -21,6 +19,23 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         {
             put(new TypePair(Type.Number, Type.Number), Type.Number);
             put(new TypePair(Type.Point, Type.Number), Type.Point);
+        }};
+
+    private final static HashMap<TypePair, Type> GE_LE_EQGE_EQLE_TYPE_MAP = new HashMap<>() {
+        {
+            put(new TypePair(Type.Number, Type.Number), Type.Boolean);
+        }};
+
+    private final static HashMap<TypePair, Type> EQ_TYPE_MAP = new HashMap<>() {
+        {
+           put(new TypePair(Type.Number, Type.Number), Type.Boolean);
+           put(new TypePair(Type.Point, Type.Point), Type.Boolean);
+           put(new TypePair(Type.Boolean, Type.Boolean), Type.Boolean);
+        }};
+
+    private final static HashMap<TypePair, Type> AND_OR_TYPE_MAP = new HashMap<>() {
+        {
+           put(new TypePair(Type.Boolean, Type.Boolean), Type.Boolean);
         }};
 
     private SymbolTable _symbolTable = new SymbolTable(null);
@@ -49,6 +64,37 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     @Override
     public Type Visit(MoveNode moveNode) throws TypeException {
         var params = moveNode.GetChild().GetChildren();
+        if (params.size() != 1) {
+            throw new TypeException();
+        }
+
+        var type = params.get(0).Accept(this);
+        if (type != Type.Point) {
+            throw new TypeException();
+        }
+
+        return Type.Void;
+    }
+
+    @Override
+    public Type Visit(SqrtNode sqrtNode) throws TypeException {
+        var params = sqrtNode.GetChild().GetChildren();
+
+        if (params.size() != 1) {
+            throw new TypeException();
+        }
+
+        var type = params.get(0).Accept(this);
+        if (type != Type.Number) {
+            throw new TypeException();
+        }
+
+        return Type.Number;
+    }
+
+    @Override
+    public Type Visit(LineNode lineNode) throws TypeException {
+        var params = lineNode.GetChild().GetChildren();
         if (params.size() != 1) {
             throw new TypeException();
         }
@@ -198,6 +244,29 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     }
 
     @Override
+    public Type Visit(PowerExpressionNode powerExpressionNode) throws TypeException {
+        var leftType = powerExpressionNode.GetLeftChild().Accept(this);
+        var rightType = powerExpressionNode.GetRightChild().Accept(this);
+
+        if (leftType == rightType && leftType == Type.Number) {
+            return Type.Number;
+        }
+
+        throw new TypeException();
+    }
+    
+    @Override
+    public Type Visit(NotExpressionNode notExpressionNode) throws TypeException {
+        var childType = notExpressionNode.GetChild().Accept(this);
+
+        if (childType != Type.Boolean) {
+            throw new TypeException();
+        }
+
+        return Type.Boolean;
+    }
+
+    @Override
     public Type Visit(IdentifierExpressionNode identifierExpressionNode) throws TypeException {
         var identifier = identifierExpressionNode.GetChild().GetValue();
         return _symbolTable.LookupVariable(identifier).GetType();
@@ -269,6 +338,55 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         forToNode.GetThirdNode().Accept(this);
 
         return null;
+    }
+
+    @Override
+    public Type Visit(GreaterThanExpressionNode greaterThanExpressionNode) throws TypeException {
+        var leftType = greaterThanExpressionNode.GetLeftChild().Accept(this);
+        var rightType = greaterThanExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, GE_LE_EQGE_EQLE_TYPE_MAP);
+    }
+
+    @Override
+    public Type Visit(LessThanExpressionNode lessThanExpressionNode) throws TypeException {
+        var leftType = lessThanExpressionNode.GetLeftChild().Accept(this);
+        var rightType = lessThanExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, GE_LE_EQGE_EQLE_TYPE_MAP);
+    }
+
+    @Override
+    public Type Visit(EqualsExpressionNode equalsExpressionNode) throws TypeException {
+        var leftType = equalsExpressionNode.GetLeftChild().Accept(this);
+        var rightType = equalsExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, EQ_TYPE_MAP);
+    }
+
+    @Override
+    public Type Visit(GreaterThanEqualsExpressionNode greaterThanEqualsExpressionNode) throws TypeException {
+        var leftType = greaterThanEqualsExpressionNode.GetLeftChild().Accept(this);
+        var rightType = greaterThanEqualsExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, GE_LE_EQGE_EQLE_TYPE_MAP);
+    }
+
+    @Override
+    public Type Visit(LessThanEqualsExpressionNode lessThanEqualsExpressionNode) throws TypeException {
+        var leftType = lessThanEqualsExpressionNode.GetLeftChild().Accept(this);
+        var rightType = lessThanEqualsExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, GE_LE_EQGE_EQLE_TYPE_MAP);
+    }
+
+    @Override
+    public Type Visit(AndExpressionNode andExpressionNode) throws TypeException {
+        var leftType = andExpressionNode.GetLeftChild().Accept(this);
+        var rightType = andExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, AND_OR_TYPE_MAP);
+    }
+
+    @Override
+    public Type Visit(OrExpressionNode orExpressionNode) throws TypeException {
+        var leftType = orExpressionNode.GetLeftChild().Accept(this);
+        var rightType = orExpressionNode.GetRightChild().Accept(this);
+        return TypePair.TryBothWays(leftType, rightType, AND_OR_TYPE_MAP);
     }
 
     private Type PlusMinusTypeCheckExpr(Type leftType, Type rightType) throws TypeException {

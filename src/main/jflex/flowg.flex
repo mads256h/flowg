@@ -44,6 +44,8 @@ Anything = .
 
 "return" { return symbol(sym.RETURN); }
 "move" { return symbol(sym.MOVE); }
+"line" { return symbol(sym.LINE); }
+"sqrt" { return symbol(sym.SQRT); }
 
 "for" { return symbol(sym.FOR); }
 "to" { return symbol(sym.TO); }
@@ -76,6 +78,16 @@ Anything = .
 "-" { return symbol(sym.MINUS); }
 "*" { return symbol(sym.TIMES); }
 "/" { return symbol(sym.DIVIDE); }
+"^" { return symbol(sym.POWER); }
+"!" { return symbol(sym.NOT); }
+
+">" { return symbol(sym.GREATER_THAN); }
+"<" { return symbol(sym.LESS_THAN); }
+"==" { return symbol(sym.EQUALS); }
+">=" { return symbol(sym.GREATER_THAN_EQUALS); }
+"<=" { return symbol(sym.LESS_THAN_EQUALS); }
+"&&" { return symbol(sym.AND); }
+"||" { return symbol(sym.OR); }
 
 // This catches any error.
 // Never match this symbol unless it is to report is as an error!
