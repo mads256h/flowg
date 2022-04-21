@@ -1,15 +1,18 @@
 package org.flowsoft.flowg;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 
 public final class BigDecimalUtils {
+    public static final MathContext DEFAULT_MATH_CONTEXT = new MathContext(100, RoundingMode.HALF_UP);
+
     public static BigDecimal Divide(BigDecimal left, BigDecimal right) {
         try {
             return left.divide(right);
         }
         catch (ArithmeticException e) {
-            return left.divide(right, 100, RoundingMode.HALF_UP);
+            return left.divide(right, DEFAULT_MATH_CONTEXT);
         }
     }
 

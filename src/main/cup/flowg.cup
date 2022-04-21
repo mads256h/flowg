@@ -3,6 +3,7 @@ package org.flowsoft.flowg;
 import java.util.ArrayList;
 import java_cup.runtime.*;
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.math.functions.*;
 
 terminal INVALID;
 
@@ -15,7 +16,16 @@ terminal BooleanLiteralNode BOOLEAN_LITERAL;
 
 terminal MOVE;
 terminal LINE;
+
+// Math builtins
 terminal SQRT;
+terminal SIN;
+terminal COS;
+terminal TAN;
+terminal ARCSIN;
+terminal ARCCOS;
+terminal ARCTAN;
+
 terminal RETURN;
 
 // ()
@@ -58,7 +68,16 @@ non terminal DeclarationNode decl;
 non terminal AssignmentNode assign;
 non terminal MoveNode move;
 non terminal LineNode line;
+
+// Math builtins
 non terminal SqrtNode sqrt;
+non terminal SinNode sin;
+non terminal CosNode cos;
+non terminal TanNode tan;
+non terminal ArcsinNode arcsin;
+non terminal ArccosNode arccos;
+non terminal ArctanNode arctan;
+
 non terminal ActualParameterListNode a_param_list;
 non terminal ArrayList<ExpressionNode> a_param_list_impl;
 non terminal FormalParameterListNode f_param_list;
@@ -127,8 +146,28 @@ move ::= MOVE L_PAREN a_param_list:p R_PAREN
 line ::= LINE L_PAREN a_param_list:p R_PAREN
         {: RESULT = new LineNode(p); :};
 
+
 sqrt ::= SQRT L_PAREN a_param_list:p R_PAREN
         {: RESULT = new SqrtNode(p); :};
+
+sin ::= SIN L_PAREN a_param_list:p R_PAREN
+        {: RESULT = new SinNode(p); :};
+
+cos ::= COS L_PAREN a_param_list:p R_PAREN
+        {: RESULT = new CosNode(p); :};
+
+tan ::= TAN L_PAREN a_param_list:p R_PAREN
+        {: RESULT = new TanNode(p); :};
+
+arcsin ::= ARCSIN L_PAREN a_param_list:p R_PAREN
+        {: RESULT = new ArcsinNode(p); :};
+
+arccos ::= ARCCOS L_PAREN a_param_list:p R_PAREN
+        {: RESULT = new ArccosNode(p); :};
+
+arctan ::= ARCTAN L_PAREN a_param_list:p R_PAREN
+        {: RESULT = new ArctanNode(p); :};
+
 
 a_param_list ::= a_param_list_impl:l
         {: RESULT = new ActualParameterListNode(l); :};
@@ -179,8 +218,23 @@ expr ::= NUMBER_LITERAL:n
         {: RESULT = new NotExpressionNode(e); :}
         | func_call:c
         {: RESULT = c; :}
+
+        // Math builtins
         | sqrt:s
         {: RESULT = s; :}
+        | sin:s
+        {: RESULT = s; :}
+        | cos:c
+        {: RESULT = c; :}
+        | tan:t
+        {: RESULT = t; :}
+        | arcsin:s
+        {: RESULT = s; :}
+        | arccos:c
+        {: RESULT = c; :}
+        | arctan:t
+        {: RESULT = t; :}
+
         // Boolean Expressions
         | expr:b1 GREATER_THAN expr:b2
         {: RESULT = new GreaterThanExpressionNode(b1, b2); :}
