@@ -2,7 +2,14 @@ package org.flowsoft.flowg.visitors;
 
 import org.flowsoft.flowg.NoException;
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.base.ExpressionNode;
+import org.flowsoft.flowg.nodes.base.INode;
+import org.flowsoft.flowg.nodes.base.StatementNode;
+import org.flowsoft.flowg.nodes.controlflow.ForToNode;
+import org.flowsoft.flowg.nodes.controlflow.ReturnNode;
+import org.flowsoft.flowg.nodes.functions.*;
 import org.flowsoft.flowg.nodes.math.functions.*;
+import org.flowsoft.flowg.nodes.math.operators.*;
 
 public class TreePrintingVisitor implements IVisitor<String, NoException> {
 
@@ -14,14 +21,14 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     }
 
     private String PrintNode(INode node, INode... children) throws NoException {
-        var str = PrintNode(node);
+        var str = new StringBuilder(PrintNode(node));
         _indentation++;
         for (var child : children) {
-            str += child.Accept(this);
+            str.append(child.Accept(this));
         }
         _indentation--;
 
-        return str;
+        return str.toString();
     }
 
     @Override

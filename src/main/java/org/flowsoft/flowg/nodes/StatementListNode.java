@@ -1,5 +1,7 @@
 package org.flowsoft.flowg.nodes;
 
+import org.flowsoft.flowg.nodes.base.ArrayNode;
+import org.flowsoft.flowg.nodes.base.StatementNode;
 import org.flowsoft.flowg.visitors.IVisitor;
 
 import java.util.List;

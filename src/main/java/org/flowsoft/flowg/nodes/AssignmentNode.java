@@ -1,5 +1,8 @@
 package org.flowsoft.flowg.nodes;
 
+import org.flowsoft.flowg.nodes.base.BinaryNode;
+import org.flowsoft.flowg.nodes.base.ExpressionNode;
+import org.flowsoft.flowg.nodes.base.StatementNode;
 import org.flowsoft.flowg.visitors.IVisitor;
 
 public class AssignmentNode extends BinaryNode<IdentifierNode, ExpressionNode> implements StatementNode {

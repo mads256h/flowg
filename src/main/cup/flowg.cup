@@ -3,7 +3,11 @@ package org.flowsoft.flowg;
 import java.util.ArrayList;
 import java_cup.runtime.*;
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.base.*;
+import org.flowsoft.flowg.nodes.controlflow.*;
+import org.flowsoft.flowg.nodes.functions.*;
 import org.flowsoft.flowg.nodes.math.functions.*;
+import org.flowsoft.flowg.nodes.math.operators.*;
 
 terminal INVALID;
 
@@ -14,6 +18,7 @@ terminal IdentifierNode IDENTIFIER;
 terminal NumberLiteralNode NUMBER_LITERAL;
 terminal BooleanLiteralNode BOOLEAN_LITERAL;
 
+// Builtin functions
 terminal MOVE;
 terminal LINE;
 
@@ -26,7 +31,6 @@ terminal ARCSIN;
 terminal ARCCOS;
 terminal ARCTAN;
 
-terminal RETURN;
 
 // ()
 terminal L_PAREN;
@@ -43,15 +47,15 @@ terminal R_SQUARE_BRACKET;
 terminal ASSIGNMENT;
 terminal SEMICOLON;
 terminal COMMA;
+
+// Arithmic operators
 terminal PLUS;
 terminal MINUS;
 terminal TIMES;
 terminal DIVIDE;
 terminal POWER;
-terminal FOR;
-terminal TO;
-terminal NOT;
 
+// Boolean operators
 terminal GREATER_THAN;
 terminal LESS_THAN;
 terminal EQUALS;
@@ -59,13 +63,22 @@ terminal GREATER_THAN_EQUALS;
 terminal LESS_THAN_EQUALS;
 terminal AND;
 terminal OR;
+terminal NOT;
+
+// Control flow
+terminal FOR;
+terminal TO;
+terminal RETURN;
 
 non terminal StatementListNode program;
 non terminal StatementListNode stmt_list;
 non terminal ArrayList<StatementNode> stmt_list_impl;
 non terminal StatementNode stmt;
+
 non terminal DeclarationNode decl;
 non terminal AssignmentNode assign;
+
+// Builtin functions
 non terminal MoveNode move;
 non terminal LineNode line;
 
@@ -78,17 +91,23 @@ non terminal ArcsinNode arcsin;
 non terminal ArccosNode arccos;
 non terminal ArctanNode arctan;
 
+// User supplied functions
+non terminal FunctionDefinitionNode func_def;
+non terminal FunctionCallNode func_call;
+
 non terminal ActualParameterListNode a_param_list;
 non terminal ArrayList<ExpressionNode> a_param_list_impl;
+
 non terminal FormalParameterListNode f_param_list;
 non terminal ArrayList<FormalParameterNode> f_param_list_impl;
 non terminal FormalParameterNode f_param;
+
 non terminal ExpressionNode expr;
 non terminal PointNode point;
-non terminal FunctionDefinitionNode func_def;
-non terminal FunctionCallNode func_call;
-non terminal ReturnNode return;
+
+// Control flow
 non terminal ForToNode for_to;
+non terminal ReturnNode return;
 
 precedence left AND, OR;
 precedence left EQUALS, GREATER_THAN, LESS_THAN, GREATER_THAN_EQUALS, LESS_THAN_EQUALS;
@@ -106,33 +125,34 @@ stmt_list ::= stmt_list_impl:l
 
 stmt_list_impl ::= stmt_list_impl:l stmt:s SEMICOLON
             {: l.add(s); RESULT = l; :}
-            |
-            stmt:s SEMICOLON
+            | stmt:s SEMICOLON
             {: var list = new ArrayList<StatementNode>(); list.add(s); RESULT = list; :};
 
-stmt ::=decl:d
+stmt ::=
+        // Variable declaration and assignment
+        decl:d
         {: RESULT = d; :}
-        |
-        move:m
-        {: RESULT = m; :}
-        |
-        line:l
-        {: RESULT = l; :}
-        |
-        func_def:d
-        {: RESULT = d; :}
-        |
-        func_call:c
-        {: RESULT = c; :}
-        |
-        return:r
-        {: RESULT = r; :}
-        |
-        assign:a
+        | assign:a
         {: RESULT = a; :}
-        |
-        for_to:f
-        {: RESULT = f; :};
+
+        // Builtin functions
+        | move:m
+        {: RESULT = m; :}
+        | line:l
+        {: RESULT = l; :}
+
+        // User supplied functions
+        | func_def:d
+        {: RESULT = d; :}
+        | func_call:c
+        {: RESULT = c; :}
+
+        // Control flow
+        | for_to:f
+        {: RESULT = f; :}
+        | return:r
+        {: RESULT = r; :}
+        ;
 
 decl ::= TYPE:t IDENTIFIER:i ASSIGNMENT expr:e
         {: RESULT = new DeclarationNode(t, i, e); :};
@@ -140,42 +160,26 @@ decl ::= TYPE:t IDENTIFIER:i ASSIGNMENT expr:e
 assign ::= IDENTIFIER:i ASSIGNMENT expr:e
         {: RESULT = new AssignmentNode(i, e); :};
 
+// Builtin functions
 move ::= MOVE L_PAREN a_param_list:p R_PAREN
         {: RESULT = new MoveNode(p); :};
 
 line ::= LINE L_PAREN a_param_list:p R_PAREN
         {: RESULT = new LineNode(p); :};
 
+// User defined functions
+func_def ::= TYPE:t IDENTIFIER:i L_PAREN f_param_list:p R_PAREN L_BRACKET stmt_list:l R_BRACKET
+        {: RESULT = new FunctionDefinitionNode(t, i, p, l); :};
 
-sqrt ::= SQRT L_PAREN a_param_list:p R_PAREN
-        {: RESULT = new SqrtNode(p); :};
-
-sin ::= SIN L_PAREN a_param_list:p R_PAREN
-        {: RESULT = new SinNode(p); :};
-
-cos ::= COS L_PAREN a_param_list:p R_PAREN
-        {: RESULT = new CosNode(p); :};
-
-tan ::= TAN L_PAREN a_param_list:p R_PAREN
-        {: RESULT = new TanNode(p); :};
-
-arcsin ::= ARCSIN L_PAREN a_param_list:p R_PAREN
-        {: RESULT = new ArcsinNode(p); :};
-
-arccos ::= ARCCOS L_PAREN a_param_list:p R_PAREN
-        {: RESULT = new ArccosNode(p); :};
-
-arctan ::= ARCTAN L_PAREN a_param_list:p R_PAREN
-        {: RESULT = new ArctanNode(p); :};
-
+func_call ::= IDENTIFIER:i L_PAREN a_param_list:p R_PAREN
+        {: RESULT = new FunctionCallNode(i, p); :};
 
 a_param_list ::= a_param_list_impl:l
         {: RESULT = new ActualParameterListNode(l); :};
 
 a_param_list_impl ::= a_param_list_impl:l COMMA expr:e
         {: l.add(e); RESULT = l; :}
-        |
-        expr:e
+        | expr:e
         {: var l = new ArrayList<ExpressionNode>(); l.add(e); RESULT = l; :}
         |
         {: RESULT = new ArrayList<ExpressionNode>(); :};
@@ -187,8 +191,7 @@ f_param_list ::= f_param_list_impl:l
 
 f_param_list_impl ::= f_param_list_impl:l COMMA f_param:p
         {: l.add(p); RESULT = l; :}
-        |
-        f_param:p
+        | f_param:p
         {: var l = new ArrayList<FormalParameterNode>(); l.add(p); RESULT = l; :}
         |
         {: RESULT = new ArrayList<FormalParameterNode>(); :};
@@ -196,12 +199,25 @@ f_param_list_impl ::= f_param_list_impl:l COMMA f_param:p
 f_param ::= TYPE:t IDENTIFIER:i
         {: RESULT = new FormalParameterNode(t, i); :};
 
-expr ::= NUMBER_LITERAL:n
+// Control flow
+for_to ::= FOR L_PAREN decl:d TO expr:e R_PAREN L_BRACKET program:l R_BRACKET
+        {: RESULT = new ForToNode(d, e, l); :};
+
+return::= RETURN expr:e
+        {: RESULT = new ReturnNode(e); :}
+        | RETURN
+        {: RESULT = new ReturnNode(null); :};
+
+expr ::=
+        // Literals
+        NUMBER_LITERAL:n
         {: RESULT = n; :}
         | BOOLEAN_LITERAL:b
         {: RESULT = b; :}
         | point:p
         {: RESULT = p; :}
+
+        // Arithmic operators
         | expr:e1 PLUS expr:e2
         {: RESULT = new PlusExpressionNode(e1, e2); :}
         | expr:e1 MINUS expr:e2
@@ -214,8 +230,6 @@ expr ::= NUMBER_LITERAL:n
         {: RESULT = new PowerExpressionNode(e1, e2); :}
         | IDENTIFIER:i
         {: RESULT = new IdentifierExpressionNode(i); :}
-        | NOT expr:e
-        {: RESULT = new NotExpressionNode(e); :}
         | func_call:c
         {: RESULT = c; :}
 
@@ -250,21 +264,32 @@ expr ::= NUMBER_LITERAL:n
         {: RESULT = new AndExpressionNode(b1, b2); :}
         | expr:b1 OR expr:b2
         {: RESULT = new OrExpressionNode(b1, b2); :}
+        | NOT expr:e
+        {: RESULT = new NotExpressionNode(e); :}
         ;
 
-func_def ::= TYPE:t IDENTIFIER:i L_PAREN f_param_list:p R_PAREN L_BRACKET stmt_list:l R_BRACKET
-        {: RESULT = new FunctionDefinitionNode(t, i, p, l); :};
+// Math builtins
+sqrt ::= SQRT L_PAREN a_param_list:p R_PAREN
+        {: RESULT = new SqrtNode(p); :};
 
-func_call ::= IDENTIFIER:i L_PAREN a_param_list:p R_PAREN
-        {: RESULT = new FunctionCallNode(i, p); :};
+sin ::= SIN L_PAREN a_param_list:p R_PAREN
+        {: RESULT = new SinNode(p); :};
 
-return::= RETURN expr:e
-        {: RESULT = new ReturnNode(e); :}
-        | RETURN
-        {: RESULT = new ReturnNode(null); :};
+cos ::= COS L_PAREN a_param_list:p R_PAREN
+        {: RESULT = new CosNode(p); :};
+
+tan ::= TAN L_PAREN a_param_list:p R_PAREN
+        {: RESULT = new TanNode(p); :};
+
+arcsin ::= ARCSIN L_PAREN a_param_list:p R_PAREN
+        {: RESULT = new ArcsinNode(p); :};
+
+arccos ::= ARCCOS L_PAREN a_param_list:p R_PAREN
+        {: RESULT = new ArccosNode(p); :};
+
+arctan ::= ARCTAN L_PAREN a_param_list:p R_PAREN
+        {: RESULT = new ArctanNode(p); :};
+
 
 point ::= L_SQUARE_BRACKET expr:e1 COMMA expr:e2 COMMA expr:e3 R_SQUARE_BRACKET
         {: RESULT = new PointNode(e1, e2, e3); :};
-
-for_to ::= FOR L_PAREN decl:d TO expr:e R_PAREN L_BRACKET program:l R_BRACKET
-        {: RESULT = new ForToNode(d, e, l); :};
