@@ -475,8 +475,11 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
         if (booleanValue) {
             ifElseNode.GetSecondNode().Accept(this);
-        } else {
-            ifElseNode.GetThirdNode().Accept(this);
+        }
+        else {
+            if (ifElseNode.GetThirdNode() != null) {
+                ifElseNode.GetThirdNode().Accept(this);
+            }
         }
 
         return null;
