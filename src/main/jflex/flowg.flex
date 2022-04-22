@@ -15,6 +15,10 @@ import java.math.BigDecimal;
 
 %debug
 
+
+%states Default, GCodePreState, GcodeFunctionState
+
+
 %{
   private Symbol symbol(int type) {
     return new Symbol(type, yyline, yycolumn);
@@ -50,11 +54,11 @@ Anything = .
 "for" { return symbol(sym.FOR); }
 "to" { return symbol(sym.TO); }
 
-"gcode" { return symbol(sym.GCODE); }
+"gcode" { yybegin(GCodePreState); return symbol(sym.GCODE); }
 
 {Identifier} { return symbol(sym.IDENTIFIER, new IdentifierNode(yytext())); }
 
-{GCodeCode} { return symbol(sym.GCODECODE, new GCodeCodeNode(yytext())); }
+<GcodeFunctionState> {GCodeCode} { return symbol(sym.GCODECODE, new GCodeCodeNode(yytext())); }
 
 {Number} { return symbol(sym.NUMBER_LITERAL, new NumberLiteralNode(new BigDecimal(yytext()))); }
 
@@ -65,6 +69,7 @@ Anything = .
 "(" { return symbol(sym.L_PAREN); }
 ")" { return symbol(sym.R_PAREN); }
 
+<GCodePreState> "{" { yybegin(GcodeFunctionState); return symbol(sym.L_BRACKET); }
 "{" { return symbol(sym.L_BRACKET); }
 "}" { return symbol(sym.R_BRACKET); }
 

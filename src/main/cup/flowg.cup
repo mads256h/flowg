@@ -10,7 +10,7 @@ terminal TypeNode TYPE;
 
 terminal IdentifierNode IDENTIFIER;
 
-terminal GCodeCodeNode GCODECODE;
+
 
 terminal NumberLiteralNode NUMBER_LITERAL;
 terminal BooleanLiteralNode BOOLEAN_LITERAL;
@@ -19,7 +19,7 @@ terminal MOVE;
 terminal LINE;
 terminal SQRT;
 terminal RETURN;
-
+terminal GCodeCodeNode GCODECODE;
 // ()
 terminal L_PAREN;
 terminal R_PAREN;
@@ -106,7 +106,7 @@ stmt ::=decl:d
         |
         func_def:d
         {: RESULT = d; :}
-        |
+        |3
         func_call:c
         {: RESULT = c; :}
         |
