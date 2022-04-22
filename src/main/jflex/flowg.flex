@@ -56,9 +56,10 @@ Anything = .
 
 "gcode" { yybegin(GCodePreState); return symbol(sym.GCODE); }
 
+<GcodeFunctionState> {GCodeCode} { return symbol(sym.GCODECODE, new GCodeCodeNode(yytext())); }
+
 {Identifier} { return symbol(sym.IDENTIFIER, new IdentifierNode(yytext())); }
 
-<GcodeFunctionState> {GCodeCode} { return symbol(sym.GCODECODE, new GCodeCodeNode(yytext())); }
 
 {Number} { return symbol(sym.NUMBER_LITERAL, new NumberLiteralNode(new BigDecimal(yytext()))); }
 
@@ -71,6 +72,7 @@ Anything = .
 
 <GCodePreState> "{" { yybegin(GcodeFunctionState); return symbol(sym.L_BRACKET); }
 "{" { return symbol(sym.L_BRACKET); }
+<GcodeFunctionState> "}" { yybegin(Default); return symbol(sym.R_BRACKET); }
 "}" { return symbol(sym.R_BRACKET); }
 
 "[" { return symbol(sym.L_SQUARE_BRACKET); }
