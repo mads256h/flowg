@@ -1,5 +1,6 @@
 package org.flowsoft.flowg.nodes.functions;
 
+import java_cup.runtime.ComplexSymbolFactory.Location;
 import org.flowsoft.flowg.nodes.IdentifierNode;
 import org.flowsoft.flowg.nodes.StatementListNode;
 import org.flowsoft.flowg.nodes.TypeNode;
@@ -13,7 +14,8 @@ public class FunctionDefinitionNode extends Node implements StatementNode {
     private final FormalParameterListNode _formalParameterListNode;
     private final StatementListNode _statementListNode;
 
-    public FunctionDefinitionNode(TypeNode typeNode, IdentifierNode identifierNode, FormalParameterListNode formalParameterListNode, StatementListNode statementListNode) {
+    public FunctionDefinitionNode(TypeNode typeNode, IdentifierNode identifierNode, FormalParameterListNode formalParameterListNode, StatementListNode statementListNode, Location left, Location right) {
+        super(left, right);
         _typeNode = typeNode;
         _identifierNode = identifierNode;
         _formalParameterListNode = formalParameterListNode;
