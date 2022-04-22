@@ -15,4 +15,20 @@ public class ParameterCountException extends TypeException {
         _left = left;
         _right = right;
     }
+
+    public int GetExpectedCount() {
+        return _expectedCount;
+    }
+
+    public int GetActualCount() {
+        return _actualCount;
+    }
+
+    public Location GetLeft() {
+        return _left;
+    }
+
+    public Location GetRight() {
+        return _right;
+    }
 }

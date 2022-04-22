@@ -111,6 +111,10 @@ public class main {
             System.err.format("%s:%d:%d: error: symbol '%s' not found\n", args[0], e.GetLeft().getLine(), e.GetLeft().getColumn(), e.GetIdentifier());
             System.err.println(GetLine(file, e.GetLeft(), e.GetRight()));
         }
+        catch (ParameterCountException e) {
+            System.err.format("%s:%d:%d: error: expected %d parameters but got %d\n", args[0], e.GetLeft().getLine(), e.GetLeft().getColumn(), e.GetExpectedCount(), e.GetActualCount());
+            System.err.println(GetLine(file, e.GetLeft(), e.GetRight()));
+        }
         catch (Exception e) {
             System.out.println("Could not parse");
             e.printStackTrace();
