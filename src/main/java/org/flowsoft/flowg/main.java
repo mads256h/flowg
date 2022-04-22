@@ -104,23 +104,23 @@ public class main {
             writer.close();
         }
         catch (ExpectedTypeException e) {
-            System.err.format("%s:%d:%d: error: expected %s but got %s\n",args[0], e.GetLeft().getLine(), e.GetLeft().getColumn(), TypeHelper.TypeToString(e.GetExpected()), TypeHelper.TypeToString(e.GetActual()));
+            System.err.format("%s:%d:%d: error: expected %s but got %s\n", e.GetLeft().getUnit(), e.GetLeft().getLine(), e.GetLeft().getColumn(), TypeHelper.TypeToString(e.GetExpected()), TypeHelper.TypeToString(e.GetActual()));
             System.err.println(GetLine(file, e.GetLeft(), e.GetRight()));
         }
         catch (SymbolNotFoundException e) {
-            System.err.format("%s:%d:%d: error: symbol '%s' not found\n", args[0], e.GetLeft().getLine(), e.GetLeft().getColumn(), e.GetIdentifier());
+            System.err.format("%s:%d:%d: error: symbol '%s' not found\n", e.GetLeft().getUnit(), e.GetLeft().getLine(), e.GetLeft().getColumn(), e.GetIdentifier());
             System.err.println(GetLine(file, e.GetLeft(), e.GetRight()));
         }
         catch (ParameterCountException e) {
-            System.err.format("%s:%d:%d: error: expected %d parameters but got %d\n", args[0], e.GetLeft().getLine(), e.GetLeft().getColumn(), e.GetExpectedCount(), e.GetActualCount());
+            System.err.format("%s:%d:%d: error: expected %d parameters but got %d\n", e.GetLeft().getUnit(), e.GetLeft().getLine(), e.GetLeft().getColumn(), e.GetExpectedCount(), e.GetActualCount());
             System.err.println(GetLine(file, e.GetLeft(), e.GetRight()));
         }
         catch (TypeMismatchException e) {
-            System.err.format("%s:%d:%d: error: type mismatch between %s and %s\n", args[0], e.GetLeft().getLine(), e.GetLeft().getColumn(), TypeHelper.TypeToString(e.GetLeftType()), TypeHelper.TypeToString(e.GetRightType()));
+            System.err.format("%s:%d:%d: error: type mismatch between %s and %s\n", e.GetLeft().getUnit(), e.GetLeft().getLine(), e.GetLeft().getColumn(), TypeHelper.TypeToString(e.GetLeftType()), TypeHelper.TypeToString(e.GetRightType()));
             System.err.println(GetLine(file, e.GetLeft(), e.GetRight()));
         }
         catch (RedeclarationException e) {
-            System.err.format("%s:%d:%d: error: symbol redefinition\n", args[0], e.GetLeft().getLine(), e.GetLeft().getColumn());
+            System.err.format("%s:%d:%d: error: symbol redefinition\n", e.GetLeft().getUnit(), e.GetLeft().getLine(), e.GetLeft().getColumn());
             System.err.println(GetLine(file, e.GetLeft(), e.GetRight()));
         }
         catch (Exception e) {
