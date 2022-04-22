@@ -225,6 +225,10 @@ expr ::=
         | point_entry:e
         {: RESULT = e; :}
 
+        // Parens
+        | L_PAREN expr:e R_PAREN
+        {: RESULT = e; :}
+
         // Arithmic operators
         | expr:e1 PLUS expr:e2
         {: RESULT = new PlusExpressionNode(e1, e2); :}
