@@ -1,5 +1,6 @@
 package org.flowsoft.flowg.symboltables;
 
+import java_cup.runtime.ComplexSymbolFactory.Location;
 import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.visitors.ExpressionValue;
 
@@ -7,6 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RuntimeSymbolTable {
+    private static final Location N = new Location("null", 0, 0, 0);
+
     private final SymbolTable _base;
     private final RuntimeSymbolTable _parent;
     
@@ -50,6 +53,6 @@ public class RuntimeSymbolTable {
     }
 
     public FunctionEntry LookupFunction(String identifier) throws TypeException {
-        return _base.LookupFunction(identifier);
+        return _base.LookupFunction(identifier, N, N);
     }
 }

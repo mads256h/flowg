@@ -341,16 +341,17 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     @Override
     public Type Visit(IdentifierExpressionNode identifierExpressionNode) throws TypeException {
         var identifier = identifierExpressionNode.GetChild().GetValue();
-        return _symbolTable.LookupVariable(identifier).GetType();
+        return _symbolTable.LookupVariable(identifier, identifierExpressionNode.GetLeft(), identifierExpressionNode.GetRight()).GetType();
     }
 
     @Override
     public Type Visit(FunctionCallNode functionCallNode) throws TypeException {
-        var identifier = functionCallNode.GetLeftChild().GetValue();
+        var identifierNode = functionCallNode.GetLeftChild();
+        var identifier = identifierNode.GetValue();
         var paramNode = functionCallNode.GetRightChild();
         var paramList = paramNode.GetChildren();
 
-        var functionEntry = _symbolTable.LookupFunction(identifier);
+        var functionEntry = _symbolTable.LookupFunction(identifier, identifierNode.GetLeft(), identifierNode.GetRight());
         var expectedTypes = functionEntry.GetFormalParameters();
 
         if (paramList.size() != expectedTypes.size()) {
@@ -411,7 +412,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     public Type Visit(AssignmentNode assignmentNode) throws TypeException {
         var identifier = assignmentNode.GetLeftChild().GetValue();
 
-        var identifierType = _symbolTable.LookupVariable(identifier).GetType();
+        var identifierType = _symbolTable.LookupVariable(identifier, assignmentNode.GetLeft(), assignmentNode.GetRight()).GetType();
 
         var expressionNode = assignmentNode.GetRightChild();
         var expressionType = expressionNode.Accept(this);

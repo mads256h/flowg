@@ -55,28 +55,28 @@ public class SymbolTable implements Cloneable<SymbolTable> {
         return _variableEntries.values().stream().toList();
     }
 
-    public VariableEntry LookupVariable(String identifier) throws TypeException {
+    public VariableEntry LookupVariable(String identifier, Location left, Location right) throws TypeException {
         if (_variableEntries.containsKey(identifier)) {
             return _variableEntries.get(identifier);
         }
 
         if (_parent != null) {
-            return _parent.LookupVariable(identifier);
+            return _parent.LookupVariable(identifier, left, right);
         }
 
-        throw new SymbolNotFoundException(identifier, N, N);
+        throw new SymbolNotFoundException(identifier, left, right);
     }
 
-    public FunctionEntry LookupFunction(String identifier) throws TypeException {
+    public FunctionEntry LookupFunction(String identifier, Location left, Location right) throws TypeException {
         if (_functionEntries.containsKey(identifier)) {
             return _functionEntries.get(identifier);
         }
 
         if (_parent != null) {
-            return _parent.LookupFunction(identifier);
+            return _parent.LookupFunction(identifier, left, right);
         }
 
-        throw new SymbolNotFoundException(identifier, N, N);
+        throw new SymbolNotFoundException(identifier, left, right);
     }
 
     public void Print() {

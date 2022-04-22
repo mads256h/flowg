@@ -107,6 +107,10 @@ public class main {
             System.err.format("%s:%d:%d: error: expected %s but got %s\n",args[0], e.GetLeft().getLine(), e.GetLeft().getColumn(), TypeHelper.TypeToString(e.GetExpected()), TypeHelper.TypeToString(e.GetActual()));
             System.err.println(GetLine(file, e.GetLeft(), e.GetRight()));
         }
+        catch (SymbolNotFoundException e) {
+            System.err.format("%s:%d:%d: error: symbol '%s' not found\n", args[0], e.GetLeft().getLine(), e.GetLeft().getColumn(), e.GetIdentifier());
+            System.err.println(GetLine(file, e.GetLeft(), e.GetRight()));
+        }
         catch (Exception e) {
             System.out.println("Could not parse");
             e.printStackTrace();

@@ -12,4 +12,16 @@ public class SymbolNotFoundException extends TypeException {
         _left = left;
         _right = right;
     }
+
+    public String GetIdentifier() {
+        return _identifier;
+    }
+
+    public Location GetLeft() {
+        return _left;
+    }
+
+    public Location GetRight() {
+        return _right;
+    }
 }

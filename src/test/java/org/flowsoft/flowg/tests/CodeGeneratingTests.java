@@ -607,10 +607,10 @@ public class CodeGeneratingTests {
         var symbolTable = typeChecker.GetSymbolTable();
 
         // Lookups throw if the symbol does not exist.
-        var funcSymbolTable = symbolTable.LookupFunction("test").GetSymbolTable();
-        funcSymbolTable.LookupVariable("x");
-        funcSymbolTable.LookupVariable("y");
-        funcSymbolTable.LookupVariable("z");
+        var funcSymbolTable = symbolTable.LookupFunction("test", N, N).GetSymbolTable();
+        funcSymbolTable.LookupVariable("x", N, N);
+        funcSymbolTable.LookupVariable("y", N, N);
+        funcSymbolTable.LookupVariable("z", N, N);
 
         assertThat(codeGen.GetCode()).isEqualTo("G0 X2 Y4 Z6\n");
     }
