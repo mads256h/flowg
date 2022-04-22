@@ -114,17 +114,15 @@ non terminal FormalParameterNode f_param;
 
 non terminal ExpressionNode expr;
 non terminal PointNode point;
-non terminal FunctionDefinitionNode func_def;
-non terminal GCodeFuncNode gcode_func;
-non terminal FunctionCallNode func_call;
-non terminal ReturnNode return;
-non terminal ForToNode for_to;
 non terminal PointEntryNode point_entry;
 
 // Control flow
 non terminal ForToNode for_to;
 non terminal ReturnNode return;
 non terminal IfElseNode if_else;
+
+// GCode
+non terminal GCodeFuncNode gcode_func;
 
 precedence left NOT;
 precedence left AND, OR;
@@ -310,11 +308,6 @@ expr ::=
 sqrt ::= SQRT L_PAREN a_param_list:p R_PAREN
         {: RESULT = new SqrtNode(p); :};
 
-gcode_func   ::= GCODE IDENTIFIER:i  L_PAREN f_param_list:p R_PAREN L_BRACKET GCODECODE:g R_BRACKET
-        {: RESULT = new GCodeFuncNode(i, p, g); :};
-
-func_call ::= IDENTIFIER:i L_PAREN a_param_list:p R_PAREN
-        {: RESULT = new FunctionCallNode(i, p); :};
 sin ::= SIN L_PAREN a_param_list:p R_PAREN
         {: RESULT = new SinNode(p); :};
 
@@ -339,3 +332,7 @@ point ::= L_SQUARE_BRACKET expr:e1 COMMA expr:e2 COMMA expr:e3 R_SQUARE_BRACKET
 
 point_entry ::= expr:e DOT IDENTIFIER:i
         {: RESULT = new PointEntryNode(e, i); :};
+
+//GCode
+gcode_func   ::= GCODE IDENTIFIER:i  L_PAREN f_param_list:p R_PAREN L_BRACKET GCODECODE:g R_BRACKET
+        {: RESULT = new GCodeFuncNode(i, p, g); :};

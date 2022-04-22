@@ -1,5 +1,8 @@
 package org.flowsoft.flowg.nodes;
 
+import org.flowsoft.flowg.nodes.base.Node;
+import org.flowsoft.flowg.nodes.base.StatementNode;
+import org.flowsoft.flowg.nodes.functions.FormalParameterListNode;
 import org.flowsoft.flowg.visitors.IVisitor;
 
 public class GCodeFuncNode extends Node implements StatementNode {

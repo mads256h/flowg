@@ -1,5 +1,7 @@
 package org.flowsoft.flowg.nodes;
 
+import org.flowsoft.flowg.nodes.base.NullaryNode;
+import org.flowsoft.flowg.nodes.base.StatementNode;
 import org.flowsoft.flowg.visitors.IVisitor;
 
 public class GCodeCodeNode extends NullaryNode<String> implements StatementNode {

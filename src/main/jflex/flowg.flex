@@ -94,10 +94,10 @@ Anything = .
 "else" { return symbol("else", sym.ELSE); }
 
 // GCode
-"gcode" { yybegin(GCodePreState); return symbol(sym.GCODE); }
+"gcode" { yybegin(GCodePreState); return symbol("GCODE", sym.GCODE); }
 
 
-<GcodeFunctionState> {GCodeCode} { return symbol(sym.GCODECODE, new GCodeCodeNode(yytext())); }
+<GcodeFunctionState> {GCodeCode} { return symbol("GCodeCodeNode", sym.GCODECODE, new GCodeCodeNode(yytext())); }
 
 {Identifier} { return symbol("identifier", sym.IDENTIFIER, new IdentifierNode(yytext())); }
 
