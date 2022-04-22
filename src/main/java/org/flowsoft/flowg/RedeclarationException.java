@@ -11,4 +11,12 @@ public class RedeclarationException extends TypeException {
         _left = left;
         _right = right;
     }
+
+    public Location GetLeft() {
+        return _left;
+    }
+
+    public Location GetRight() {
+        return _right;
+    }
 }

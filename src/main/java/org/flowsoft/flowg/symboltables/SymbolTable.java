@@ -12,9 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 public class SymbolTable implements Cloneable<SymbolTable> {
-    //TODO: remove this
-    private static final Location N = new Location("fixme", 0, 0, 0);
-
     private final SymbolTable _parent;
 
     private final Map<String, VariableEntry> _variableEntries;
@@ -33,21 +30,21 @@ public class SymbolTable implements Cloneable<SymbolTable> {
         _functionEntries = functionEntries;
     }
 
-    public void Enter(String identifier, Type type) throws TypeException {
+    public void Enter(String identifier, Type type, Location left, Location right) throws TypeException {
         if (!_variableEntries.containsKey(identifier)) {
             _variableEntries.put(identifier, new VariableEntry(identifier, type));
         }
         else {
-            throw new RedeclarationException(N, N);
+            throw new RedeclarationException(left, right);
         }
     }
 
-    public void Enter(Type returnType, String identifier, ArrayList<FormalParameterNode> formalParameters, StatementListNode functionBody, SymbolTable parent) throws TypeException {
+    public void Enter(Type returnType, String identifier, ArrayList<FormalParameterNode> formalParameters, StatementListNode functionBody, SymbolTable parent, Location left, Location right) throws TypeException {
         if (!_functionEntries.containsKey(identifier)) {
             _functionEntries.put(identifier, new FunctionEntry(returnType, identifier, formalParameters, functionBody, parent));
         }
         else {
-            throw new RedeclarationException(N, N);
+            throw new RedeclarationException(left, right);
         }
     }
 

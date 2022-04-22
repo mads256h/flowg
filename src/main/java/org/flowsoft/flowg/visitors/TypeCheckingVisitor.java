@@ -180,7 +180,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         var typeNodeType = typeNode.Accept(this);
         var expressionNodeType = expressionNode.Accept(this);
         if (typeNodeType == expressionNodeType) {
-            _symbolTable.Enter(identifierNode.GetValue(), typeNodeType);
+            _symbolTable.Enter(identifierNode.GetValue(), typeNodeType, declarationNode.GetLeft(), declarationNode.GetRight());
             return typeNodeType;
         }
         else {
@@ -191,18 +191,19 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     @Override
     public Type Visit(FunctionDefinitionNode functionDefinitionNode) throws TypeException {
         var returnType = functionDefinitionNode.GetTypeNode().Accept(this);
-        var identifier = functionDefinitionNode.GetIdentifierNode().GetValue();
+        var identifierNode = functionDefinitionNode.GetIdentifierNode();
+        var identifier = identifierNode.GetValue();
         var formalParams = functionDefinitionNode.GetFormalParameterListNode();
         var statementList = functionDefinitionNode.GetStatementListNode();
 
         var parentSymbolTable = _symbolTable.Clone();
         var bodySymbolTable = new SymbolTable(parentSymbolTable);
         for (var param : formalParams.GetChildren()) {
-            bodySymbolTable.Enter(param.GetRightChild().GetValue(), param.GetLeftChild().GetValue());
+            bodySymbolTable.Enter(param.GetRightChild().GetValue(), param.GetLeftChild().GetValue(), param.GetLeft(), param.GetRight());
         }
 
-        parentSymbolTable.Enter(returnType, identifier, (ArrayList<FormalParameterNode>) formalParams.GetChildren(), functionDefinitionNode.GetStatementListNode(), bodySymbolTable);
-        _symbolTable.Enter(returnType, identifier, (ArrayList<FormalParameterNode>) formalParams.GetChildren(), functionDefinitionNode.GetStatementListNode(), bodySymbolTable);
+        parentSymbolTable.Enter(returnType, identifier, (ArrayList<FormalParameterNode>) formalParams.GetChildren(), functionDefinitionNode.GetStatementListNode(), bodySymbolTable, identifierNode.GetLeft(), identifierNode.GetRight());
+        _symbolTable.Enter(returnType, identifier, (ArrayList<FormalParameterNode>) formalParams.GetChildren(), functionDefinitionNode.GetStatementListNode(), bodySymbolTable, identifierNode.GetLeft(), identifierNode.GetRight());
 
         var oldFunctionReturnType = _functionReturnType;
         var oldSymbolTable = _symbolTable;
