@@ -12,9 +12,6 @@ import org.flowsoft.flowg.symboltables.RuntimeSymbolTable;
 import org.flowsoft.flowg.symboltables.SymbolTable;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.math.MathContext;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -196,9 +193,9 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         _stringBuilder
                 .append("G0")
                 // Don't extrude anything we are moving :)
-                .append(" X").append(point.GetX())
-                .append(" Y").append(point.GetY())
-                .append(" Z").append(point.GetZ())
+                .append(" X").append(BigDecimalUtils.ToGCode(point.GetX()))
+                .append(" Y").append(BigDecimalUtils.ToGCode(point.GetY()))
+                .append(" Z").append(BigDecimalUtils.ToGCode(point.GetZ()))
                 .append('\n');
 
         return new ExpressionValue(Type.Void);
@@ -229,21 +226,12 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
         _currentPosition = point;
 
-        var decimalSeparator = new DecimalFormatSymbols();
-        decimalSeparator.setDecimalSeparator('.');
-
-        var df = new DecimalFormat();
-        df.setMaximumFractionDigits(5);
-        df.setMinimumFractionDigits(0);
-        df.setGroupingUsed(false);
-        df.setDecimalFormatSymbols(decimalSeparator);
-
         _stringBuilder
                 .append("G1")
-                .append(" E").append(df.format(_currentExtrusion))
-                .append(" X").append(point.GetX())
-                .append(" Y").append(point.GetY())
-                .append(" Z").append(point.GetZ())
+                .append(" E").append(BigDecimalUtils.ToGCode(_currentExtrusion))
+                .append(" X").append(BigDecimalUtils.ToGCode(point.GetX()))
+                .append(" Y").append(BigDecimalUtils.ToGCode(point.GetY()))
+                .append(" Z").append(BigDecimalUtils.ToGCode(point.GetZ()))
                 .append('\n');
 
         return new ExpressionValue(Type.Void);
@@ -415,7 +403,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         var leftValue = powerExpressionNode.GetLeftChild().Accept(this).GetNumber();
         var rightValue = powerExpressionNode.GetRightChild().Accept(this).GetNumber();
 
-        return new ExpressionValue(BigDecimalMath.pow(leftValue, rightValue, new MathContext(100)));
+        return new ExpressionValue(BigDecimalMath.pow(leftValue, rightValue, BigDecimalUtils.DEFAULT_MATH_CONTEXT));
     }
 
     @Override
