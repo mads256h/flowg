@@ -2,6 +2,15 @@ package org.flowsoft.flowg.visitors;
 
 import org.flowsoft.flowg.NoException;
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.base.ExpressionNode;
+import org.flowsoft.flowg.nodes.base.INode;
+import org.flowsoft.flowg.nodes.base.StatementNode;
+import org.flowsoft.flowg.nodes.controlflow.ForToNode;
+import org.flowsoft.flowg.nodes.controlflow.IfElseNode;
+import org.flowsoft.flowg.nodes.controlflow.ReturnNode;
+import org.flowsoft.flowg.nodes.functions.*;
+import org.flowsoft.flowg.nodes.math.functions.*;
+import org.flowsoft.flowg.nodes.math.operators.*;
 
 public class TreePrintingVisitor implements IVisitor<String, NoException> {
 
@@ -13,14 +22,14 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     }
 
     private String PrintNode(INode node, INode... children) throws NoException {
-        var str = PrintNode(node);
+        var str = new StringBuilder(PrintNode(node));
         _indentation++;
         for (var child : children) {
-            str += child.Accept(this);
+            str.append(child.Accept(this));
         }
         _indentation--;
 
-        return str;
+        return str.toString();
     }
 
     @Override
@@ -43,6 +52,36 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     @Override
     public String Visit(SqrtNode sqrtNode) throws NoException {
         return PrintNode(sqrtNode, sqrtNode.GetChild());
+    }
+
+    @Override
+    public String Visit(SinNode sinNode) throws NoException {
+        return PrintNode(sinNode, sinNode.GetChild());
+    }
+
+    @Override
+    public String Visit(CosNode cosNode) throws NoException {
+        return PrintNode(cosNode, cosNode.GetChild());
+    }
+
+    @Override
+    public String Visit(TanNode tanNode) throws NoException {
+        return PrintNode(tanNode, tanNode.GetChild());
+    }
+
+    @Override
+    public String Visit(ArcsinNode arcsinNode) throws NoException {
+        return PrintNode(arcsinNode, arcsinNode.GetChild());
+    }
+
+    @Override
+    public String Visit(ArccosNode arccosNode) throws NoException {
+        return PrintNode(arccosNode, arccosNode.GetChild());
+    }
+
+    @Override
+    public String Visit(ArctanNode arctanNode) throws NoException {
+        return PrintNode(arctanNode, arctanNode.GetChild());
     }
 
     @Override
@@ -111,6 +150,11 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
+    public String Visit(PointEntryNode pointEntryNode) throws NoException {
+        return PrintNode(pointEntryNode, pointEntryNode.GetLeftChild(), pointEntryNode.GetRightChild());
+    }
+
+    @Override
     public String Visit(PlusExpressionNode plusExpressionNode) throws NoException { return PrintNode(plusExpressionNode, plusExpressionNode.GetLeftChild(), plusExpressionNode.GetRightChild()); }
 
     @Override
@@ -150,6 +194,16 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
         }
 
         return PrintNode(returnNode);
+    }
+
+    @Override
+    public String Visit(IfElseNode ifElseNode) throws NoException {
+        var child = ifElseNode.GetThirdNode();
+        if (child != null) {
+            return PrintNode(ifElseNode, ifElseNode.GetFirstNode(), ifElseNode.GetSecondNode(), ifElseNode.GetThirdNode());
+        }
+
+        return PrintNode(ifElseNode, ifElseNode.GetFirstNode(), ifElseNode.GetSecondNode());
     }
 
     @Override

@@ -3,6 +3,14 @@ package org.flowsoft.flowg.visitors;
 import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.base.UnaryNode;
+import org.flowsoft.flowg.nodes.controlflow.ForToNode;
+import org.flowsoft.flowg.nodes.controlflow.IfElseNode;
+import org.flowsoft.flowg.nodes.controlflow.ReturnNode;
+import org.flowsoft.flowg.nodes.functions.*;
+import org.flowsoft.flowg.nodes.math.functions.*;
+import org.flowsoft.flowg.nodes.math.operators.*;
+import org.flowsoft.flowg.symboltables.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,9 +85,23 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     }
 
     @Override
-    public Type Visit(SqrtNode sqrtNode) throws TypeException {
-        var params = sqrtNode.GetChild().GetChildren();
+    public Type Visit(LineNode lineNode) throws TypeException {
+        var params = lineNode.GetChild().GetChildren();
+        if (params.size() != 1) {
+            throw new TypeException();
+        }
 
+        var type = params.get(0).Accept(this);
+        if (type != Type.Point) {
+            throw new TypeException();
+        }
+
+        return Type.Void;
+    }
+
+    // Handles builtin function typechecking on the form number func(number)
+    private Type TypeCheckMathFunc(UnaryNode<ActualParameterListNode> funcNode) throws TypeException {
+        var params = funcNode.GetChild().GetChildren();
         if (params.size() != 1) {
             throw new TypeException();
         }
@@ -93,18 +115,38 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     }
 
     @Override
-    public Type Visit(LineNode lineNode) throws TypeException {
-        var params = lineNode.GetChild().GetChildren();
-        if (params.size() != 1) {
-            throw new TypeException();
-        }
+    public Type Visit(SqrtNode sqrtNode) throws TypeException {
+        return TypeCheckMathFunc(sqrtNode);
+    }
 
-        var type = params.get(0).Accept(this);
-        if (type != Type.Point) {
-            throw new TypeException();
-        }
+    @Override
+    public Type Visit(SinNode sinNode) throws TypeException {
+        return TypeCheckMathFunc(sinNode);
+    }
 
-        return Type.Void;
+    @Override
+    public Type Visit(CosNode cosNode) throws TypeException {
+        return TypeCheckMathFunc(cosNode);
+    }
+
+    @Override
+    public Type Visit(TanNode tanNode) throws TypeException {
+        return TypeCheckMathFunc(tanNode);
+    }
+
+    @Override
+    public Type Visit(ArcsinNode arcsinNode) throws TypeException {
+        return TypeCheckMathFunc(arcsinNode);
+    }
+
+    @Override
+    public Type Visit(ArccosNode arccosNode) throws TypeException {
+        return TypeCheckMathFunc(arccosNode);
+    }
+
+    @Override
+    public Type Visit(ArctanNode arctanNode) throws TypeException {
+        return TypeCheckMathFunc(arctanNode);
     }
 
     @Override
@@ -216,6 +258,22 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     }
 
     @Override
+    public Type Visit(PointEntryNode pointEntryNode) throws TypeException {
+        var expressionType = pointEntryNode.GetLeftChild().Accept(this);
+        var identifier = pointEntryNode.GetRightChild().GetValue();
+
+        if (expressionType != Type.Point) {
+            throw new TypeException();
+        }
+
+        if (!(identifier.equals("x") || identifier.equals("y") || identifier.equals("z"))) {
+            throw new TypeException();
+        }
+
+        return Type.Number;
+    }
+
+    @Override
     public Type Visit(PlusExpressionNode plusExpressionNode) throws TypeException {
         var leftType = plusExpressionNode.GetLeftChild().Accept(this);
         var rightType = plusExpressionNode.GetRightChild().Accept(this);
@@ -303,6 +361,23 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
         if (type != _functionReturnType) {
             throw new TypeException();
+        }
+
+        return null;
+    }
+
+    @Override
+    public Type Visit(IfElseNode ifElseNode) throws TypeException {
+        var expressionType = ifElseNode.GetFirstNode().Accept(this);
+
+        if (expressionType != Type.Boolean) {
+            throw new TypeException();
+        }
+
+        ifElseNode.GetSecondNode().Accept(this);
+
+        if (ifElseNode.GetThirdNode() != null) {
+            ifElseNode.GetThirdNode().Accept(this);
         }
 
         return null;

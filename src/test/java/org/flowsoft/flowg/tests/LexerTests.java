@@ -53,7 +53,7 @@ public class LexerTests {
 
     @Theory
     public void TestLexerSuccess(TextSymbolPair pair) throws IOException {
-        var lexer = new Yylex(new StringReader(pair.GetText()));
+        var lexer = new Yylex(new StringReader(pair.GetText()), "test");
         for (int symbol : pair.GetSymbols()) {
             assertThat(lexer.next_token().sym).isEqualTo(symbol);
         }
@@ -62,7 +62,7 @@ public class LexerTests {
 
     @Theory
     public void TestLexerFailure(String input) throws IOException {
-        var lexer = new Yylex(new StringReader(input));
+        var lexer = new Yylex(new StringReader(input), "test");
         assertThat(lexer.next_token().sym).isEqualTo(sym.INVALID);
         assertThat(lexer.next_token().sym).isEqualTo(sym.EOF);
     }

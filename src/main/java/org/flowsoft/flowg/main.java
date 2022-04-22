@@ -1,7 +1,7 @@
 package org.flowsoft.flowg;
 
-import java_cup.runtime.Symbol;
-import org.flowsoft.flowg.nodes.Node;
+import java_cup.runtime.ComplexSymbolFactory;
+import org.flowsoft.flowg.nodes.base.Node;
 import org.flowsoft.flowg.visitors.CodeGeneratingVisitor;
 import org.flowsoft.flowg.visitors.PrettyPrintingVisitor;
 import org.flowsoft.flowg.visitors.TreePrintingVisitor;
@@ -16,7 +16,7 @@ public class main {
         //Yylex.main(args);
         Yylex scanner;
         try {
-            scanner = new Yylex(new FileReader(args[0]));
+            scanner = new Yylex(new FileReader(args[0]), args[0]);
         }
         catch (Exception e) {
             System.out.println("Usage: <file>");
@@ -24,7 +24,7 @@ public class main {
             return;
         }
 
-        parser parser = new parser(scanner);
+        parser parser = new parser(scanner, new ComplexSymbolFactory());
         try {
             var symbol = parser.debug_parse();
             var rootNode = (Node)symbol.value;

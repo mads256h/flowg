@@ -1,8 +1,10 @@
 package org.flowsoft.flowg.nodes;
 
+import org.flowsoft.flowg.nodes.base.ExpressionNode;
+import org.flowsoft.flowg.nodes.base.UnaryNode;
 import org.flowsoft.flowg.visitors.IVisitor;
 
-public class IdentifierExpressionNode extends UnaryNode<IdentifierNode> implements ExpressionNode{
+public class IdentifierExpressionNode extends UnaryNode<IdentifierNode> implements ExpressionNode {
     public IdentifierExpressionNode(IdentifierNode identifierNode) {
         super(identifierNode);
     }

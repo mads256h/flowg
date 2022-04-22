@@ -3,6 +3,13 @@ package org.flowsoft.flowg.visitors;
 import org.flowsoft.flowg.NoException;
 import org.flowsoft.flowg.TypeHelper;
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.base.UnaryNode;
+import org.flowsoft.flowg.nodes.controlflow.ForToNode;
+import org.flowsoft.flowg.nodes.controlflow.IfElseNode;
+import org.flowsoft.flowg.nodes.controlflow.ReturnNode;
+import org.flowsoft.flowg.nodes.functions.*;
+import org.flowsoft.flowg.nodes.math.functions.*;
+import org.flowsoft.flowg.nodes.math.operators.*;
 
 public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     @Override
@@ -10,8 +17,8 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
         var children = statementListNode.GetChildren();
         StringBuilder str = new StringBuilder();
 
-        for (int i = 0; i < children.size(); i++) {
-            str.append(children.get(i).Accept(this));
+        for (var child : children) {
+            str.append(child.Accept(this));
             str.append(";\n");
         }
 
@@ -19,9 +26,13 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
         return str.toString();
     }
 
+    private String BuiltinFunctionPrinter(String funcName, UnaryNode<ActualParameterListNode> funcNode) throws NoException {
+        return funcName + "(" + funcNode.GetChild().Accept(this) + ")";
+    }
+
     @Override
     public String Visit(MoveNode moveNode) throws NoException {
-        return "move(" + moveNode.GetChild().Accept(this) + ")";
+        return BuiltinFunctionPrinter("move", moveNode);
     }
 
     @Override
@@ -31,7 +42,37 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
 
     @Override
     public String Visit(SqrtNode sqrtNode) throws NoException {
-        return "sqrt(" + sqrtNode.GetChild().Accept(this) + ")";
+        return BuiltinFunctionPrinter("sqrt", sqrtNode);
+    }
+
+    @Override
+    public String Visit(SinNode sinNode) throws NoException {
+        return BuiltinFunctionPrinter("sin", sinNode);
+    }
+
+    @Override
+    public String Visit(CosNode cosNode) throws NoException {
+        return BuiltinFunctionPrinter("cos", cosNode);
+    }
+
+    @Override
+    public String Visit(TanNode tanNode) throws NoException {
+        return BuiltinFunctionPrinter("tan", tanNode);
+    }
+
+    @Override
+    public String Visit(ArcsinNode arcsinNode) throws NoException {
+        return BuiltinFunctionPrinter("arcsin", arcsinNode);
+    }
+
+    @Override
+    public String Visit(ArccosNode arccosNode) throws NoException {
+        return BuiltinFunctionPrinter("arccos", arccosNode);
+    }
+
+    @Override
+    public String Visit(ArctanNode arctanNode) throws NoException {
+        return BuiltinFunctionPrinter("arctan", arctanNode);
     }
 
     @Override
@@ -126,6 +167,11 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
+    public String Visit(PointEntryNode pointEntryNode) throws NoException {
+        return pointEntryNode.GetLeftChild().Accept(this) + "." + pointEntryNode.GetRightChild().Accept(this);
+    }
+
+    @Override
     public String Visit(PlusExpressionNode plusExpressionNode) throws NoException {
         return plusExpressionNode.GetLeftChild().Accept(this) + " + " + plusExpressionNode.GetRightChild().Accept(this);
     }
@@ -171,6 +217,15 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     public String Visit(ReturnNode returnNode) throws NoException {
         var child = returnNode.GetChild();
         return "return" + (child == null ? "" : " " + child.Accept(this));
+    }
+
+    @Override
+    public String Visit(IfElseNode ifElseNode) throws NoException {
+        if (ifElseNode.GetThirdNode() == null) {
+            return "if (" + ifElseNode.GetFirstNode().Accept(this) + ") {\n" + ifElseNode.GetSecondNode().Accept(this) + "}";
+        } else {
+            return "if (" + ifElseNode.GetFirstNode().Accept(this) + ") {\n" + ifElseNode.GetSecondNode().Accept(this) + "} else {\n" + ifElseNode.GetThirdNode().Accept(this);
+        }
     }
 
     @Override

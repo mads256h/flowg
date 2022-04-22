@@ -1,16 +1,18 @@
 package org.flowsoft.flowg.visitors;
 
 import ch.obermuhlner.math.big.BigDecimalMath;
-import org.flowsoft.flowg.BigDecimalUtils;
-import org.flowsoft.flowg.ReturnException;
-import org.flowsoft.flowg.Type;
-import org.flowsoft.flowg.TypeException;
+import org.flowsoft.flowg.*;
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.controlflow.ForToNode;
+import org.flowsoft.flowg.nodes.controlflow.IfElseNode;
+import org.flowsoft.flowg.nodes.controlflow.ReturnNode;
+import org.flowsoft.flowg.nodes.functions.*;
+import org.flowsoft.flowg.nodes.math.functions.*;
+import org.flowsoft.flowg.nodes.math.operators.*;
+import org.flowsoft.flowg.symboltables.RuntimeSymbolTable;
+import org.flowsoft.flowg.symboltables.SymbolTable;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.math.MathContext;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -192,9 +194,9 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         _stringBuilder
                 .append("G0")
                 // Don't extrude anything we are moving :)
-                .append(" X").append(point.GetX())
-                .append(" Y").append(point.GetY())
-                .append(" Z").append(point.GetZ())
+                .append(" X").append(BigDecimalUtils.ToGCode(point.GetX()))
+                .append(" Y").append(BigDecimalUtils.ToGCode(point.GetY()))
+                .append(" Z").append(BigDecimalUtils.ToGCode(point.GetZ()))
                 .append('\n');
 
         return new ExpressionValue(Type.Void);
@@ -225,21 +227,12 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
         _currentPosition = point;
 
-        var decimalSeperator = new DecimalFormatSymbols();
-        decimalSeperator.setDecimalSeparator('.');
-
-        var df = new DecimalFormat();
-        df.setMaximumFractionDigits(5);
-        df.setMinimumFractionDigits(0);
-        df.setGroupingUsed(false);
-        df.setDecimalFormatSymbols(decimalSeperator);
-
         _stringBuilder
                 .append("G1")
-                .append(" E").append(df.format(_currentExtrusion))
-                .append(" X").append(point.GetX())
-                .append(" Y").append(point.GetY())
-                .append(" Z").append(point.GetZ())
+                .append(" E").append(BigDecimalUtils.ToGCode(_currentExtrusion))
+                .append(" X").append(BigDecimalUtils.ToGCode(point.GetX()))
+                .append(" Y").append(BigDecimalUtils.ToGCode(point.GetY()))
+                .append(" Z").append(BigDecimalUtils.ToGCode(point.GetZ()))
                 .append('\n');
 
         return new ExpressionValue(Type.Void);
@@ -250,7 +243,55 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         var parameters = sqrtNode.GetChild().GetChildren();
         var number = parameters.get(0).Accept(this).GetNumber();
 
-        return new ExpressionValue(number.sqrt(new MathContext(100)));
+        return new ExpressionValue(number.sqrt(BigDecimalUtils.DEFAULT_MATH_CONTEXT));
+    }
+
+    @Override
+    public ExpressionValue Visit(SinNode sinNode) throws Exception {
+        var parameters = sinNode.GetChild().GetChildren();
+        var number = parameters.get(0).Accept(this).GetNumber();
+
+        return new ExpressionValue(BigDecimalMath.sin(number, BigDecimalUtils.DEFAULT_MATH_CONTEXT));
+    }
+
+    @Override
+    public ExpressionValue Visit(CosNode cosNode) throws Exception {
+        var parameters = cosNode.GetChild().GetChildren();
+        var number = parameters.get(0).Accept(this).GetNumber();
+
+        return new ExpressionValue(BigDecimalMath.cos(number, BigDecimalUtils.DEFAULT_MATH_CONTEXT));
+    }
+
+    @Override
+    public ExpressionValue Visit(TanNode tanNode) throws Exception {
+        var parameters = tanNode.GetChild().GetChildren();
+        var number = parameters.get(0).Accept(this).GetNumber();
+
+        return new ExpressionValue(BigDecimalMath.tan(number, BigDecimalUtils.DEFAULT_MATH_CONTEXT));
+    }
+
+    @Override
+    public ExpressionValue Visit(ArcsinNode arcsinNode) throws Exception {
+        var parameters = arcsinNode.GetChild().GetChildren();
+        var number = parameters.get(0).Accept(this).GetNumber();
+
+        return new ExpressionValue(BigDecimalMath.asin(number, BigDecimalUtils.DEFAULT_MATH_CONTEXT));
+    }
+
+    @Override
+    public ExpressionValue Visit(ArccosNode arccosNode) throws Exception {
+        var parameters = arccosNode.GetChild().GetChildren();
+        var number = parameters.get(0).Accept(this).GetNumber();
+
+        return new ExpressionValue(BigDecimalMath.acos(number, BigDecimalUtils.DEFAULT_MATH_CONTEXT));
+    }
+
+    @Override
+    public ExpressionValue Visit(ArctanNode arctanNode) throws Exception {
+        var parameters = arctanNode.GetChild().GetChildren();
+        var number = parameters.get(0).Accept(this).GetNumber();
+
+        return new ExpressionValue(BigDecimalMath.atan(number, BigDecimalUtils.DEFAULT_MATH_CONTEXT));
     }
 
     @Override
@@ -324,6 +365,19 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     }
 
     @Override
+    public ExpressionValue Visit(PointEntryNode pointEntryNode) throws Exception {
+        var point = pointEntryNode.GetLeftChild().Accept(this).GetPoint();
+        var entry = pointEntryNode.GetRightChild().GetValue();
+
+        return new ExpressionValue(switch (entry) {
+            case "x" -> point.GetX();
+            case "y" -> point.GetY();
+            case "z" -> point.GetZ();
+            default -> throw new IllegalArgumentException();
+        });
+    }
+
+    @Override
     public ExpressionValue Visit(PlusExpressionNode plusExpressionNode) throws Exception {
         var leftValue = plusExpressionNode.GetLeftChild().Accept(this);
         var rightValue = plusExpressionNode.GetRightChild().Accept(this);
@@ -360,7 +414,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         var leftValue = powerExpressionNode.GetLeftChild().Accept(this).GetNumber();
         var rightValue = powerExpressionNode.GetRightChild().Accept(this).GetNumber();
 
-        return new ExpressionValue(BigDecimalMath.pow(leftValue, rightValue, new MathContext(100)));
+        return new ExpressionValue(BigDecimalMath.pow(leftValue, rightValue, BigDecimalUtils.DEFAULT_MATH_CONTEXT));
     }
 
     @Override
@@ -426,6 +480,22 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     }
 
     @Override
+    public ExpressionValue Visit(IfElseNode ifElseNode) throws Exception {
+        var booleanValue = ifElseNode.GetFirstNode().Accept(this).GetBoolean();
+
+        if (booleanValue) {
+            ifElseNode.GetSecondNode().Accept(this);
+        }
+        else {
+            if (ifElseNode.GetThirdNode() != null) {
+                ifElseNode.GetThirdNode().Accept(this);
+            }
+        }
+
+        return null;
+    }
+
+    @Override
     public ExpressionValue Visit(AssignmentNode assignmentNode) throws Exception {
         var identifier = assignmentNode.GetLeftChild().GetValue();
         var value = assignmentNode.GetRightChild().Accept(this);
@@ -437,7 +507,6 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     @Override
     public ExpressionValue Visit(ForToNode forToNode) throws Exception {
         var declNode = forToNode.GetFirstNode();
-        var declType = declNode.GetFirstNode().GetValue();
         var declIdentifier = declNode.GetSecondNode().GetValue();
         var declValue = declNode.GetThirdNode().Accept(this).GetNumber();
 

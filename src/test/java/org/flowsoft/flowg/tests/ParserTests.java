@@ -3,9 +3,13 @@ package org.flowsoft.flowg.tests;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
+import java_cup.runtime.ComplexSymbolFactory;
 import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.Yylex;
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.base.INode;
+import org.flowsoft.flowg.nodes.functions.*;
+import org.flowsoft.flowg.nodes.math.operators.PlusExpressionNode;
 import org.flowsoft.flowg.parser;
 import org.flowsoft.flowg.visitors.PrettyPrintingVisitor;
 import org.junit.experimental.theories.DataPoints;
@@ -50,7 +54,7 @@ public class ParserTests {
             new TextAstPair(
                     "number hello = 2;",
                     new StatementListNode(
-                            new ArrayList<StatementNode>() {
+                            new ArrayList<>() {
                                 {
                                     add(new DeclarationNode(new TypeNode(Type.Number), new IdentifierNode("hello"), new NumberLiteralNode(new BigDecimal(2))));
                                 }
@@ -194,8 +198,8 @@ public class ParserTests {
 
 
     private StatementListNode Parse(String input) throws Exception {
-        Yylex lexer = new Yylex(new StringReader(input));
-        parser parser = new parser(lexer);
+        Yylex lexer = new Yylex(new StringReader(input), "test");
+        parser parser = new parser(lexer, new ComplexSymbolFactory());
         return (StatementListNode) parser.parse().value;
     }
 }
