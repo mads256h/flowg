@@ -6,6 +6,7 @@ import org.flowsoft.flowg.nodes.base.ExpressionNode;
 import org.flowsoft.flowg.nodes.base.INode;
 import org.flowsoft.flowg.nodes.base.StatementNode;
 import org.flowsoft.flowg.nodes.controlflow.ForToNode;
+import org.flowsoft.flowg.nodes.controlflow.IfElseNode;
 import org.flowsoft.flowg.nodes.controlflow.ReturnNode;
 import org.flowsoft.flowg.nodes.functions.*;
 import org.flowsoft.flowg.nodes.math.functions.*;
@@ -183,6 +184,16 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
         }
 
         return PrintNode(returnNode);
+    }
+
+    @Override
+    public String Visit(IfElseNode ifElseNode) throws NoException {
+        var child = ifElseNode.GetThirdNode();
+        if (child != null) {
+            return PrintNode(ifElseNode, ifElseNode.GetFirstNode(), ifElseNode.GetSecondNode(), ifElseNode.GetThirdNode());
+        }
+
+        return PrintNode(ifElseNode, ifElseNode.GetFirstNode(), ifElseNode.GetSecondNode());
     }
 
     @Override

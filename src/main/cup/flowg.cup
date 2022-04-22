@@ -70,6 +70,9 @@ terminal NOT;
 terminal FOR;
 terminal TO;
 terminal RETURN;
+terminal IF;
+terminal ELSE;
+
 
 non terminal StatementListNode program;
 non terminal StatementListNode stmt_list;
@@ -110,6 +113,7 @@ non terminal PointEntryNode point_entry;
 // Control flow
 non terminal ForToNode for_to;
 non terminal ReturnNode return;
+non terminal IfElseNode if_else;
 
 precedence left NOT;
 precedence left AND, OR;
@@ -156,6 +160,8 @@ stmt ::=
         {: RESULT = f; :}
         | return:r
         {: RESULT = r; :}
+        | if_else:i
+        {: RESULT = i; :}
         ;
 
 decl ::= TYPE:t IDENTIFIER:i ASSIGNMENT expr:e
@@ -211,6 +217,11 @@ return::= RETURN expr:e
         {: RESULT = new ReturnNode(e); :}
         | RETURN
         {: RESULT = new ReturnNode(null); :};
+
+if_else ::= IF L_PAREN expr:e R_PAREN L_BRACKET stmt_list:l1 R_BRACKET
+        {: RESULT = new IfElseNode(e, l1, null); :}
+        | IF L_PAREN expr:e R_PAREN L_BRACKET stmt_list:l1 R_BRACKET ELSE L_BRACKET stmt_list:l2 R_BRACKET
+        {: RESULT = new IfElseNode(e, l1, l2); :};
 
 expr ::=
         // Literals

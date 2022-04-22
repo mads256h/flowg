@@ -4,6 +4,7 @@ import ch.obermuhlner.math.big.BigDecimalMath;
 import org.flowsoft.flowg.*;
 import org.flowsoft.flowg.nodes.*;
 import org.flowsoft.flowg.nodes.controlflow.ForToNode;
+import org.flowsoft.flowg.nodes.controlflow.IfElseNode;
 import org.flowsoft.flowg.nodes.controlflow.ReturnNode;
 import org.flowsoft.flowg.nodes.functions.*;
 import org.flowsoft.flowg.nodes.math.functions.*;
@@ -466,6 +467,22 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         }
 
         throw new ReturnException(value);
+    }
+
+    @Override
+    public ExpressionValue Visit(IfElseNode ifElseNode) throws Exception {
+        var booleanValue = ifElseNode.GetFirstNode().Accept(this).GetBoolean();
+
+        if (booleanValue) {
+            ifElseNode.GetSecondNode().Accept(this);
+        }
+        else {
+            if (ifElseNode.GetThirdNode() != null) {
+                ifElseNode.GetThirdNode().Accept(this);
+            }
+        }
+
+        return null;
     }
 
     @Override

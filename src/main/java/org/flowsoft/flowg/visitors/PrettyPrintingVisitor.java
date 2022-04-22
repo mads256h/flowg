@@ -5,6 +5,7 @@ import org.flowsoft.flowg.TypeHelper;
 import org.flowsoft.flowg.nodes.*;
 import org.flowsoft.flowg.nodes.base.UnaryNode;
 import org.flowsoft.flowg.nodes.controlflow.ForToNode;
+import org.flowsoft.flowg.nodes.controlflow.IfElseNode;
 import org.flowsoft.flowg.nodes.controlflow.ReturnNode;
 import org.flowsoft.flowg.nodes.functions.*;
 import org.flowsoft.flowg.nodes.math.functions.*;
@@ -206,6 +207,15 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     public String Visit(ReturnNode returnNode) throws NoException {
         var child = returnNode.GetChild();
         return "return" + (child == null ? "" : " " + child.Accept(this));
+    }
+
+    @Override
+    public String Visit(IfElseNode ifElseNode) throws NoException {
+        if (ifElseNode.GetThirdNode() == null) {
+            return "if (" + ifElseNode.GetFirstNode().Accept(this) + ") {\n" + ifElseNode.GetSecondNode().Accept(this) + "}";
+        } else {
+            return "if (" + ifElseNode.GetFirstNode().Accept(this) + ") {\n" + ifElseNode.GetSecondNode().Accept(this) + "} else {\n" + ifElseNode.GetThirdNode().Accept(this);
+        }
     }
 
     @Override
