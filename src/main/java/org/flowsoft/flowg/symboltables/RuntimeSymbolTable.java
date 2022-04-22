@@ -25,17 +25,17 @@ public class RuntimeSymbolTable {
         return new RuntimeSymbolTable(symbolTable, this);
     }
 
-    public void SetValue(String identifier, ExpressionValue expressionValue) throws TypeException {
+    public void SetValue(String identifier, ExpressionValue expressionValue) {
         if (_variableMap.containsKey(identifier)) {
             _variableMap.put(identifier, expressionValue);
         }
         else
         {
-            throw new TypeException();
+            throw new IllegalStateException();
         }
     }
 
-    public ExpressionValue LookupVariable(String identifier) throws TypeException {
+    public ExpressionValue LookupVariable(String identifier) {
         if (_variableMap.containsKey(identifier)) {
             var value = _variableMap.get(identifier);
             assert(value != null);
@@ -46,7 +46,7 @@ public class RuntimeSymbolTable {
             return _parent.LookupVariable(identifier);
         }
 
-        throw new TypeException();
+        throw new IllegalStateException();
     }
 
     public FunctionEntry LookupFunction(String identifier) throws TypeException {

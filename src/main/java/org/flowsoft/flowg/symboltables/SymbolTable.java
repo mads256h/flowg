@@ -1,10 +1,10 @@
 package org.flowsoft.flowg.symboltables;
 
-import org.flowsoft.flowg.Type;
-import org.flowsoft.flowg.TypeException;
+import java_cup.runtime.ComplexSymbolFactory.Location;
+import org.flowsoft.flowg.*;
+import org.flowsoft.flowg.Cloneable;
 import org.flowsoft.flowg.nodes.functions.FormalParameterNode;
 import org.flowsoft.flowg.nodes.StatementListNode;
-import org.flowsoft.flowg.Cloneable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 public class SymbolTable implements Cloneable<SymbolTable> {
+    //TODO: remove this
+    private static final Location N = new Location("fixme", 0, 0, 0);
+
     private final SymbolTable _parent;
 
     private final Map<String, VariableEntry> _variableEntries;
@@ -35,7 +38,7 @@ public class SymbolTable implements Cloneable<SymbolTable> {
             _variableEntries.put(identifier, new VariableEntry(identifier, type));
         }
         else {
-            throw new TypeException();
+            throw new RedeclarationException(N, N);
         }
     }
 
@@ -44,7 +47,7 @@ public class SymbolTable implements Cloneable<SymbolTable> {
             _functionEntries.put(identifier, new FunctionEntry(returnType, identifier, formalParameters, functionBody, parent));
         }
         else {
-            throw new TypeException();
+            throw new RedeclarationException(N, N);
         }
     }
 
@@ -61,7 +64,7 @@ public class SymbolTable implements Cloneable<SymbolTable> {
             return _parent.LookupVariable(identifier);
         }
 
-        throw new TypeException();
+        throw new SymbolNotFoundException(identifier, N, N);
     }
 
     public FunctionEntry LookupFunction(String identifier) throws TypeException {
@@ -73,7 +76,7 @@ public class SymbolTable implements Cloneable<SymbolTable> {
             return _parent.LookupFunction(identifier);
         }
 
-        throw new TypeException();
+        throw new SymbolNotFoundException(identifier, N, N);
     }
 
     public void Print() {
