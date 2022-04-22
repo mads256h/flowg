@@ -3,6 +3,7 @@ package org.flowsoft.flowg.tests;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
+import java_cup.runtime.ComplexSymbolFactory;
 import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.Yylex;
 import org.flowsoft.flowg.nodes.*;
@@ -197,8 +198,8 @@ public class ParserTests {
 
 
     private StatementListNode Parse(String input) throws Exception {
-        Yylex lexer = new Yylex(new StringReader(input));
-        parser parser = new parser(lexer);
+        Yylex lexer = new Yylex(new StringReader(input), "test");
+        parser parser = new parser(lexer, new ComplexSymbolFactory());
         return (StatementListNode) parser.parse().value;
     }
 }
