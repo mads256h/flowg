@@ -115,6 +115,10 @@ public class main {
             System.err.format("%s:%d:%d: error: expected %d parameters but got %d\n", args[0], e.GetLeft().getLine(), e.GetLeft().getColumn(), e.GetExpectedCount(), e.GetActualCount());
             System.err.println(GetLine(file, e.GetLeft(), e.GetRight()));
         }
+        catch (TypeMismatchException e) {
+            System.err.format("%s:%d:%d: error: type mismatch between %s and %s\n", args[0], e.GetLeft().getLine(), e.GetLeft().getColumn(), TypeHelper.TypeToString(e.GetLeftType()), TypeHelper.TypeToString(e.GetRightType()));
+            System.err.println(GetLine(file, e.GetLeft(), e.GetRight()));
+        }
         catch (Exception e) {
             System.out.println("Could not parse");
             e.printStackTrace();

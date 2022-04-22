@@ -14,4 +14,20 @@ public class TypeMismatchException extends TypeException {
         _left = left;
         _right = right;
     }
+
+    public Type GetLeftType() {
+        return _leftType;
+    }
+
+    public Type GetRightType() {
+        return _rightType;
+    }
+
+    public Location GetLeft() {
+        return _left;
+    }
+
+    public Location GetRight() {
+        return _right;
+    }
 }
