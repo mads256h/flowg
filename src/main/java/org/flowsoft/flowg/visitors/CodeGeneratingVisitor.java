@@ -471,8 +471,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
             return value;
         } else {
             String gCodeBody = functionEntry.GetGCode().GetValue();
-            Pattern patternIdentifier = Pattern.compile("\\[[a-zA-Z][a-zA-Z0-9]*\\]", Pattern.MULTILINE);
-            Pattern patternPointIndexation = Pattern.compile("\\[[a-zA-Z][a-zA-Z0-9]*.[x|y|z]\\]", Pattern.MULTILINE);
+            Pattern patternIdentifier = Pattern.compile("\\[[a-zA-Z][a-zA-Z0-9]*\\]|\\[[a-zA-Z][a-zA-Z0-9]*.[x|y|z]\\]", Pattern.MULTILINE);
             Matcher matcher = patternIdentifier.matcher(gCodeBody);
 
 
@@ -485,71 +484,60 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
                 String var = "";
                 String postString = "";
 
-                Identifier = gCodeBody.substring(start + 1, end - 1);
-
-                System.out.print("Identifier: " + Identifier);
-                System.out.print("Start index: " + matcher.start());
-                System.out.print(" End index: " + matcher.end());
-                System.out.println(" Found: " + matcher.group());
-
                 if (matcher.start() != 0) preString = gCodeBody.substring(0, start);
-                switch (_symbolTable.LookupLocalVariable(Identifier).GetType()){
-                    case Number -> {
-                        var = _symbolTable.LookupLocalVariable(Identifier).GetNumber().toPlainString();
-                        break;
-                    }
-                    case Point -> {
-                        var = _symbolTable.LookupLocalVariable(Identifier).GetPoint().toString();
-                        break;
-                    }
-                    case Boolean -> {
-                        var = _symbolTable.LookupLocalVariable(Identifier).GetBoolean().toString();
-                        break;
-                    }
-                    default -> var = "null";
-                }
-                if (matcher.end() != gCodeBody.length()) postString = gCodeBody.substring(end, gCodeBody.length());
-                gCodeBody = preString + var + postString;
-                matcher = pattern.matcher(gCodeBody);
-            }
-            matcher = patternPointIndexation.matcher(gCodeBody);
-            while (matcher.find()) {
-                int start = matcher.start();
-                int end = matcher.end();
-                String Identifier;
-                String preString = "";
-                String var = "";
-                String postString = "";
-
                 Identifier = gCodeBody.substring(start + 1, end - 1);
-
-                System.out.print("Identifier: " + Identifier);
-                System.out.print("Start index: " + matcher.start());
-                System.out.print(" End index: " + matcher.end());
-                System.out.println(" Found: " + matcher.group());
-
-                if (matcher.start() != 0) preString = gCodeBody.substring(0, start);
-                switch (_symbolTable.LookupLocalVariable(Identifier).GetType()){
-                    case Number -> {
-                        var = _symbolTable.LookupLocalVariable(Identifier).GetNumber().toPlainString();
-                        break;
-                    }
-                    case Point -> {
-                        var = _symbolTable.LookupLocalVariable(Identifier).GetPoint().toString();
-                        break;
-                    }
-                    case Boolean -> {
-                        var = _symbolTable.LookupLocalVariable(Identifier).GetBoolean().toString();
-                        break;
-                    }
-                    default -> var = "null";
-                }
                 if (matcher.end() != gCodeBody.length()) postString = gCodeBody.substring(end, gCodeBody.length());
-                gCodeBody = preString + var + postString;
-                matcher = pattern.matcher(gCodeBody);
-            }
-            System.out.println(gCodeBody);
 
+
+                if (Identifier.contains(".")){
+                    String[] identifierArray = Identifier.split("\\.",2);
+
+                    String pointIdentifier = identifierArray[0];
+                    String identifierIndexer = identifierArray[1];
+                    switch (_symbolTable.LookupLocalVariable(pointIdentifier).GetType()){
+                        case Point -> {
+                            Point point = _symbolTable.LookupLocalVariable(pointIdentifier).GetPoint();
+                            switch (identifierIndexer){
+                                case "x" -> {
+                                    var = point.GetX().toPlainString();
+                                    break;
+                                }
+                                case "y" -> {
+                                    var = point.GetY().toPlainString();
+                                    break;
+                                }
+                                case "z" ->{
+                                    var = point.GetZ().toPlainString();
+                                    break;
+                                }
+                                    default -> var = null;
+                            }
+                        }
+                        default -> var = null;
+                    }
+                }else{
+                    switch (_symbolTable.LookupLocalVariable(Identifier).GetType()){
+                        case Number -> {
+                            var = _symbolTable.LookupLocalVariable(Identifier).GetNumber().toPlainString();
+                            break;
+                        }
+                        case Point -> {
+                            var = _symbolTable.LookupLocalVariable(Identifier).GetPoint().toString();
+                            break;
+                        }
+                        case Boolean -> {
+                            var = _symbolTable.LookupLocalVariable(Identifier).GetBoolean().toString();
+                            break;
+                        }
+                        default -> var = "null";
+                    }
+                }
+
+
+                gCodeBody = preString + var + postString;
+                matcher = patternIdentifier.matcher(gCodeBody);
+            }
+            _stringBuilder.append(gCodeBody);
             return null;
         }
     }
