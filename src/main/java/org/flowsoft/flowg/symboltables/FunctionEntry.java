@@ -51,6 +51,8 @@ public class FunctionEntry implements Cloneable<FunctionEntry> {
         return _functionBody;
     }
 
+    public GCodeCodeNode GetGCode() { return _gCodeBody; }
+
     public SymbolTable GetSymbolTable() { return _symbolTable; }
 
     @Override

@@ -1,5 +1,6 @@
 package org.flowsoft.flowg.symboltables;
 
+import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.visitors.ExpressionValue;
 
@@ -47,6 +48,14 @@ public class RuntimeSymbolTable {
         }
 
         throw new TypeException();
+    }
+    public ExpressionValue LookupLocalVariable(String identifier) throws TypeException {
+        if (_variableMap.containsKey(identifier)) {
+            var value = _variableMap.get(identifier);
+            assert (value != null);
+            return value;
+        }
+        return new ExpressionValue(Type.Void);
     }
 
     public FunctionEntry LookupFunction(String identifier) throws TypeException {
