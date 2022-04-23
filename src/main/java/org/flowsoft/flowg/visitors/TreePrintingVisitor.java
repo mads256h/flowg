@@ -116,12 +116,12 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
 
     @Override
     public String Visit(GCodeFuncNode gCodeFuncNode) throws NoException {
-        return gCodeFuncNode.GetIdentifierNode().Accept(this) + gCodeFuncNode.GetGCodeCodeNode() + gCodeFuncNode.GetFormalParameterListNode();
+        return PrintNode(gCodeFuncNode, gCodeFuncNode.GetIdentifierNode(),  gCodeFuncNode.GetFormalParameterListNode(), gCodeFuncNode.GetGCodeCodeNode());
     }
 
     @Override
     public String Visit(GCodeCodeNode gCodeCodeNode) throws NoException {
-        return "hejsa";//return PrintNode(gCodeCodeNode);
+        return PrintNode(gCodeCodeNode);//return PrintNode(gCodeCodeNode);
     }
 
     @Override

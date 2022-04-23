@@ -129,12 +129,14 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
 
     @Override
     public String Visit(GCodeFuncNode gCodeFuncNode) throws NoException {
-            return null;
+            return "gcode " + gCodeFuncNode.GetIdentifierNode().Accept(this) + " (" +
+                    gCodeFuncNode.GetFormalParameterListNode().Accept(this) + ") {" +
+                    gCodeFuncNode.GetGCodeCodeNode().Accept(this) + "}";
     }
 
     @Override
     public String Visit(GCodeCodeNode gCodeCodeNode) throws NoException {
-        return null;
+        return gCodeCodeNode.GetValue();
     }
 
     @Override

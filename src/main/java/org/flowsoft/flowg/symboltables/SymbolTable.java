@@ -2,6 +2,7 @@ package org.flowsoft.flowg.symboltables;
 
 import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.TypeException;
+import org.flowsoft.flowg.nodes.GCodeCodeNode;
 import org.flowsoft.flowg.nodes.functions.FormalParameterNode;
 import org.flowsoft.flowg.nodes.StatementListNode;
 import org.flowsoft.flowg.Cloneable;
@@ -42,6 +43,17 @@ public class SymbolTable implements Cloneable<SymbolTable> {
     public void Enter(Type returnType, String identifier, ArrayList<FormalParameterNode> formalParameters, StatementListNode functionBody, SymbolTable parent) throws TypeException {
         if (!_functionEntries.containsKey(identifier)) {
             _functionEntries.put(identifier, new FunctionEntry(returnType, identifier, formalParameters, functionBody, parent));
+        }
+        else {
+            throw new TypeException();
+        }
+    }
+    /*
+    Gcodefunction
+     */
+    public void Enter(String identifier, ArrayList<FormalParameterNode> formalParameters, GCodeCodeNode functionBody, SymbolTable parent) throws TypeException {
+        if (!_functionEntries.containsKey(identifier)) {
+            _functionEntries.put(identifier, new FunctionEntry(identifier, formalParameters, functionBody, parent));
         }
         else {
             throw new TypeException();

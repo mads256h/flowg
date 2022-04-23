@@ -216,7 +216,32 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
     @Override
     public Type Visit(GCodeFuncNode gCodeFuncNode) throws TypeException {
+        String identifier = gCodeFuncNode.GetIdentifierNode().GetValue();
+        FormalParameterListNode formalParams = gCodeFuncNode.GetFormalParameterListNode();
+        GCodeCodeNode gCode = gCodeFuncNode.GetGCodeCodeNode();
+
+        SymbolTable parentSymbolTable = _symbolTable.Clone();
+        SymbolTable bodySymbolTable = new SymbolTable(null);
+
+        for (var param : formalParams.GetChildren()) {
+            bodySymbolTable.Enter(param.GetRightChild().GetValue(), param.GetLeftChild().GetValue());
+        }
+
+        parentSymbolTable.Enter(identifier, (ArrayList<FormalParameterNode>) formalParams.GetChildren(), gCodeFuncNode.GetGCodeCodeNode(), bodySymbolTable);
+        _symbolTable.Enter(identifier, (ArrayList<FormalParameterNode>) formalParams.GetChildren(), gCodeFuncNode.GetGCodeCodeNode(), bodySymbolTable);
+
+        var oldFunctionReturnType = _functionReturnType;
+        var oldSymbolTable = _symbolTable;
+        _functionReturnType = Type.Void;
+        _symbolTable = bodySymbolTable;
+
+        gCode.Accept(this);
+
+        _symbolTable = oldSymbolTable;
+        _functionReturnType = oldFunctionReturnType;
+
         return null;
+
     }
 
     @Override
