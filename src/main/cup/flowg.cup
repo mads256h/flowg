@@ -9,8 +9,6 @@ import org.flowsoft.flowg.nodes.functions.*;
 import org.flowsoft.flowg.nodes.math.functions.*;
 import org.flowsoft.flowg.nodes.math.operators.*;
 
-terminal INVALID;
-
 terminal TypeNode TYPE;
 
 terminal IdentifierNode IDENTIFIER;
