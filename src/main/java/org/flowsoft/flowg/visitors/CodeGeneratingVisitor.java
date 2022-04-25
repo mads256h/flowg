@@ -474,8 +474,6 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
             Pattern patternIdentifier = Pattern.compile("\\[[a-zA-Z][a-zA-Z0-9]*\\]|\\[[a-zA-Z][a-zA-Z0-9]*.[x|y|z]\\]", Pattern.MULTILINE);
             Matcher matcher = patternIdentifier.matcher(gCodeBody);
 
-
-            //MatchResult matchResult = matcher.toMatchResult();
             while (matcher.find()) {
                 int start = matcher.start();
                 int end = matcher.end();
@@ -532,13 +530,11 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
                         default -> var = "null";
                     }
                 }
-
-
                 gCodeBody = preString + var + postString;
                 matcher = patternIdentifier.matcher(gCodeBody);
             }
             _stringBuilder.append(gCodeBody);
-            return null;
+            return new ExpressionValue(Type.Void);
         }
     }
 
