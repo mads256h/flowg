@@ -36,7 +36,7 @@ public class main {
             rootNode.Accept(codeGeneratingVisitor);
             typeCheckingVisitor.PrintSymbolTable();
             System.out.println(codeGeneratingVisitor.GetCode());
-            File f = new File(args[0]);
+            File f = new File(args[1]);
             FileWriter writer = new FileWriter(f);
             var str =
                     """
