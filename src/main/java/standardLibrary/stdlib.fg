@@ -1,10 +1,30 @@
 number nozzleWidth;
+number filamentDiameter;
+number nozzleDiameter;
+number pi = 3.13183712837123871238921731289371283721;
+_currentPosition = [0,0,0];
 /*
 Indsæt resten af defaultværdier
 */
+void line(point currentPosition, point endpoint){
+    number x = currentPosition.x - endpoint.x;
+    number y = currentPosition.y - endpoint.y;
+    number z = currentPosition.z - endpoint.z;
 
-gcode line(point p){
+    number x2 = x^2;
+    number y2 = y^2;
+    number z2 = z^2;
 
+    number distance = sqrt(x2 + y2 + z2);
+
+    number filamentVolumeNeeded = distance * nozzleDiameter * layerHeight;
+    number filamentArea = filamentRadius^2 * pi;
+    number filamentMm = filamentVolumeNeeded / filamentArea;
+    gcodeLine(currentPosition, endpoint, filamentMm);
+    _currentPosition = endpoint;
+};
+gcode gcodeLine(point currentPosition, point endpoint, number filament){
+G1 E[] X[p.x] Y[p.y] Z[p.z]
 }
 
 gcode move(point p){

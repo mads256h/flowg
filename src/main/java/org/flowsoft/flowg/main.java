@@ -46,10 +46,9 @@ public class main {
                             M104 S200
                             M105
                             M109 S200
-                            M82 ;absolute extrusion mode
+                            M83 ;relative extrusion mode
                             G21 ;metric values
-                            G90 ;absolute positioning
-                            M82 ;set extruder to absolute mode
+                            G90 ;absolute positioning                       
                             M107 ;start with the fan off
                             G28 Z0 ;move Z to bottom endstops
                             G28 X0 Y0 ;move X/Y to endstops
@@ -89,8 +88,7 @@ public class main {
                                     ;bytes at the end of the g-code so that the file is not yet finished by the
                                     ;time that the motion planner gets flushed. With firmware version _3.3 this
                                     ;should be fixed, so this comment wouldn't be necessary any more. Now we have
-                                    ;to pad this text to make precisely 512 bytes.
-                                    M82 ;absolute extrusion mode
+                                    ;to pad this text to make precisely 512 bytes.                                    
                                     M104 S0
                                     """;
 
