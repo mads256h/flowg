@@ -492,9 +492,9 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
                     String pointIdentifier = identifierArray[0];
                     String identifierIndexer = identifierArray[1];
-                    switch (_symbolTable.LookupLocalVariable(pointIdentifier).GetType()){
+                    switch (_symbolTable.LookupVariable(pointIdentifier).GetType()){
                         case Point -> {
-                            Point point = _symbolTable.LookupLocalVariable(pointIdentifier).GetPoint();
+                            Point point = _symbolTable.LookupVariable(pointIdentifier).GetPoint();
                             switch (identifierIndexer){
                                 case "x" -> {
                                     var = point.GetX().toPlainString();
@@ -514,17 +514,17 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
                         default -> var = null;
                     }
                 }else{
-                    switch (_symbolTable.LookupLocalVariable(Identifier).GetType()){
+                    switch (_symbolTable.LookupVariable(Identifier).GetType()){
                         case Number -> {
-                            var = _symbolTable.LookupLocalVariable(Identifier).GetNumber().toPlainString();
+                            var = _symbolTable.LookupVariable(Identifier).GetNumber().toPlainString();
                             break;
                         }
                         case Point -> {
-                            var = _symbolTable.LookupLocalVariable(Identifier).GetPoint().toString();
+                            var = _symbolTable.LookupVariable(Identifier).GetPoint().toString();
                             break;
                         }
                         case Boolean -> {
-                            var = _symbolTable.LookupLocalVariable(Identifier).GetBoolean().toString();
+                            var = _symbolTable.LookupVariable(Identifier).GetBoolean().toString();
                             break;
                         }
                         default -> var = "null";

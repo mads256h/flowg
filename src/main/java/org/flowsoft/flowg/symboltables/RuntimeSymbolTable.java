@@ -49,6 +49,7 @@ public class RuntimeSymbolTable {
 
         throw new TypeException();
     }
+    /* Function that only finds variables from current symboltable
     public ExpressionValue LookupLocalVariable(String identifier) throws TypeException {
         if (_variableMap.containsKey(identifier)) {
             var value = _variableMap.get(identifier);
@@ -57,7 +58,7 @@ public class RuntimeSymbolTable {
         }
         return new ExpressionValue(Type.Void);
     }
-
+*/
     public FunctionEntry LookupFunction(String identifier) throws TypeException {
         return _base.LookupFunction(identifier);
     }
