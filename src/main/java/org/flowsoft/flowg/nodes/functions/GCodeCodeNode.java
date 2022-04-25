@@ -1,4 +1,4 @@
-package org.flowsoft.flowg.nodes;
+package org.flowsoft.flowg.nodes.functions;
 
 import org.flowsoft.flowg.nodes.base.NullaryNode;
 import org.flowsoft.flowg.nodes.base.StatementNode;

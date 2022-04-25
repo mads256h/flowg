@@ -2,7 +2,7 @@ package org.flowsoft.flowg;
 
 import java_cup.runtime.ComplexSymbolFactory;
 import org.flowsoft.flowg.nodes.*;
-import org.flowsoft.flowg.nodes.base.INode;
+import org.flowsoft.flowg.nodes.base.INode;import org.flowsoft.flowg.nodes.functions.GCodeCodeNode;
 import java.math.BigDecimal;
 %%
 

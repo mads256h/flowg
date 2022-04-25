@@ -1,8 +1,7 @@
 package org.flowsoft.flowg.symboltables;
 
-import java_cup.runtime.Symbol;
 import org.flowsoft.flowg.Type;
-import org.flowsoft.flowg.nodes.GCodeCodeNode;
+import org.flowsoft.flowg.nodes.functions.GCodeCodeNode;
 import org.flowsoft.flowg.nodes.functions.FormalParameterNode;
 import org.flowsoft.flowg.nodes.StatementListNode;
 import org.flowsoft.flowg.Cloneable;
