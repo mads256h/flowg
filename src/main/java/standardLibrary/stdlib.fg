@@ -1,0 +1,13 @@
+number nozzleWidth;
+/*
+Indsæt resten af defaultværdier
+*/
+
+gcode line(point p){
+
+}
+
+gcode move(point p){
+
+}
+
