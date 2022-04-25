@@ -1,12 +1,13 @@
 package org.flowsoft.flowg.nodes.math.operators;
 
+import java_cup.runtime.ComplexSymbolFactory.Location;
 import org.flowsoft.flowg.nodes.base.BinaryNode;
 import org.flowsoft.flowg.nodes.base.ExpressionNode;
 import org.flowsoft.flowg.visitors.IVisitor;
 
 public class PowerExpressionNode extends BinaryNode<ExpressionNode, ExpressionNode> implements ExpressionNode {
-    public PowerExpressionNode(ExpressionNode expressionNode, ExpressionNode expressionNode2) {
-        super(expressionNode, expressionNode2);
+    public PowerExpressionNode(ExpressionNode leftChild, ExpressionNode rightChild, Location left, Location right) {
+        super(leftChild, rightChild, left, right);
     }
 
     @Override

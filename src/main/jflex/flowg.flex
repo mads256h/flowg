@@ -1,6 +1,7 @@
 package org.flowsoft.flowg;
 
 import java_cup.runtime.ComplexSymbolFactory;
+import java_cup.runtime.ComplexSymbolFactory.*;
 import org.flowsoft.flowg.nodes.*;
 import org.flowsoft.flowg.nodes.base.INode;
 import java.math.BigDecimal;
@@ -33,20 +34,28 @@ import java.math.BigDecimal;
 %{
     private String _file = "unknown";
 
-    private ComplexSymbolFactory.ComplexSymbol symbol(String name, int type) {
-        return new ComplexSymbolFactory.ComplexSymbol(
-            name,
-            type,
-            new ComplexSymbolFactory.Location(_file, yyline + 1, yycolumn + 1),
-            new ComplexSymbolFactory.Location(_file, yyline + 1, yycolumn + yylength()));
+    private Location leftLocation() {
+        return new Location(_file, yyline + 1, yycolumn + 1);
     }
 
-    private ComplexSymbolFactory.ComplexSymbol symbol(String name, int type, INode value) {
+    private Location rightLocation() {
+        return new Location(_file, yyline + 1, yycolumn + yylength());
+    }
+
+    private ComplexSymbol symbol(String name, int type) {
         return new ComplexSymbolFactory.ComplexSymbol(
             name,
             type,
-            new ComplexSymbolFactory.Location(_file, yyline + 1, yycolumn + 1),
-            new ComplexSymbolFactory.Location(_file, yyline + 1, yycolumn + yylength()),
+            leftLocation(),
+            rightLocation());
+    }
+
+    private ComplexSymbol symbol(String name, int type, INode value) {
+        return new ComplexSymbolFactory.ComplexSymbol(
+            name,
+            type,
+            leftLocation(),
+            rightLocation(),
             value);
     }
 %}
@@ -63,11 +72,11 @@ Anything = .
 
 %%
 
-{Type} { return symbol("type", sym.TYPE, new TypeNode(TypeHelper.StringToType(yytext()))); }
+{Type} { return symbol("type", sym.TYPE, new TypeNode(TypeHelper.StringToType(yytext()), leftLocation(), rightLocation())); }
 
 // Boolean literals
-"true" { return symbol("true", sym.BOOLEAN_LITERAL, new BooleanLiteralNode(true)); }
-"false" { return symbol("false", sym.BOOLEAN_LITERAL, new BooleanLiteralNode(false)); }
+"true" { return symbol("true", sym.BOOLEAN_LITERAL, new BooleanLiteralNode(true, leftLocation(), rightLocation())); }
+"false" { return symbol("false", sym.BOOLEAN_LITERAL, new BooleanLiteralNode(false, leftLocation(), rightLocation())); }
 
 // Builtin functions
 "move" { return symbol("move", sym.MOVE); }
@@ -90,9 +99,9 @@ Anything = .
 "else" { return symbol("else", sym.ELSE); }
 
 
-{Identifier} { return symbol("identifier", sym.IDENTIFIER, new IdentifierNode(yytext())); }
+{Identifier} { return symbol("identifier", sym.IDENTIFIER, new IdentifierNode(yytext(), leftLocation(), rightLocation())); }
 
-{Number} { return symbol("number literal", sym.NUMBER_LITERAL, new NumberLiteralNode(new BigDecimal(yytext()))); }
+{Number} { return symbol("number literal", sym.NUMBER_LITERAL, new NumberLiteralNode(new BigDecimal(yytext()), leftLocation(), rightLocation())); }
 
 {Whitespace} { /* Ignore */ }
 

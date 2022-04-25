@@ -1,8 +1,8 @@
 package org.flowsoft.flowg.visitors;
 
-import org.flowsoft.flowg.Type;
-import org.flowsoft.flowg.TypeException;
+import org.flowsoft.flowg.*;
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.base.ExpressionNode;
 import org.flowsoft.flowg.nodes.base.UnaryNode;
 import org.flowsoft.flowg.nodes.controlflow.ForToNode;
 import org.flowsoft.flowg.nodes.controlflow.IfElseNode;
@@ -73,12 +73,13 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     public Type Visit(MoveNode moveNode) throws TypeException {
         var params = moveNode.GetChild().GetChildren();
         if (params.size() != 1) {
-            throw new TypeException();
+            throw new ParameterCountException(1, params.size(), moveNode.GetChild().GetLeft(), moveNode.GetChild().GetRight());
         }
 
-        var type = params.get(0).Accept(this);
+        var param = params.get(0);
+        var type = param.Accept(this);
         if (type != Type.Point) {
-            throw new TypeException();
+            throw new ExpectedTypeException(Type.Point, type, param.GetLeft(), param.GetRight());
         }
 
         return Type.Void;
@@ -88,12 +89,13 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     public Type Visit(LineNode lineNode) throws TypeException {
         var params = lineNode.GetChild().GetChildren();
         if (params.size() != 1) {
-            throw new TypeException();
+            throw new ParameterCountException(1, params.size(), lineNode.GetChild().GetLeft(), lineNode.GetChild().GetRight());
         }
 
-        var type = params.get(0).Accept(this);
+        var param = params.get(0);
+        var type = param.Accept(this);
         if (type != Type.Point) {
-            throw new TypeException();
+            throw new ExpectedTypeException(Type.Point, type, param.GetLeft(), param.GetRight());
         }
 
         return Type.Void;
@@ -103,12 +105,13 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     private Type TypeCheckMathFunc(UnaryNode<ActualParameterListNode> funcNode) throws TypeException {
         var params = funcNode.GetChild().GetChildren();
         if (params.size() != 1) {
-            throw new TypeException();
+            throw new ParameterCountException(1, params.size(), funcNode.GetChild().GetLeft(), funcNode.GetChild().GetRight());
         }
 
-        var type = params.get(0).Accept(this);
+        var param = params.get(0);
+        var type = param.Accept(this);
         if (type != Type.Number) {
-            throw new TypeException();
+            throw new ExpectedTypeException(Type.Number, type, param.GetLeft(), param.GetRight());
         }
 
         return Type.Number;
@@ -177,29 +180,30 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         var typeNodeType = typeNode.Accept(this);
         var expressionNodeType = expressionNode.Accept(this);
         if (typeNodeType == expressionNodeType) {
-            _symbolTable.Enter(identifierNode.GetValue(), typeNodeType);
+            _symbolTable.Enter(identifierNode.GetValue(), typeNodeType, declarationNode.GetLeft(), declarationNode.GetRight());
             return typeNodeType;
         }
         else {
-            throw new TypeException();
+            throw new ExpectedTypeException(typeNodeType, expressionNodeType, expressionNode.GetLeft(), expressionNode.GetRight());
         }
     }
 
     @Override
     public Type Visit(FunctionDefinitionNode functionDefinitionNode) throws TypeException {
         var returnType = functionDefinitionNode.GetTypeNode().Accept(this);
-        var identifier = functionDefinitionNode.GetIdentifierNode().GetValue();
+        var identifierNode = functionDefinitionNode.GetIdentifierNode();
+        var identifier = identifierNode.GetValue();
         var formalParams = functionDefinitionNode.GetFormalParameterListNode();
         var statementList = functionDefinitionNode.GetStatementListNode();
 
         var parentSymbolTable = _symbolTable.Clone();
         var bodySymbolTable = new SymbolTable(parentSymbolTable);
         for (var param : formalParams.GetChildren()) {
-            bodySymbolTable.Enter(param.GetRightChild().GetValue(), param.GetLeftChild().GetValue());
+            bodySymbolTable.Enter(param.GetRightChild().GetValue(), param.GetLeftChild().GetValue(), param.GetLeft(), param.GetRight());
         }
 
-        parentSymbolTable.Enter(returnType, identifier, (ArrayList<FormalParameterNode>) formalParams.GetChildren(), functionDefinitionNode.GetStatementListNode(), bodySymbolTable);
-        _symbolTable.Enter(returnType, identifier, (ArrayList<FormalParameterNode>) formalParams.GetChildren(), functionDefinitionNode.GetStatementListNode(), bodySymbolTable);
+        parentSymbolTable.Enter(returnType, identifier, (ArrayList<FormalParameterNode>) formalParams.GetChildren(), functionDefinitionNode.GetStatementListNode(), bodySymbolTable, identifierNode.GetLeft(), identifierNode.GetRight());
+        _symbolTable.Enter(returnType, identifier, (ArrayList<FormalParameterNode>) formalParams.GetChildren(), functionDefinitionNode.GetStatementListNode(), bodySymbolTable, identifierNode.GetLeft(), identifierNode.GetRight());
 
         var oldFunctionReturnType = _functionReturnType;
         var oldSymbolTable = _symbolTable;
@@ -236,12 +240,23 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
     @Override
     public Type Visit(PointNode pointNode) throws TypeException {
-        var firstType = pointNode.GetFirstNode().Accept(this);
-        var secondType = pointNode.GetSecondNode().Accept(this);
-        var thirdType = pointNode.GetThirdNode().Accept(this);
+        var firstNode = pointNode.GetFirstNode();
+        var secondNode = pointNode.GetSecondNode();
+        var thirdNode = pointNode.GetThirdNode();
+        var firstType = firstNode.Accept(this);
+        var secondType = secondNode.Accept(this);
+        var thirdType = thirdNode.Accept(this);
 
-        if (firstType != Type.Number || secondType != Type.Number || thirdType != Type.Number) {
-            throw new TypeException();
+        if (firstType != Type.Number) {
+            throw new ExpectedTypeException(Type.Number, firstType, firstNode.GetLeft(), firstNode.GetRight());
+        }
+
+        if (secondType != Type.Number) {
+            throw new ExpectedTypeException(Type.Number, secondType, secondNode.GetLeft(), secondNode.GetRight());
+        }
+
+        if (thirdType != Type.Number) {
+            throw new ExpectedTypeException(Type.Number, thirdType, thirdNode.GetLeft(), thirdNode.GetRight());
         }
 
         return Type.Point;
@@ -249,15 +264,17 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
     @Override
     public Type Visit(PointEntryNode pointEntryNode) throws TypeException {
-        var expressionType = pointEntryNode.GetLeftChild().Accept(this);
-        var identifier = pointEntryNode.GetRightChild().GetValue();
+        var expressionNode = pointEntryNode.GetLeftChild();
+        var expressionType = expressionNode.Accept(this);
+        var identifierNode = pointEntryNode.GetRightChild();
+        var identifier = identifierNode.GetValue();
 
         if (expressionType != Type.Point) {
-            throw new TypeException();
+            throw new ExpectedTypeException(Type.Point, expressionType, expressionNode.GetLeft(), expressionNode.GetRight());
         }
 
         if (!(identifier.equals("x") || identifier.equals("y") || identifier.equals("z"))) {
-            throw new TypeException();
+            throw new SymbolNotFoundException(identifier, identifierNode.GetLeft(), identifierNode.GetRight());
         }
 
         return Type.Number;
@@ -267,48 +284,56 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     public Type Visit(PlusExpressionNode plusExpressionNode) throws TypeException {
         var leftType = plusExpressionNode.GetLeftChild().Accept(this);
         var rightType = plusExpressionNode.GetRightChild().Accept(this);
-        return PlusMinusTypeCheckExpr(leftType, rightType);
+        return PlusMinusTypeCheckExpr(leftType, rightType, plusExpressionNode);
     }
 
     @Override
     public Type Visit(MinusExpressionNode minusExpressionNode) throws TypeException {
         var leftType = minusExpressionNode.GetLeftChild().Accept(this);
         var rightType = minusExpressionNode.GetRightChild().Accept(this);
-        return PlusMinusTypeCheckExpr(leftType, rightType);
+        return PlusMinusTypeCheckExpr(leftType, rightType, minusExpressionNode);
     }
 
     @Override
     public Type Visit(TimesExpressionNode multiplyExpressionNode) throws TypeException {
         var leftType = multiplyExpressionNode.GetLeftChild().Accept(this);
         var rightType = multiplyExpressionNode.GetRightChild().Accept(this);
-        return TimesDivideTypeCheckExpr(leftType, rightType);
+        return TimesDivideTypeCheckExpr(leftType, rightType, multiplyExpressionNode);
     }
 
     @Override
     public Type Visit(DivideExpressionNode divisionExpressionNode) throws TypeException {
         var leftType = divisionExpressionNode.GetLeftChild().Accept(this);
         var rightType = divisionExpressionNode.GetRightChild().Accept(this);
-        return TimesDivideTypeCheckExpr(leftType, rightType);
+        return TimesDivideTypeCheckExpr(leftType, rightType, divisionExpressionNode);
     }
 
     @Override
     public Type Visit(PowerExpressionNode powerExpressionNode) throws TypeException {
-        var leftType = powerExpressionNode.GetLeftChild().Accept(this);
-        var rightType = powerExpressionNode.GetRightChild().Accept(this);
+        var leftNode = powerExpressionNode.GetLeftChild();
+        var rightNode = powerExpressionNode.GetRightChild();
 
-        if (leftType == rightType && leftType == Type.Number) {
-            return Type.Number;
+        var leftType = leftNode.Accept(this);
+        var rightType = rightNode.Accept(this);
+
+        if (leftType != Type.Number) {
+            throw new ExpectedTypeException(Type.Number, leftType, leftNode.GetLeft(), leftNode.GetRight());
         }
 
-        throw new TypeException();
+        if (rightType != Type.Number) {
+            throw new ExpectedTypeException(Type.Number, rightType, rightNode.GetLeft(), rightNode.GetRight());
+        }
+
+        return Type.Number;
     }
     
     @Override
     public Type Visit(NotExpressionNode notExpressionNode) throws TypeException {
-        var childType = notExpressionNode.GetChild().Accept(this);
+        var childNode = notExpressionNode.GetChild();
+        var childType = childNode.Accept(this);
 
         if (childType != Type.Boolean) {
-            throw new TypeException();
+            throw new ExpectedTypeException(Type.Boolean, childType, childNode.GetLeft(), childNode.GetRight());
         }
 
         return Type.Boolean;
@@ -317,24 +342,29 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     @Override
     public Type Visit(IdentifierExpressionNode identifierExpressionNode) throws TypeException {
         var identifier = identifierExpressionNode.GetChild().GetValue();
-        return _symbolTable.LookupVariable(identifier).GetType();
+        return _symbolTable.LookupVariable(identifier, identifierExpressionNode.GetLeft(), identifierExpressionNode.GetRight()).GetType();
     }
 
     @Override
     public Type Visit(FunctionCallNode functionCallNode) throws TypeException {
-        var identifier = functionCallNode.GetLeftChild().GetValue();
-        var paramList = functionCallNode.GetRightChild().GetChildren();
+        var identifierNode = functionCallNode.GetLeftChild();
+        var identifier = identifierNode.GetValue();
+        var paramNode = functionCallNode.GetRightChild();
+        var paramList = paramNode.GetChildren();
 
-        var functionEntry = _symbolTable.LookupFunction(identifier);
+        var functionEntry = _symbolTable.LookupFunction(identifier, identifierNode.GetLeft(), identifierNode.GetRight());
         var expectedTypes = functionEntry.GetFormalParameters();
 
         if (paramList.size() != expectedTypes.size()) {
-            throw new TypeException();
+            throw new ParameterCountException(expectedTypes.size(), paramList.size(), paramNode.GetLeft(), paramNode.GetRight());
         }
 
         for (int i = 0; i < paramList.size(); i++) {
-            if (paramList.get(i).Accept(this) != expectedTypes.get(i).GetLeftChild().GetValue()) {
-                throw new TypeException();
+            var expectedType = expectedTypes.get(i).GetLeftChild().GetValue();
+            var actualNode = paramList.get(i);
+            var actualType = actualNode.Accept(this);
+            if (actualType != expectedType) {
+                throw new ExpectedTypeException(expectedType, actualType, actualNode.GetLeft(), actualNode.GetRight());
             }
         }
 
@@ -350,7 +380,12 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         }
 
         if (type != _functionReturnType) {
-            throw new TypeException();
+            if (child != null) {
+                throw new ExpectedTypeException(_functionReturnType, type, child.GetLeft(), child.GetRight());
+            }
+            else {
+                throw new ExpectedTypeException(_functionReturnType, type, returnNode.GetLeft(), returnNode.GetRight());
+            }
         }
 
         return null;
@@ -358,10 +393,11 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
     @Override
     public Type Visit(IfElseNode ifElseNode) throws TypeException {
-        var expressionType = ifElseNode.GetFirstNode().Accept(this);
+        var expressionNode = ifElseNode.GetFirstNode();
+        var expressionType = expressionNode.Accept(this);
 
         if (expressionType != Type.Boolean) {
-            throw new TypeException();
+            throw new ExpectedTypeException(Type.Boolean, expressionType, expressionNode.GetLeft(), expressionNode.GetRight());
         }
 
         ifElseNode.GetSecondNode().Accept(this);
@@ -377,11 +413,13 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     public Type Visit(AssignmentNode assignmentNode) throws TypeException {
         var identifier = assignmentNode.GetLeftChild().GetValue();
 
-        var identifierType = _symbolTable.LookupVariable(identifier).GetType();
-        var expressionType = assignmentNode.GetRightChild().Accept(this);
+        var identifierType = _symbolTable.LookupVariable(identifier, assignmentNode.GetLeft(), assignmentNode.GetRight()).GetType();
+
+        var expressionNode = assignmentNode.GetRightChild();
+        var expressionType = expressionNode.Accept(this);
 
         if (identifierType != expressionType) {
-            throw new TypeException();
+            throw new ExpectedTypeException(identifierType, expressionType, expressionNode.GetLeft(), expressionNode.GetRight());
         }
 
         return null;
@@ -393,11 +431,15 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         declNode.Accept(this);
         var declType = declNode.GetFirstNode().GetValue();
 
-        var exprNode = forToNode.GetSecondNode();
-        var toType = exprNode.Accept(this);
+        var toNode = forToNode.GetSecondNode();
+        var toType = toNode.Accept(this);
 
-        if (declType != Type.Number && toType != Type.Number) {
-            throw new TypeException();
+        if (declType != Type.Number) {
+            throw new ExpectedTypeException(Type.Number, declType, declNode.GetLeft(), declNode.GetRight());
+        }
+
+        if (toType != Type.Number) {
+            throw new ExpectedTypeException(Type.Number, toType, toNode.GetLeft(), toNode.GetRight());
         }
 
         forToNode.GetThirdNode().Accept(this);
@@ -405,60 +447,97 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         return null;
     }
 
+    private Type TypeCheckGreaterThanTypeOperators(ExpressionNode left, ExpressionNode right) throws TypeException {
+        var leftType = left.Accept(this);
+        var rightType = right.Accept(this);
+
+        if (leftType != Type.Number) {
+            throw new ExpectedTypeException(Type.Number, leftType, left.GetLeft(), left.GetRight());
+        }
+
+        if (rightType != Type.Number) {
+            throw new ExpectedTypeException(Type.Number, rightType, right.GetLeft(), right.GetRight());
+        }
+
+        return Type.Boolean;
+    }
+
     @Override
     public Type Visit(GreaterThanExpressionNode greaterThanExpressionNode) throws TypeException {
-        var leftType = greaterThanExpressionNode.GetLeftChild().Accept(this);
-        var rightType = greaterThanExpressionNode.GetRightChild().Accept(this);
-        return TypePair.TryBothWays(leftType, rightType, GE_LE_EQGE_EQLE_TYPE_MAP);
+        return TypeCheckGreaterThanTypeOperators(greaterThanExpressionNode.GetLeftChild(), greaterThanExpressionNode.GetRightChild());
     }
 
     @Override
     public Type Visit(LessThanExpressionNode lessThanExpressionNode) throws TypeException {
-        var leftType = lessThanExpressionNode.GetLeftChild().Accept(this);
-        var rightType = lessThanExpressionNode.GetRightChild().Accept(this);
-        return TypePair.TryBothWays(leftType, rightType, GE_LE_EQGE_EQLE_TYPE_MAP);
+        return TypeCheckGreaterThanTypeOperators(lessThanExpressionNode.GetLeftChild(), lessThanExpressionNode.GetRightChild());
     }
 
     @Override
     public Type Visit(EqualsExpressionNode equalsExpressionNode) throws TypeException {
         var leftType = equalsExpressionNode.GetLeftChild().Accept(this);
         var rightType = equalsExpressionNode.GetRightChild().Accept(this);
-        return TypePair.TryBothWays(leftType, rightType, EQ_TYPE_MAP);
+        var maybe_type = TypePair.TryBothWays(leftType, rightType, EQ_TYPE_MAP);
+
+        if (maybe_type.isPresent()) {
+            return maybe_type.get();
+        }
+
+        throw new TypeMismatchException(leftType, rightType, equalsExpressionNode.GetLeft(), equalsExpressionNode.GetRight());
     }
 
     @Override
     public Type Visit(GreaterThanEqualsExpressionNode greaterThanEqualsExpressionNode) throws TypeException {
-        var leftType = greaterThanEqualsExpressionNode.GetLeftChild().Accept(this);
-        var rightType = greaterThanEqualsExpressionNode.GetRightChild().Accept(this);
-        return TypePair.TryBothWays(leftType, rightType, GE_LE_EQGE_EQLE_TYPE_MAP);
+        return TypeCheckGreaterThanTypeOperators(greaterThanEqualsExpressionNode.GetLeftChild(), greaterThanEqualsExpressionNode.GetRightChild());
     }
 
     @Override
     public Type Visit(LessThanEqualsExpressionNode lessThanEqualsExpressionNode) throws TypeException {
-        var leftType = lessThanEqualsExpressionNode.GetLeftChild().Accept(this);
-        var rightType = lessThanEqualsExpressionNode.GetRightChild().Accept(this);
-        return TypePair.TryBothWays(leftType, rightType, GE_LE_EQGE_EQLE_TYPE_MAP);
+        return TypeCheckGreaterThanTypeOperators(lessThanEqualsExpressionNode.GetLeftChild(), lessThanEqualsExpressionNode.GetRightChild());
     }
 
     @Override
     public Type Visit(AndExpressionNode andExpressionNode) throws TypeException {
         var leftType = andExpressionNode.GetLeftChild().Accept(this);
         var rightType = andExpressionNode.GetRightChild().Accept(this);
-        return TypePair.TryBothWays(leftType, rightType, AND_OR_TYPE_MAP);
+        var maybe_type = TypePair.TryBothWays(leftType, rightType, AND_OR_TYPE_MAP);
+
+        if (maybe_type.isPresent()) {
+            return maybe_type.get();
+        }
+
+        throw new TypeMismatchException(leftType, rightType, andExpressionNode.GetLeft(), andExpressionNode.GetRight());
     }
 
     @Override
     public Type Visit(OrExpressionNode orExpressionNode) throws TypeException {
         var leftType = orExpressionNode.GetLeftChild().Accept(this);
         var rightType = orExpressionNode.GetRightChild().Accept(this);
-        return TypePair.TryBothWays(leftType, rightType, AND_OR_TYPE_MAP);
+        var maybe_type = TypePair.TryBothWays(leftType, rightType, AND_OR_TYPE_MAP);
+
+        if (maybe_type.isPresent()) {
+            return maybe_type.get();
+        }
+
+        throw new TypeMismatchException(leftType, rightType, orExpressionNode.GetLeft(), orExpressionNode.GetRight());
     }
 
-    private Type PlusMinusTypeCheckExpr(Type leftType, Type rightType) throws TypeException {
-        return TypePair.TryBothWays(leftType, rightType, PLUS_MINUS_TYPE_MAP);
+    private Type PlusMinusTypeCheckExpr(Type leftType, Type rightType, ExpressionNode node) throws TypeException {
+        var maybe_type = TypePair.TryBothWays(leftType, rightType, PLUS_MINUS_TYPE_MAP);
+
+        if (maybe_type.isPresent()) {
+            return maybe_type.get();
+        }
+
+        throw new TypeMismatchException(leftType, rightType, node.GetLeft(), node.GetRight());
     }
 
-    private Type TimesDivideTypeCheckExpr(Type leftType, Type rightType) throws TypeException {
-        return TypePair.TryBothWays(leftType, rightType, MULTIPLY_DIVIDE_TYPE_MAP);
+    private Type TimesDivideTypeCheckExpr(Type leftType, Type rightType, ExpressionNode node) throws TypeException {
+        var maybe_type = TypePair.TryBothWays(leftType, rightType, MULTIPLY_DIVIDE_TYPE_MAP);
+
+        if (maybe_type.isPresent()) {
+            return maybe_type.get();
+        }
+
+        throw new TypeMismatchException(leftType, rightType, node.GetLeft(), node.GetRight());
     }
 }

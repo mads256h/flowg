@@ -24,6 +24,7 @@ import java.util.ArrayList;
 @RunWith(Theories.class)
 public class ParserTests {
 
+    private static final ComplexSymbolFactory.Location N = new ComplexSymbolFactory.Location("test", 0, 0, 0);
     private static class TextAstPair {
         private final String _text;
         private final INode _astTree;
@@ -56,9 +57,9 @@ public class ParserTests {
                     new StatementListNode(
                             new ArrayList<>() {
                                 {
-                                    add(new DeclarationNode(new TypeNode(Type.Number), new IdentifierNode("hello"), new NumberLiteralNode(new BigDecimal(2))));
+                                    add(new DeclarationNode(new TypeNode(Type.Number, N, N), new IdentifierNode("hello", N, N), new NumberLiteralNode(new BigDecimal(2), N, N), N, N));
                                 }
-                            }
+                            }, N, N
                     )
             ),
             new TextAstPair(
@@ -66,9 +67,9 @@ public class ParserTests {
                     new StatementListNode(
                             new ArrayList<>() {
                                 {
-                                    add(new DeclarationNode(new TypeNode(Type.Boolean), new IdentifierNode("world"), new BooleanLiteralNode(true)));
+                                    add(new DeclarationNode(new TypeNode(Type.Boolean, N, N), new IdentifierNode("world", N, N), new BooleanLiteralNode(true, N, N), N, N));
                                 }
-                            }
+                            }, N, N
                     )
             ),
             new TextAstPair(
@@ -78,12 +79,12 @@ public class ParserTests {
                                 {
                                     add(
                                             new DeclarationNode(
-                                                    new TypeNode(Type.Number),
-                                                    new IdentifierNode("a"),
-                                                    new PlusExpressionNode(new NumberLiteralNode(new BigDecimal(1)), new NumberLiteralNode(new BigDecimal(2))))
+                                                    new TypeNode(Type.Number, N, N),
+                                                    new IdentifierNode("a", N, N),
+                                                    new PlusExpressionNode(new NumberLiteralNode(new BigDecimal(1), N, N), new NumberLiteralNode(new BigDecimal(2), N, N), N, N), N, N)
                                     );
                                 }
-                            }
+                            }, N, N
                     )
             ),
             new TextAstPair(
@@ -95,15 +96,15 @@ public class ParserTests {
                                             new ActualParameterListNode(
                                                     new ArrayList<>() {
                                                         {
-                                                            add(new NumberLiteralNode(new BigDecimal(1)));
-                                                            add(new NumberLiteralNode(new BigDecimal(2)));
-                                                            add(new NumberLiteralNode(new BigDecimal(3)));
+                                                            add(new NumberLiteralNode(new BigDecimal(1), N, N));
+                                                            add(new NumberLiteralNode(new BigDecimal(2), N, N));
+                                                            add(new NumberLiteralNode(new BigDecimal(3), N, N));
                                                         }
-                                                    }
-                                            )
+                                                    }, N, N
+                                            ), N, N
                                     ));
                                 }
-                            }
+                            }, N, N
                     )
             ),
             new TextAstPair(
@@ -112,18 +113,18 @@ public class ParserTests {
                     new StatementListNode(
                             new ArrayList<>() {
                                 {
-                                    add(new DeclarationNode(new TypeNode(Type.Number), new IdentifierNode("x"), new NumberLiteralNode(new BigDecimal(2))));
+                                    add(new DeclarationNode(new TypeNode(Type.Number, N, N), new IdentifierNode("x", N, N), new NumberLiteralNode(new BigDecimal(2), N, N), N, N));
 
-                                    add(new DeclarationNode(new TypeNode(Type.Number), new IdentifierNode("y"),
+                                    add(new DeclarationNode(new TypeNode(Type.Number, N, N), new IdentifierNode("y", N, N),
                                             new PlusExpressionNode(
                                                     new IdentifierExpressionNode(
-                                                            new IdentifierNode("x")
+                                                            new IdentifierNode("x", N, N), N, N
                                                     ),
-                                                    new NumberLiteralNode(new BigDecimal(2))
-                                            )
+                                                    new NumberLiteralNode(new BigDecimal(2), N, N), N, N
+                                            ), N, N
                                     ));
                                 }
-                            }
+                            }, N, N
                     )
             ),
             new TextAstPair(
@@ -136,41 +137,41 @@ public class ParserTests {
                             new ArrayList<>() {
                                 {
                                     add(new FunctionDefinitionNode(
-                                            new TypeNode(Type.Void),
-                                            new IdentifierNode("test"),
+                                            new TypeNode(Type.Void, N, N),
+                                            new IdentifierNode("test", N, N),
                                             new FormalParameterListNode(
                                                     new ArrayList<>() {
                                                         {
-                                                            add(new FormalParameterNode(new TypeNode(Type.Number), new IdentifierNode("x")));
-                                                            add(new FormalParameterNode(new TypeNode(Type.Number), new IdentifierNode("y")));
+                                                            add(new FormalParameterNode(new TypeNode(Type.Number, N, N), new IdentifierNode("x", N, N), N, N));
+                                                            add(new FormalParameterNode(new TypeNode(Type.Number, N, N), new IdentifierNode("y", N, N), N, N));
                                                         }
-                                                    }
+                                                    }, N, N
                                             ),
                                             new StatementListNode(new ArrayList<>() {
                                                 {
                                                     add(new DeclarationNode(
-                                                            new TypeNode(Type.Number),
-                                                            new IdentifierNode("z"),
+                                                            new TypeNode(Type.Number, N, N),
+                                                            new IdentifierNode("z", N, N),
                                                             new PlusExpressionNode(
-                                                                    new IdentifierExpressionNode(new IdentifierNode("x")),
-                                                                    new IdentifierExpressionNode(new IdentifierNode("y"))
-                                                            )));
+                                                                    new IdentifierExpressionNode(new IdentifierNode("x", N, N), N, N),
+                                                                    new IdentifierExpressionNode(new IdentifierNode("y", N, N), N, N), N, N
+                                                            ), N, N));
                                                 }
-                                            })
+                                            }, N, N), N, N
                                     ));
 
                                     add (new FunctionCallNode(
-                                            new IdentifierNode("test"),
+                                            new IdentifierNode("test", N, N),
                                             new ActualParameterListNode(
                                                     new ArrayList<>() {
                                                         {
-                                                            add(new NumberLiteralNode(new BigDecimal("1")));
-                                                            add(new NumberLiteralNode(new BigDecimal("2")));
+                                                            add(new NumberLiteralNode(new BigDecimal("1"), N, N));
+                                                            add(new NumberLiteralNode(new BigDecimal("2"), N, N));
                                                         }
-                                                    }
-                                            )));
+                                                    }, N, N
+                                            ), N, N));
                                 }
-                            }
+                            }, N, N
                     )
             )
     };

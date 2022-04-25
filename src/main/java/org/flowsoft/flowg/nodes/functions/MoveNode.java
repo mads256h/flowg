@@ -1,13 +1,14 @@
 package org.flowsoft.flowg.nodes.functions;
 
+import java_cup.runtime.ComplexSymbolFactory.Location;
 import org.flowsoft.flowg.nodes.base.StatementNode;
 import org.flowsoft.flowg.nodes.base.UnaryNode;
 import org.flowsoft.flowg.visitors.IVisitor;
 
 public class MoveNode extends UnaryNode<ActualParameterListNode> implements StatementNode {
 
-    public MoveNode(ActualParameterListNode actualParameterListNode) {
-        super(actualParameterListNode);
+    public MoveNode(ActualParameterListNode actualParameterListNode, Location left, Location right) {
+        super(actualParameterListNode, left, right);
     }
 
     @Override
