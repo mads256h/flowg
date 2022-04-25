@@ -491,7 +491,14 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
                     String pointIdentifier = identifierArray[0];
                     String identifierIndexer = identifierArray[1];
-                    switch (_symbolTable.LookupVariable(pointIdentifier).GetType()){
+                    Type identifierType;
+                    try {
+                        identifierType = _symbolTable.LookupVariable(pointIdentifier).GetType();
+                    }catch(Exception e){
+                        throw new IdentifierNotInitializedException(pointIdentifier);
+                    }
+
+                    switch (identifierType){
                         case Point -> {
                             Point point = _symbolTable.LookupVariable(pointIdentifier).GetPoint();
                             switch (identifierIndexer){
@@ -507,13 +514,19 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
                                     var = point.GetZ().toPlainString();
                                     break;
                                 }
-                                    default -> var = null;
+                                default -> throw new Exception("Points can only be indexed by: x, y  or z.");
                             }
                         }
-                        default -> var = null;
+                        default -> throw new Exception("Unexpected type");
                     }
                 }else{
-                    switch (_symbolTable.LookupVariable(Identifier).GetType()){
+                    Type identifierType;
+                    try{
+                        identifierType = _symbolTable.LookupVariable(Identifier).GetType();
+                    }catch (Exception e){
+                        throw new IdentifierNotInitializedException(Identifier);
+                    }
+                    switch (identifierType){
                         case Number -> {
                             var = _symbolTable.LookupVariable(Identifier).GetNumber().toPlainString();
                             break;
@@ -526,7 +539,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
                             var = _symbolTable.LookupVariable(Identifier).GetBoolean().toString();
                             break;
                         }
-                        default -> var = "null";
+                        default -> throw new Exception("Unexpected type");
                     }
                 }
                 gCodeBody = preString + var + postString;

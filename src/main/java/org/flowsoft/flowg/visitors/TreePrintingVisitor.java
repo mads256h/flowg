@@ -121,7 +121,7 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
 
     @Override
     public String Visit(GCodeCodeNode gCodeCodeNode) throws NoException {
-        return PrintNode(gCodeCodeNode);//return PrintNode(gCodeCodeNode);
+        return PrintNode(gCodeCodeNode);
     }
 
     @Override
