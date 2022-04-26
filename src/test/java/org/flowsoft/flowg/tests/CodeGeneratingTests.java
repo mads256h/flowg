@@ -6,6 +6,7 @@ import org.flowsoft.flowg.Point;
 import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.nodes.*;
 import org.flowsoft.flowg.nodes.base.INode;
+import org.flowsoft.flowg.nodes.controlflow.ReturnNode;
 import org.flowsoft.flowg.nodes.functions.*;
 import org.flowsoft.flowg.nodes.math.operators.*;
 import org.flowsoft.flowg.symboltables.SymbolTable;
@@ -104,6 +105,27 @@ public class CodeGeneratingTests {
                     new BigDecimal("2"),
                     new MinusExpressionNode(
                             new NumberLiteralNode(new BigDecimal("1"), N, N),
+                            new NumberLiteralNode(new BigDecimal("-1"), N, N),
+                            N, N
+                    )
+            ),
+            new Thing<>(
+                    new BigDecimal("0"),
+                    new MinusExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("0"), N, N),
+                            N, N
+                    )
+            ),
+            new Thing<>(
+                    new BigDecimal("-1"),
+                    new MinusExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("1"), N, N),
+                            N, N
+                    )
+            ),
+            new Thing<>(
+                    new BigDecimal("1"),
+                    new MinusExpressionNode(
                             new NumberLiteralNode(new BigDecimal("-1"), N, N),
                             N, N
                     )
