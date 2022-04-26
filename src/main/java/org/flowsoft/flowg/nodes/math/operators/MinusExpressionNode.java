@@ -11,6 +11,10 @@ public class MinusExpressionNode extends BinaryNode<ExpressionNode, ExpressionNo
       super(leftChild, rightChild, left, right);
     }
 
+    public MinusExpressionNode(ExpressionNode rightChild, Location left, Location right) {
+        super(null, rightChild, left, right);
+    }
+
     @Override
     public <T, TException extends Exception> T Accept(IVisitor<T, TException> visitor) throws TException {
         return visitor.Visit(this);

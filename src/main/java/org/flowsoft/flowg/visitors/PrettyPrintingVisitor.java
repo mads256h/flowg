@@ -178,7 +178,12 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
 
     @Override
     public String Visit(MinusExpressionNode minusExpressionNode) throws NoException {
-        return minusExpressionNode.GetLeftChild().Accept(this) + " - " + minusExpressionNode.GetRightChild().Accept(this);
+        var child = minusExpressionNode.GetLeftChild();
+        if (child == null) {
+            return " -" + minusExpressionNode.GetRightChild().Accept(this);
+        } else {
+            return minusExpressionNode.GetLeftChild().Accept(this) + " - " + minusExpressionNode.GetRightChild().Accept(this);
+        }
     }
 
     @Override

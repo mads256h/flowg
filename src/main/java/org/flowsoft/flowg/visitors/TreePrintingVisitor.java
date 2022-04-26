@@ -158,7 +158,13 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     public String Visit(PlusExpressionNode plusExpressionNode) throws NoException { return PrintNode(plusExpressionNode, plusExpressionNode.GetLeftChild(), plusExpressionNode.GetRightChild()); }
 
     @Override
-    public String Visit(MinusExpressionNode minusExpressionNode) throws NoException { return PrintNode(minusExpressionNode, minusExpressionNode.GetLeftChild(), minusExpressionNode.GetRightChild()); }
+    public String Visit(MinusExpressionNode minusExpressionNode) throws NoException {
+        var child = minusExpressionNode.GetLeftChild();
+        if (child == null) {
+            return PrintNode(minusExpressionNode, minusExpressionNode.GetRightChild());
+        }
+        return PrintNode(minusExpressionNode, minusExpressionNode.GetLeftChild(), minusExpressionNode.GetRightChild());
+    }
 
     @Override
     public String Visit(TimesExpressionNode multiplyExpressionNode) throws NoException { return PrintNode(multiplyExpressionNode, multiplyExpressionNode.GetLeftChild(), multiplyExpressionNode.GetRightChild()); }

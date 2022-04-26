@@ -258,6 +258,8 @@ expr ::=
         {: RESULT = new PlusExpressionNode(e1, e2, e1xleft, e2xright); :}
         | expr:e1 MINUS expr:e2
         {: RESULT = new MinusExpressionNode(e1, e2, e1xleft, e2xright); :}
+        | MINUS:b expr:e
+        {: RESULT = new MinusExpressionNode(e, bxleft, exright); :}
         | expr:e1 TIMES expr:e2
         {: RESULT = new TimesExpressionNode(e1, e2, e1xleft, e2xright); :}
         | expr:e1 DIVIDE expr:e2

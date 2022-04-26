@@ -20,6 +20,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     private final static HashMap<TypePair, Type> PLUS_MINUS_TYPE_MAP = new HashMap<>() {
         {
             put(new TypePair(Type.Number, Type.Number), Type.Number);
+            put(new TypePair(Type.Void, Type.Number), Type.Number);
             put(new TypePair(Type.Point, Type.Point), Type.Point);
         }};
 
@@ -316,8 +317,15 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
     @Override
     public Type Visit(MinusExpressionNode minusExpressionNode) throws TypeException {
-        var leftType = minusExpressionNode.GetLeftChild().Accept(this);
+        Type leftType;
+        if (minusExpressionNode.GetLeftChild() != null) {
+            leftType = minusExpressionNode.GetLeftChild().Accept(this);
+        } else {
+            leftType = Type.Void;
+        }
+
         var rightType = minusExpressionNode.GetRightChild().Accept(this);
+
         return PlusMinusTypeCheckExpr(leftType, rightType, minusExpressionNode);
     }
 
