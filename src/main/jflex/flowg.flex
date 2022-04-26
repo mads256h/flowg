@@ -75,6 +75,9 @@ Anything = .
 
 {Type} { return symbol("type", sym.TYPE, new TypeNode(TypeHelper.StringToType(yytext()), leftLocation(), rightLocation())); }
 
+// Include statement
+"include" {return symbol(sym.INCLUDE, new IncludeNode()); }
+
 // Boolean literals
 "true" { return symbol("true", sym.BOOLEAN_LITERAL, new BooleanLiteralNode(true, leftLocation(), rightLocation())); }
 "false" { return symbol("false", sym.BOOLEAN_LITERAL, new BooleanLiteralNode(false, leftLocation(), rightLocation())); }

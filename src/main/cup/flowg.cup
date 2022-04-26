@@ -16,6 +16,13 @@ terminal IdentifierNode IDENTIFIER;
 terminal NumberLiteralNode NUMBER_LITERAL;
 terminal BooleanLiteralNode BOOLEAN_LITERAL;
 
+// #include
+terminal INCLUDE;
+
+// < >
+terminal GREATER_THAN;
+terminal LESS_THAN;
+
 // Builtin functions
 terminal MOVE;
 terminal LINE;
@@ -73,6 +80,9 @@ terminal RETURN;
 terminal IF;
 terminal ELSE;
 
+
+// non-terminal #include
+non terminal IncludeNode include;
 
 non terminal StatementListNode program;
 non terminal StatementListNode stmt_list;
