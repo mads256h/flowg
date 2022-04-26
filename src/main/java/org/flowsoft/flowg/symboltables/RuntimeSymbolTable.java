@@ -1,6 +1,5 @@
 package org.flowsoft.flowg.symboltables;
 
-import org.flowsoft.flowg.Type;
 import java_cup.runtime.ComplexSymbolFactory.Location;
 import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.visitors.ExpressionValue;
@@ -35,9 +34,6 @@ public class RuntimeSymbolTable {
         }else if(_parent != null){
             _parent.SetValue(identifier, expressionValue);
         }
-        else if (_parent != null) {
-            _parent.SetValue(identifier, expressionValue);
-        }
         else {
             throw new IllegalStateException();
         }
@@ -56,16 +52,7 @@ public class RuntimeSymbolTable {
 
         throw new IllegalStateException();
     }
-    /* Function that only finds variables from current symboltable
-    public ExpressionValue LookupLocalVariable(String identifier) throws TypeException {
-        if (_variableMap.containsKey(identifier)) {
-            var value = _variableMap.get(identifier);
-            assert (value != null);
-            return value;
-        }
-        return new ExpressionValue(Type.Void);
-    }
-*/
+
     public FunctionEntry LookupFunction(String identifier) throws TypeException {
         return _base.LookupFunction(identifier, N, N);
     }

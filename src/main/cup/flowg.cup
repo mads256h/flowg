@@ -345,5 +345,5 @@ point_entry ::= expr:e DOT IDENTIFIER:i
         {: RESULT = new PointEntryNode(e, i, exleft, ixright); :};
 
 //GCode
-gcode_func   ::= GCODE:b IDENTIFIER:i  L_PAREN f_param_list:p R_PAREN L_BRACKET GCODECODE:g R_BRACKET:e
+gcode_func ::= GCODE:b IDENTIFIER:i L_PAREN f_param_list:p R_PAREN L_BRACKET GCODECODE:g R_BRACKET:e
         {: RESULT = new GCodeFuncNode(i, p, g, bxleft, exright); :};

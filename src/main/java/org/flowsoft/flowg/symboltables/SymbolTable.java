@@ -51,9 +51,8 @@ public class SymbolTable implements Cloneable<SymbolTable> {
             throw new RedeclarationException(left, right);
         }
     }
-    /*
-    Gcodefunction
-     */
+
+    //Gcodefunction
     public void Enter(String identifier, ArrayList<FormalParameterNode> formalParameters, GCodeCodeNode functionBody, SymbolTable parent, Location left, Location right) throws TypeException {
         if (!_functionEntries.containsKey(identifier)) {
             _functionEntries.put(identifier, new FunctionEntry(identifier, formalParameters, functionBody, parent));

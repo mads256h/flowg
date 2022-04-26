@@ -58,7 +58,7 @@ public class FunctionEntry implements Cloneable<FunctionEntry> {
     public FunctionEntry Clone() {
         if (GetFunctionBody() == null){
             return new FunctionEntry(GetIdentifier(), GetFormalParameters(), GetGCode(), GetSymbolTable());
-        }else{
+        } else{
             return new FunctionEntry(GetReturnType(), GetIdentifier(), GetFormalParameters(), GetFunctionBody(), GetSymbolTable());
         }
 
