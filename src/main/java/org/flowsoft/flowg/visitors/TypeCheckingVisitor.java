@@ -220,7 +220,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
     @Override
     public Type Visit(GCodeFuncNode gCodeFuncNode) throws TypeException {
-        String identifier = gCodeFuncNode.GetIdentifierNode().GetValue();
+        IdentifierNode identifierNode = gCodeFuncNode.GetIdentifierNode();
         FormalParameterListNode formalParams = gCodeFuncNode.GetFormalParameterListNode();
         GCodeCodeNode gCode = gCodeFuncNode.GetGCodeCodeNode();
 
@@ -228,11 +228,11 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         SymbolTable bodySymbolTable = new SymbolTable(null);
 
         for (var param : formalParams.GetChildren()) {
-            bodySymbolTable.Enter(param.GetRightChild().GetValue(), param.GetLeftChild().GetValue());
+            bodySymbolTable.Enter(param.GetRightChild().GetValue(), param.GetLeftChild().GetValue(), param.GetLeft(), param.GetRight());
         }
 
-        parentSymbolTable.Enter(identifier, (ArrayList<FormalParameterNode>) formalParams.GetChildren(), gCodeFuncNode.GetGCodeCodeNode(), bodySymbolTable);
-        _symbolTable.Enter(identifier, (ArrayList<FormalParameterNode>) formalParams.GetChildren(), gCodeFuncNode.GetGCodeCodeNode(), bodySymbolTable);
+        parentSymbolTable.Enter(identifierNode.GetValue(), (ArrayList<FormalParameterNode>) formalParams.GetChildren(), gCodeFuncNode.GetGCodeCodeNode(), bodySymbolTable, identifierNode.GetLeft(), identifierNode.GetRight());
+        _symbolTable.Enter(identifierNode.GetValue(), (ArrayList<FormalParameterNode>) formalParams.GetChildren(), gCodeFuncNode.GetGCodeCodeNode(), bodySymbolTable, identifierNode.GetLeft(), identifierNode.GetRight());
 
         var oldFunctionReturnType = _functionReturnType;
         var oldSymbolTable = _symbolTable;

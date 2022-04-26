@@ -106,7 +106,7 @@ Anything = .
 "gcode" { yybegin(GCodePreState); return symbol("GCODE", sym.GCODE); }
 
 
-<GcodeFunctionState> {GCodeCode} { return symbol("GCodeCodeNode", sym.GCODECODE, new GCodeCodeNode(yytext())); }
+<GcodeFunctionState> {GCodeCode} { return symbol("GCodeCodeNode", sym.GCODECODE, new GCodeCodeNode(yytext(), leftLocation(), rightLocation())); }
 
 {Identifier} { return symbol("identifier", sym.IDENTIFIER, new IdentifierNode(yytext(), leftLocation(), rightLocation())); }
 
