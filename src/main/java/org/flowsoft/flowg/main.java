@@ -121,6 +121,9 @@ public class main {
             System.err.format("%s:%d:%d: error: symbol redefinition\n", e.GetLeft().getUnit(), e.GetLeft().getLine(), e.GetLeft().getColumn());
             System.err.println(GetLine(file, e.GetLeft(), e.GetRight()));
         }
+        catch (WrongPointIndexingException e){
+            System.err.format("Type Point can only be indexed with 'x', 'y' and 'z'. From line %s to %s it was indexed by %s", e.GetLeft(), e.GetRight(), e.GetIdentifier());
+        }
         catch (Exception e) {
             System.out.println("Could not parse");
             e.printStackTrace();

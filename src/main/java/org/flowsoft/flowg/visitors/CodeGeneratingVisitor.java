@@ -382,7 +382,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
             return value;
         } else {
             String gCodeBody = functionEntry.GetGCode().GetValue();
-            Pattern patternIdentifier = Pattern.compile("\\[[a-zA-Z][a-zA-Z0-9]*\\]|\\[[a-zA-Z][a-zA-Z0-9]*.[x|y|z]\\]", Pattern.MULTILINE);
+            Pattern patternIdentifier = Pattern.compile("\\[[a-zA-Z][a-zA-Z0-9]*\\]|\\[[a-zA-Z][a-zA-Z0-9]*.[^\\]]*\\]", Pattern.MULTILINE);
             Matcher matcher = patternIdentifier.matcher(gCodeBody);
 
             while (matcher.find()) {
@@ -407,7 +407,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
                     try {
                         identifierType = _symbolTable.LookupVariable(pointIdentifier).GetType();
                     }catch(Exception e){
-                        throw new IdentifierNotInitializedException(pointIdentifier);
+                        throw new SymbolNotFoundException(pointIdentifier, functionEntry.GetGCode().GetLeft(), functionEntry.GetGCode().GetRight());
                     }
 
                     switch (identifierType){
@@ -426,17 +426,17 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
                                     var = point.GetZ().toPlainString();
                                     break;
                                 }
-                                default -> throw new Exception("Points can only be indexed by: x, y  or z.");
+                                default -> throw new WrongPointIndexingException(pointIdentifier, functionEntry.GetGCode().GetLeft(), functionEntry.GetGCode().GetRight());
                             }
                         }
-                        default -> throw new Exception("Unexpected type");
+                        default -> throw new ExpectedTypeException(Type.Point, identifierType, functionEntry.GetGCode().GetLeft(), functionEntry.GetGCode().GetRight());
                     }
                 }else{
                     Type identifierType;
                     try{
                         identifierType = _symbolTable.LookupVariable(Identifier).GetType();
                     }catch (Exception e){
-                        throw new IdentifierNotInitializedException(Identifier);
+                        throw new SymbolNotFoundException(Identifier, functionEntry.GetGCode().GetLeft(), functionEntry.GetGCode().GetRight());
                     }
                     switch (identifierType){
                         case Number -> {
@@ -451,7 +451,9 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
                             var = _symbolTable.LookupVariable(Identifier).GetBoolean().toString();
                             break;
                         }
-                        default -> throw new Exception("Unexpected type");
+                        case Void -> throw new ExpectedTypeException(Type.Number, Type.Void, functionEntry.GetGCode().GetLeft(), functionEntry.GetGCode().GetRight()) {
+                            //Technically not a correct error message
+                        };
                     }
                 }
                 gCodeBody = preString + var + postString;
