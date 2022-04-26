@@ -56,6 +56,11 @@ public class FunctionEntry implements Cloneable<FunctionEntry> {
 
     @Override
     public FunctionEntry Clone() {
-        return new FunctionEntry(GetReturnType(), GetIdentifier(), GetFormalParameters(), GetFunctionBody(), GetSymbolTable());
+        if (GetFunctionBody() == null){
+            return new FunctionEntry(GetIdentifier(), GetFormalParameters(), GetGCode(), GetSymbolTable());
+        }else{
+            return new FunctionEntry(GetReturnType(), GetIdentifier(), GetFormalParameters(), GetFunctionBody(), GetSymbolTable());
+        }
+
     }
 }

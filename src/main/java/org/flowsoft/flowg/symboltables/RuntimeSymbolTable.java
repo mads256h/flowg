@@ -29,6 +29,8 @@ public class RuntimeSymbolTable {
     public void SetValue(String identifier, ExpressionValue expressionValue) throws TypeException {
         if (_variableMap.containsKey(identifier)) {
             _variableMap.put(identifier, expressionValue);
+        }else if(_parent != null){
+            _parent.SetValue(identifier, expressionValue);
         }
         else
         {
