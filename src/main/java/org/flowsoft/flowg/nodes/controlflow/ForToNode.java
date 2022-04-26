@@ -1,5 +1,6 @@
 package org.flowsoft.flowg.nodes.controlflow;
 
+import java_cup.runtime.ComplexSymbolFactory.Location;
 import org.flowsoft.flowg.nodes.*;
 import org.flowsoft.flowg.nodes.base.ExpressionNode;
 import org.flowsoft.flowg.nodes.base.StatementNode;
@@ -8,8 +9,8 @@ import org.flowsoft.flowg.visitors.IVisitor;
 
 public class ForToNode extends TernaryNode<DeclarationNode, ExpressionNode, StatementListNode> implements StatementNode {
 
-    public ForToNode(DeclarationNode declarationNode, ExpressionNode expressionNode, StatementListNode statementListNode) {
-        super(declarationNode, expressionNode, statementListNode);
+    public ForToNode(DeclarationNode declarationNode, ExpressionNode expressionNode, StatementListNode statementListNode, Location left, Location right) {
+        super(declarationNode, expressionNode, statementListNode, left, right);
     }
 
     @Override

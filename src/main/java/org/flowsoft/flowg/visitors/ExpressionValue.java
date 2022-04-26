@@ -44,25 +44,25 @@ public class ExpressionValue {
         return _type;
     }
 
-    public BigDecimal GetNumber() throws TypeException {
+    public BigDecimal GetNumber() {
         if (_type != Type.Number) {
-            throw new TypeException();
+            throw new IllegalStateException();
         }
         assert (_number != null);
         return _number;
     }
 
-    public Boolean GetBoolean() throws TypeException {
+    public Boolean GetBoolean() {
         if (_type != Type.Boolean) {
-            throw new TypeException();
+            throw new IllegalStateException();
         }
         assert (_boolean != null);
         return _boolean;
     }
 
-    public Point GetPoint() throws TypeException {
+    public Point GetPoint() {
         if (_type != Type.Point) {
-            throw new TypeException();
+            throw new IllegalStateException();
         }
 
         assert (_point != null);

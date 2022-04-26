@@ -1,5 +1,6 @@
 package org.flowsoft.flowg.nodes.functions;
 
+import java_cup.runtime.ComplexSymbolFactory.Location;
 import org.flowsoft.flowg.nodes.base.ArrayNode;
 import org.flowsoft.flowg.nodes.base.ExpressionNode;
 import org.flowsoft.flowg.visitors.IVisitor;
@@ -8,8 +9,8 @@ import java.util.List;
 
 public class ActualParameterListNode extends ArrayNode<ExpressionNode> {
 
-    public ActualParameterListNode(List<ExpressionNode> children) {
-        super(children);
+    public ActualParameterListNode(List<ExpressionNode> children, Location left, Location right) {
+        super(children, left, right);
     }
 
     @Override

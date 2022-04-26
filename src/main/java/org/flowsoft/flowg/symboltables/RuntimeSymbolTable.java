@@ -1,6 +1,7 @@
 package org.flowsoft.flowg.symboltables;
 
 import org.flowsoft.flowg.Type;
+import java_cup.runtime.ComplexSymbolFactory.Location;
 import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.visitors.ExpressionValue;
 
@@ -8,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RuntimeSymbolTable {
+    private static final Location N = new Location("null", 0, 0, 0);
+
     private final SymbolTable _base;
     private final RuntimeSymbolTable _parent;
     
@@ -26,7 +29,7 @@ public class RuntimeSymbolTable {
         return new RuntimeSymbolTable(symbolTable, this);
     }
 
-    public void SetValue(String identifier, ExpressionValue expressionValue) throws TypeException {
+    public void SetValue(String identifier, ExpressionValue expressionValue) {
         if (_variableMap.containsKey(identifier)) {
             _variableMap.put(identifier, expressionValue);
         }else if(_parent != null){
@@ -34,11 +37,11 @@ public class RuntimeSymbolTable {
         }
         else
         {
-            throw new TypeException();
+            throw new IllegalStateException();
         }
     }
 
-    public ExpressionValue LookupVariable(String identifier) throws TypeException {
+    public ExpressionValue LookupVariable(String identifier) {
         if (_variableMap.containsKey(identifier)) {
             var value = _variableMap.get(identifier);
             assert(value != null);
@@ -49,7 +52,7 @@ public class RuntimeSymbolTable {
             return _parent.LookupVariable(identifier);
         }
 
-        throw new TypeException();
+        throw new IllegalStateException();
     }
     /* Function that only finds variables from current symboltable
     public ExpressionValue LookupLocalVariable(String identifier) throws TypeException {
@@ -62,6 +65,6 @@ public class RuntimeSymbolTable {
     }
 */
     public FunctionEntry LookupFunction(String identifier) throws TypeException {
-        return _base.LookupFunction(identifier);
+        return _base.LookupFunction(identifier, N, N);
     }
 }

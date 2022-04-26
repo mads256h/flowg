@@ -1,6 +1,7 @@
 package org.flowsoft.flowg;
 
 import java_cup.runtime.ComplexSymbolFactory;
+import java_cup.runtime.ComplexSymbolFactory.Location;
 import org.flowsoft.flowg.nodes.base.Node;
 import org.flowsoft.flowg.visitors.CodeGeneratingVisitor;
 import org.flowsoft.flowg.visitors.PrettyPrintingVisitor;
@@ -10,12 +11,17 @@ import org.flowsoft.flowg.visitors.TypeCheckingVisitor;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class main {
     public static void main(String[] args) {
         //Yylex.main(args);
+
+        String file;
         Yylex scanner;
         try {
+            file = Files.readString(Path.of(args[0]));
             scanner = new Yylex(new FileReader(args[0]), args[0]);
         }
         catch (Exception e) {
@@ -95,10 +101,39 @@ public class main {
             writer.write(str);
             writer.close();
         }
+        catch (ExpectedTypeException e) {
+            System.err.format("%s:%d:%d: error: expected %s but got %s\n", e.GetLeft().getUnit(), e.GetLeft().getLine(), e.GetLeft().getColumn(), TypeHelper.TypeToString(e.GetExpected()), TypeHelper.TypeToString(e.GetActual()));
+            System.err.println(GetLine(file, e.GetLeft(), e.GetRight()));
+        }
+        catch (SymbolNotFoundException e) {
+            System.err.format("%s:%d:%d: error: symbol '%s' not found\n", e.GetLeft().getUnit(), e.GetLeft().getLine(), e.GetLeft().getColumn(), e.GetIdentifier());
+            System.err.println(GetLine(file, e.GetLeft(), e.GetRight()));
+        }
+        catch (ParameterCountException e) {
+            System.err.format("%s:%d:%d: error: expected %d parameters but got %d\n", e.GetLeft().getUnit(), e.GetLeft().getLine(), e.GetLeft().getColumn(), e.GetExpectedCount(), e.GetActualCount());
+            System.err.println(GetLine(file, e.GetLeft(), e.GetRight()));
+        }
+        catch (TypeMismatchException e) {
+            System.err.format("%s:%d:%d: error: type mismatch between %s and %s\n", e.GetLeft().getUnit(), e.GetLeft().getLine(), e.GetLeft().getColumn(), TypeHelper.TypeToString(e.GetLeftType()), TypeHelper.TypeToString(e.GetRightType()));
+            System.err.println(GetLine(file, e.GetLeft(), e.GetRight()));
+        }
+        catch (RedeclarationException e) {
+            System.err.format("%s:%d:%d: error: symbol redefinition\n", e.GetLeft().getUnit(), e.GetLeft().getLine(), e.GetLeft().getColumn());
+            System.err.println(GetLine(file, e.GetLeft(), e.GetRight()));
+        }
         catch (Exception e) {
             System.out.println("Could not parse");
             e.printStackTrace();
             return;
         }
+    }
+
+    private static String GetLine(String file, Location left, Location right) {
+        var lines = file.split("[\r\n]");
+        var line = lines[left.getLine() - 1];
+
+        var underline = " ".repeat(left.getColumn() - 1) + "~".repeat(right.getColumn() - left.getColumn() + 1);
+
+        return line + "\n" + underline;
     }
 }

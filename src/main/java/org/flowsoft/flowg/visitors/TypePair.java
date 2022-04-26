@@ -5,6 +5,7 @@ import org.flowsoft.flowg.TypeException;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 public final class TypePair {
     private final Type _first;
@@ -29,17 +30,17 @@ public final class TypePair {
     }
 
 
-    public static <T> T TryBothWays(Type left, Type right, Map<TypePair, T> map) throws TypeException {
+    public static <T> Optional<T> TryBothWays(Type left, Type right, Map<TypePair, T> map) {
         var pair = new TypePair(left, right);
         if (map.containsKey(pair)) {
-            return map.get(pair);
+            return Optional.of(map.get(pair));
         }
 
         pair = new TypePair(right, left);
         if (map.containsKey(pair)) {
-            return map.get(pair);
+            return Optional.of(map.get(pair));
         }
 
-        throw new TypeException();
+        return Optional.empty();
     }
 }

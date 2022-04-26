@@ -1,12 +1,13 @@
 package org.flowsoft.flowg.nodes.functions;
 
+import java_cup.runtime.ComplexSymbolFactory.Location;
 import org.flowsoft.flowg.nodes.base.StatementNode;
 import org.flowsoft.flowg.nodes.base.UnaryNode;
 import org.flowsoft.flowg.visitors.IVisitor;
 
 public class LineNode extends UnaryNode<ActualParameterListNode> implements StatementNode {
-    public LineNode(ActualParameterListNode actualParameterListNode) {
-        super(actualParameterListNode);
+    public LineNode(ActualParameterListNode actualParameterListNode, Location left, Location right) {
+        super(actualParameterListNode, left, right);
     }
 
     @Override

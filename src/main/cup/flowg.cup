@@ -15,8 +15,6 @@ terminal TypeNode TYPE;
 
 terminal IdentifierNode IDENTIFIER;
 
-
-
 terminal NumberLiteralNode NUMBER_LITERAL;
 terminal BooleanLiteralNode BOOLEAN_LITERAL;
 
@@ -138,7 +136,7 @@ program ::= stmt_list:l
             {: RESULT = l; :};
 
 stmt_list ::= stmt_list_impl:l
-            {: RESULT = new StatementListNode(l); :};
+            {: RESULT = new StatementListNode(l, lxleft, lxright); :};
 
 stmt_list_impl ::= stmt_list_impl:l stmt:s SEMICOLON
             {: l.add(s); RESULT = l; :}
@@ -178,27 +176,27 @@ stmt ::=
         ;
 
 decl ::= TYPE:t IDENTIFIER:i ASSIGNMENT expr:e
-        {: RESULT = new DeclarationNode(t, i, e); :};
+        {: RESULT = new DeclarationNode(t, i, e, txleft, exright); :};
 
 assign ::= IDENTIFIER:i ASSIGNMENT expr:e
-        {: RESULT = new AssignmentNode(i, e); :};
+        {: RESULT = new AssignmentNode(i, e, ixleft, exright); :};
 
 // Builtin functions
-move ::= MOVE L_PAREN a_param_list:p R_PAREN
-        {: RESULT = new MoveNode(p); :};
+move ::= MOVE:b L_PAREN a_param_list:p R_PAREN:e
+        {: RESULT = new MoveNode(p, bxleft, exright); :};
 
-line ::= LINE L_PAREN a_param_list:p R_PAREN
-        {: RESULT = new LineNode(p); :};
+line ::= LINE:b L_PAREN a_param_list:p R_PAREN:e
+        {: RESULT = new LineNode(p, bxleft, exright); :};
 
 // User defined functions
-func_def ::= TYPE:t IDENTIFIER:i L_PAREN f_param_list:p R_PAREN L_BRACKET stmt_list:l R_BRACKET
-        {: RESULT = new FunctionDefinitionNode(t, i, p, l); :};
+func_def ::= TYPE:t IDENTIFIER:i L_PAREN f_param_list:p R_PAREN L_BRACKET stmt_list:l R_BRACKET:e
+        {: RESULT = new FunctionDefinitionNode(t, i, p, l, txleft, exright); :};
 
-func_call ::= IDENTIFIER:i L_PAREN a_param_list:p R_PAREN
-        {: RESULT = new FunctionCallNode(i, p); :};
+func_call ::= IDENTIFIER:i L_PAREN a_param_list:p R_PAREN:e
+        {: RESULT = new FunctionCallNode(i, p, ixleft, exright); :};
 
 a_param_list ::= a_param_list_impl:l
-        {: RESULT = new ActualParameterListNode(l); :};
+        {: RESULT = new ActualParameterListNode(l, lxleft, lxright); :};
 
 a_param_list_impl ::= a_param_list_impl:l COMMA expr:e
         {: l.add(e); RESULT = l; :}
@@ -209,7 +207,7 @@ a_param_list_impl ::= a_param_list_impl:l COMMA expr:e
 
 
 f_param_list ::= f_param_list_impl:l
-        {: RESULT = new FormalParameterListNode(l); :};
+        {: RESULT = new FormalParameterListNode(l, lxleft, lxright); :};
 
 
 f_param_list_impl ::= f_param_list_impl:l COMMA f_param:p
@@ -220,21 +218,21 @@ f_param_list_impl ::= f_param_list_impl:l COMMA f_param:p
         {: RESULT = new ArrayList<FormalParameterNode>(); :};
 
 f_param ::= TYPE:t IDENTIFIER:i
-        {: RESULT = new FormalParameterNode(t, i); :};
+        {: RESULT = new FormalParameterNode(t, i, txleft, ixright); :};
 
 // Control flow
-for_to ::= FOR L_PAREN decl:d TO expr:e R_PAREN L_BRACKET program:l R_BRACKET
-        {: RESULT = new ForToNode(d, e, l); :};
+for_to ::= FOR:b L_PAREN decl:d TO expr:e R_PAREN L_BRACKET stmt_list:l R_BRACKET:f
+        {: RESULT = new ForToNode(d, e, l, bxleft, fxright); :};
 
-return::= RETURN expr:e
-        {: RESULT = new ReturnNode(e); :}
-        | RETURN
-        {: RESULT = new ReturnNode(null); :};
+return::= RETURN:b expr:e
+        {: RESULT = new ReturnNode(e, bxleft, exright); :}
+        | RETURN:b
+        {: RESULT = new ReturnNode(null, bxleft, bxright); :};
 
-if_else ::= IF L_PAREN expr:e R_PAREN L_BRACKET stmt_list:l1 R_BRACKET
-        {: RESULT = new IfElseNode(e, l1, null); :}
-        | IF L_PAREN expr:e R_PAREN L_BRACKET stmt_list:l1 R_BRACKET ELSE L_BRACKET stmt_list:l2 R_BRACKET
-        {: RESULT = new IfElseNode(e, l1, l2); :};
+if_else ::= IF:b L_PAREN expr:e R_PAREN L_BRACKET stmt_list:l1 R_BRACKET:f
+        {: RESULT = new IfElseNode(e, l1, null, bxleft, fxright); :}
+        | IF:b L_PAREN expr:e R_PAREN L_BRACKET stmt_list:l1 R_BRACKET ELSE L_BRACKET stmt_list:l2 R_BRACKET:f
+        {: RESULT = new IfElseNode(e, l1, l2, bxleft, fxright); :};
 
 expr ::=
         // Literals
@@ -250,22 +248,23 @@ expr ::=
         {: RESULT = e; :}
 
         // Parens
+        // TODO: fix left and right
         | L_PAREN expr:e R_PAREN
         {: RESULT = e; :}
 
         // Arithmic operators
         | expr:e1 PLUS expr:e2
-        {: RESULT = new PlusExpressionNode(e1, e2); :}
+        {: RESULT = new PlusExpressionNode(e1, e2, e1xleft, e2xright); :}
         | expr:e1 MINUS expr:e2
-        {: RESULT = new MinusExpressionNode(e1, e2); :}
+        {: RESULT = new MinusExpressionNode(e1, e2, e1xleft, e2xright); :}
         | expr:e1 TIMES expr:e2
-        {: RESULT = new TimesExpressionNode(e1, e2); :}
+        {: RESULT = new TimesExpressionNode(e1, e2, e1xleft, e2xright); :}
         | expr:e1 DIVIDE expr:e2
-        {: RESULT = new DivideExpressionNode(e1, e2); :}
+        {: RESULT = new DivideExpressionNode(e1, e2, e1xleft, e2xright); :}
         | expr:e1 POWER expr:e2
-        {: RESULT = new PowerExpressionNode(e1, e2); :}
+        {: RESULT = new PowerExpressionNode(e1, e2, e1xleft, e2xright); :}
         | IDENTIFIER:i
-        {: RESULT = new IdentifierExpressionNode(i); :}
+        {: RESULT = new IdentifierExpressionNode(i, ixleft, ixright); :}
         | func_call:c
         {: RESULT = c; :}
 
@@ -287,52 +286,52 @@ expr ::=
 
         // Boolean Expressions
         | expr:b1 GREATER_THAN expr:b2
-        {: RESULT = new GreaterThanExpressionNode(b1, b2); :}
+        {: RESULT = new GreaterThanExpressionNode(b1, b2, b1xleft, b2xright); :}
         | expr:b1 LESS_THAN expr:b2
-        {: RESULT = new LessThanExpressionNode(b1, b2); :}
+        {: RESULT = new LessThanExpressionNode(b1, b2, b1xleft, b2xright); :}
         | expr:e1 EQUALS expr:e2
-        {: RESULT = new EqualsExpressionNode(e1, e2); :}
+        {: RESULT = new EqualsExpressionNode(e1, e2, e1xleft, e2xright); :}
         | expr:b1 GREATER_THAN_EQUALS expr:b2
-        {: RESULT = new GreaterThanEqualsExpressionNode(b1, b2); :}
+        {: RESULT = new GreaterThanEqualsExpressionNode(b1, b2, b1xleft, b2xright); :}
         | expr:b1 LESS_THAN_EQUALS expr:b2
-        {: RESULT = new LessThanEqualsExpressionNode(b1, b2); :}
+        {: RESULT = new LessThanEqualsExpressionNode(b1, b2, b1xleft, b2xright); :}
         | expr:b1 AND expr:b2
-        {: RESULT = new AndExpressionNode(b1, b2); :}
+        {: RESULT = new AndExpressionNode(b1, b2, b1xleft, b2xright); :}
         | expr:b1 OR expr:b2
-        {: RESULT = new OrExpressionNode(b1, b2); :}
-        | NOT expr:e
-        {: RESULT = new NotExpressionNode(e); :}
+        {: RESULT = new OrExpressionNode(b1, b2, b1xleft, b2xright); :}
+        | NOT:b expr:e
+        {: RESULT = new NotExpressionNode(e, bxleft, exright); :}
         ;
 
 // Math builtins
-sqrt ::= SQRT L_PAREN a_param_list:p R_PAREN
-        {: RESULT = new SqrtNode(p); :};
+sqrt ::= SQRT:b L_PAREN a_param_list:p R_PAREN:e
+        {: RESULT = new SqrtNode(p, bxleft, exright); :};
 
-sin ::= SIN L_PAREN a_param_list:p R_PAREN
-        {: RESULT = new SinNode(p); :};
+sin ::= SIN:b L_PAREN a_param_list:p R_PAREN:e
+        {: RESULT = new SinNode(p, bxleft, exright); :};
 
-cos ::= COS L_PAREN a_param_list:p R_PAREN
-        {: RESULT = new CosNode(p); :};
+cos ::= COS:b L_PAREN a_param_list:p R_PAREN:e
+        {: RESULT = new CosNode(p, bxleft, exright); :};
 
-tan ::= TAN L_PAREN a_param_list:p R_PAREN
-        {: RESULT = new TanNode(p); :};
+tan ::= TAN:b L_PAREN a_param_list:p R_PAREN:e
+        {: RESULT = new TanNode(p, bxleft, exright); :};
 
-arcsin ::= ARCSIN L_PAREN a_param_list:p R_PAREN
-        {: RESULT = new ArcsinNode(p); :};
+arcsin ::= ARCSIN:b L_PAREN a_param_list:p R_PAREN:e
+        {: RESULT = new ArcsinNode(p, bxleft, exright); :};
 
-arccos ::= ARCCOS L_PAREN a_param_list:p R_PAREN
-        {: RESULT = new ArccosNode(p); :};
+arccos ::= ARCCOS:b L_PAREN a_param_list:p R_PAREN:e
+        {: RESULT = new ArccosNode(p, bxleft, exright); :};
 
-arctan ::= ARCTAN L_PAREN a_param_list:p R_PAREN
-        {: RESULT = new ArctanNode(p); :};
+arctan ::= ARCTAN:b L_PAREN a_param_list:p R_PAREN:e
+        {: RESULT = new ArctanNode(p, bxleft, exright); :};
 
 
-point ::= L_SQUARE_BRACKET expr:e1 COMMA expr:e2 COMMA expr:e3 R_SQUARE_BRACKET
-        {: RESULT = new PointNode(e1, e2, e3); :};
+point ::= L_SQUARE_BRACKET:b expr:e1 COMMA expr:e2 COMMA expr:e3 R_SQUARE_BRACKET:e
+        {: RESULT = new PointNode(e1, e2, e3, bxleft, exright); :};
 
 point_entry ::= expr:e DOT IDENTIFIER:i
-        {: RESULT = new PointEntryNode(e, i); :};
+        {: RESULT = new PointEntryNode(e, i, exleft, ixright); :};
 
 //GCode
-gcode_func   ::= GCODE IDENTIFIER:i  L_PAREN f_param_list:p R_PAREN L_BRACKET GCODECODE:g R_BRACKET
-        {: RESULT = new GCodeFuncNode(i, p, g); :};
+gcode_func   ::= GCODE:b IDENTIFIER:i  L_PAREN f_param_list:p R_PAREN L_BRACKET GCODECODE:g R_BRACKET:e
+        {: RESULT = new GCodeFuncNode(i, p, g, bxleft, exright); :};

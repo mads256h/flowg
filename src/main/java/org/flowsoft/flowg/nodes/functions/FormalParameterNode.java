@@ -1,13 +1,14 @@
 package org.flowsoft.flowg.nodes.functions;
 
+import java_cup.runtime.ComplexSymbolFactory.Location;
 import org.flowsoft.flowg.nodes.IdentifierNode;
 import org.flowsoft.flowg.nodes.TypeNode;
 import org.flowsoft.flowg.nodes.base.BinaryNode;
 import org.flowsoft.flowg.visitors.IVisitor;
 
 public class FormalParameterNode extends BinaryNode<TypeNode, IdentifierNode> {
-    public FormalParameterNode(TypeNode typeNode, IdentifierNode identifierNode) {
-        super(typeNode, identifierNode);
+    public FormalParameterNode(TypeNode typeNode, IdentifierNode identifierNode, Location left, Location right) {
+        super(typeNode, identifierNode, left, right);
     }
 
     @Override

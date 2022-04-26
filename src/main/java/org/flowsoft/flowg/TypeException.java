@@ -1,4 +1,6 @@
 package org.flowsoft.flowg;
 
-public class TypeException extends Exception {
+import java_cup.runtime.ComplexSymbolFactory.Location;
+
+public abstract class TypeException extends Exception {
 }

@@ -24,138 +24,50 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     private final static HashMap<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> PLUS_MAP = new HashMap<>() {
         {
-            put(new TypePair(Type.Number, Type.Number), (left, right) -> {
-                try {
-                    return new ExpressionValue(left.GetNumber().add(right.GetNumber()));
-                } catch (TypeException e) {
-                    e.printStackTrace();
-                    assert(false);
-                    return null;
-                }
-            });
-            put(new TypePair(Type.Point, Type.Point), (left, right) -> {
-                try {
-                    return new ExpressionValue(left.GetPoint().Add(right.GetPoint()));
-                } catch (TypeException e) {
-                    e.printStackTrace();
-                    assert(false);
-                    return null;
-                }
-            });
+            put(new TypePair(Type.Number, Type.Number), (left, right) -> new ExpressionValue(left.GetNumber().add(right.GetNumber())));
+            put(new TypePair(Type.Point, Type.Point), (left, right) -> new ExpressionValue(left.GetPoint().Add(right.GetPoint())));
         }
     };
 
     private final static HashMap<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> MINUS_MAP = new HashMap<>() {
         {
-            put(new TypePair(Type.Number, Type.Number), (left, right) -> {
-                try {
-                    return new ExpressionValue(left.GetNumber().subtract(right.GetNumber()));
-                } catch (TypeException e) {
-                    e.printStackTrace();
-                    assert(false);
-                    return null;
-                }
-            });
-            put(new TypePair(Type.Point, Type.Point), (left, right) -> {
-                try {
-                    return new ExpressionValue(left.GetPoint().Subtract(right.GetPoint()));
-                } catch (TypeException e) {
-                    e.printStackTrace();
-                    assert(false);
-                    return null;
-                }
-            });
+            put(new TypePair(Type.Number, Type.Number), (left, right) -> new ExpressionValue(left.GetNumber().subtract(right.GetNumber())));
+            put(new TypePair(Type.Point, Type.Point), (left, right) -> new ExpressionValue(left.GetPoint().Subtract(right.GetPoint())));
         }
     };
 
     private final static HashMap<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> MULTIPLY_MAP = new HashMap<>() {
         {
-            put(new TypePair(Type.Number, Type.Number), (left, right) -> {
-                try {
-                    return new ExpressionValue(left.GetNumber().multiply(right.GetNumber()));
-                } catch (TypeException e) {
-                    e.printStackTrace();
-                    assert(false);
-                    return null;
-                }
-            });
+            put(new TypePair(Type.Number, Type.Number), (left, right) -> new ExpressionValue(left.GetNumber().multiply(right.GetNumber())));
 
-            put(new TypePair(Type.Point, Type.Number), (left, right) -> {
-                try {
-                    return new ExpressionValue(left.GetPoint().MultiplyBy(right.GetNumber()));
-                } catch (TypeException e) {
-                    e.printStackTrace();
-                    assert(false);
-                    return null;
-                }
-            });
+            put(new TypePair(Type.Point, Type.Number), (left, right) -> new ExpressionValue(left.GetPoint().MultiplyBy(right.GetNumber())));
         }
     };
 
     private final static HashMap<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> DIVIDE_MAP = new HashMap<>() {
         {
-            put(new TypePair(Type.Number, Type.Number), (left, right) -> {
-                try {
-                    return new ExpressionValue(BigDecimalUtils.Divide(left.GetNumber(), right.GetNumber()));
-                } catch (TypeException e) {
-                    e.printStackTrace();
-                    assert(false);
-                    return null;
-                }
-            });
+            put(new TypePair(Type.Number, Type.Number), (left, right) -> new ExpressionValue(BigDecimalUtils.Divide(left.GetNumber(), right.GetNumber())));
 
-            put(new TypePair(Type.Point, Type.Number), (left, right) -> {
-                try {
-                    return new ExpressionValue(left.GetPoint().DivideBy(right.GetNumber()));
-                } catch (TypeException e) {
-                    e.printStackTrace();
-                    assert(false);
-                    return null;
-                }
-            });
+            put(new TypePair(Type.Point, Type.Number), (left, right) -> new ExpressionValue(left.GetPoint().DivideBy(right.GetNumber())));
         }
     };
 
     private final static HashMap<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> EQ_MAP = new HashMap<>() {
         {
-            put(new TypePair(Type.Number, Type.Number), (left, right) -> {
-                try {
-                    return new ExpressionValue(BigDecimalUtils.Equals(left.GetNumber(), right.GetNumber()));
-                } catch (TypeException e) {
-                    e.printStackTrace();
-                    assert(false);
-                    return null;
-                }
-            });
+            put(new TypePair(Type.Number, Type.Number), (left, right) -> new ExpressionValue(BigDecimalUtils.Equals(left.GetNumber(), right.GetNumber())));
             put(new TypePair(Type.Point, Type.Point), (left, right) -> {
-                try {
                     if (left.GetPoint().equals(right.GetPoint())) {
                         return new ExpressionValue(true);
                     } else {
                         return new ExpressionValue(false);
                     }
-                } catch (TypeException e) {
-                    e.printStackTrace();
-                    assert(false);
-                    return null;
-                }
             });
             put(new TypePair(Type.Boolean, Type.Boolean), (left, right) -> {
-                try {
-                    var boolLeft = left.GetBoolean();
-                    var boolRight = right.GetBoolean();
-
-                    if (boolLeft == boolRight) {
+                    if (left.GetBoolean() == right.GetBoolean()) {
                         return new ExpressionValue(true);
                     } else {
                         return new ExpressionValue(false);
                     }
-
-                } catch (TypeException e) {
-                    e.printStackTrace();
-                    assert(false);
-                    return null;
-                }
             });
         }
     };
@@ -676,6 +588,6 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
             return (e1, e2) -> func.apply(e2, e1);
         }
 
-        throw new TypeException();
+        throw new IllegalStateException();
     }
 }
