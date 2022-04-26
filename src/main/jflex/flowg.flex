@@ -64,7 +64,7 @@ import java.math.BigDecimal;
 
 
 Type = "number"|"bool"|"point"|"void"
-Identifier = [a-zA-Z][a-zA-Z0-9]*
+Identifier = [a-zA-Z_][a-zA-Z0-9_]*
 Number = [0-9]+(\.[0-9]+)?
 Whitespace = [\ \r\n]
 NewLine = \n
@@ -82,6 +82,8 @@ Anything = .
 // Builtin functions
 "move" { return symbol("move", sym.MOVE); }
 "line" { return symbol("line", sym.LINE); }
+"cw_arc" { return symbol("cw_arc", sym.CW_ARC); }
+"ccw_arc" { return symbol("ccw_arc", sym.CCW_ARC); }
 
 // Math builtins
 "sqrt" { return symbol("sqrt", sym.SQRT); }

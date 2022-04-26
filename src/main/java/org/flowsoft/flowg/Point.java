@@ -64,7 +64,19 @@ public final class Point {
 
         var sum = x2.add(y2).add(z2);
 
-        return sum.sqrt(MathContext.UNLIMITED);
+        return sum.sqrt(BigDecimalUtils.DEFAULT_MATH_CONTEXT);
+    }
+
+    public BigDecimal Distance2D(Point point) {
+        var x = GetX().subtract(point.GetX());
+        var y = GetY().subtract(point.GetY());
+
+        var x2 = x.pow(2);
+        var y2 = y.pow(2);
+
+        var sum = x2.add(y2);
+
+        return sum.sqrt(BigDecimalUtils.DEFAULT_MATH_CONTEXT);
     }
 
     @Override
