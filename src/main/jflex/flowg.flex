@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 %implements java_cup.runtime.Scanner
 %function next_token
 %type java_cup.runtime.Symbol
+%yylexthrow InvalidTokenException
 %eofval{
   return symbol("EOF", sym.EOF);
 %eofval}
@@ -139,6 +140,5 @@ Anything = .
 "!" { return symbol("!", sym.NOT); }
 
 // This catches any error.
-// Never match this symbol unless it is to report is as an error!
-{Anything} { return symbol("invalid", sym.INVALID); }
+{Anything} { throw new InvalidTokenException(leftLocation(), rightLocation()); }
 
