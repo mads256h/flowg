@@ -41,6 +41,16 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
+    public String Visit(CWArcNode cwArcNode) throws NoException {
+        return BuiltinFunctionPrinter("cw_arc", cwArcNode);
+    }
+
+    @Override
+    public String Visit(CCWArcNode ccwArcNode) throws NoException {
+        return BuiltinFunctionPrinter("ccw_arc", ccwArcNode);
+    }
+
+    @Override
     public String Visit(SqrtNode sqrtNode) throws NoException {
         return BuiltinFunctionPrinter("sqrt", sqrtNode);
     }

@@ -151,6 +151,134 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     }
 
     @Override
+    public ExpressionValue Visit(CWArcNode cwArcNode) throws Exception {
+        var parameters = cwArcNode.GetChild().GetChildren();
+        var centerPoint = parameters.get(0).Accept(this).GetPoint();
+        var finalPoint = parameters.get(1).Accept(this).GetPoint();
+
+        var absoluteCenterPoint = _currentPosition.Add(centerPoint);
+
+        var pi = new BigDecimal(Math.PI);
+
+        // All distances in mm
+        var a = _currentPosition.Distance2D(absoluteCenterPoint);
+        var b = absoluteCenterPoint.Distance2D(finalPoint);
+        var c = _currentPosition.Distance2D(absoluteCenterPoint);
+
+        // cos(C) =
+        //          a² + b² - c²
+        //          ------------
+        //              2ab
+
+        var numerator = a.pow(2).add(b.pow(2)).subtract(c.pow(2));
+        var denominator = new BigDecimal("2").multiply(a).multiply(b);
+
+        var cosC = BigDecimalUtils.Divide(numerator, denominator);
+
+        var angle = BigDecimalMath.acos(cosC, BigDecimalUtils.DEFAULT_MATH_CONTEXT);
+
+        // Circle circumference = π * r²
+        // r = distance(current, center)
+
+        var circumference = pi.multiply(a.pow(2));
+        var arcCircumference = BigDecimalUtils.Divide(angle, new BigDecimal("2").multiply(pi)).multiply(circumference);
+
+
+        var filamentDiameter = new BigDecimal("2.85");
+        var nozzleDiameter = new BigDecimal("0.4");
+        var layerHeight = new BigDecimal("0.1");
+
+        var filamentRadius = BigDecimalUtils.Divide(filamentDiameter, new BigDecimal(2));
+
+
+        var filamentVolumeNeeded = arcCircumference.multiply(nozzleDiameter).multiply(layerHeight);
+
+        // PI * r²
+        var filamentArea = pi.multiply(filamentRadius.pow(2));
+
+        var filamentMm = BigDecimalUtils.Divide(filamentVolumeNeeded, filamentArea);
+        _currentExtrusion = _currentExtrusion.add(filamentMm);
+
+        _currentPosition = finalPoint;
+
+        _stringBuilder
+                .append("G2")
+                .append(" E").append(BigDecimalUtils.ToGCode(_currentExtrusion))
+                .append(" X").append(BigDecimalUtils.ToGCode(finalPoint.GetX()))
+                .append(" Y").append(BigDecimalUtils.ToGCode(finalPoint.GetY()))
+                .append(" Z").append(BigDecimalUtils.ToGCode(finalPoint.GetZ()))
+                .append(" I").append(BigDecimalUtils.ToGCode(centerPoint.GetX()))
+                .append(" J").append(BigDecimalUtils.ToGCode(centerPoint.GetY()))
+                .append('\n');
+
+        return new ExpressionValue(Type.Void);
+    }
+
+    @Override
+    public ExpressionValue Visit(CCWArcNode ccwArcNode) throws Exception {
+        var parameters = ccwArcNode.GetChild().GetChildren();
+        var centerPoint = parameters.get(0).Accept(this).GetPoint();
+        var finalPoint = parameters.get(1).Accept(this).GetPoint();
+
+        var absoluteCenterPoint = _currentPosition.Add(centerPoint);
+
+        var pi = new BigDecimal(Math.PI);
+
+        // All distances in mm
+        var a = _currentPosition.Distance2D(absoluteCenterPoint);
+        var b = absoluteCenterPoint.Distance2D(finalPoint);
+        var c = _currentPosition.Distance2D(absoluteCenterPoint);
+
+        // cos(C) =
+        //          a² + b² - c²
+        //          ------------
+        //              2ab
+
+        var numerator = a.pow(2).add(b.pow(2)).subtract(c.pow(2));
+        var denominator = new BigDecimal("2").multiply(a).multiply(b);
+
+        var cosC = BigDecimalUtils.Divide(numerator, denominator);
+
+        var angle = BigDecimalMath.acos(cosC, BigDecimalUtils.DEFAULT_MATH_CONTEXT);
+
+        // Circle circumference = π * r²
+        // r = distance(current, center)
+
+        var circumference = pi.multiply(a.pow(2));
+        var arcCircumference = BigDecimalUtils.Divide(angle, new BigDecimal("2").multiply(pi)).multiply(circumference);
+
+
+        var filamentDiameter = new BigDecimal("2.85");
+        var nozzleDiameter = new BigDecimal("0.4");
+        var layerHeight = new BigDecimal("0.1");
+
+        var filamentRadius = BigDecimalUtils.Divide(filamentDiameter, new BigDecimal(2));
+
+
+        var filamentVolumeNeeded = arcCircumference.multiply(nozzleDiameter).multiply(layerHeight);
+
+        // PI * r²
+        var filamentArea = pi.multiply(filamentRadius.pow(2));
+
+        var filamentMm = BigDecimalUtils.Divide(filamentVolumeNeeded, filamentArea);
+        _currentExtrusion = _currentExtrusion.add(filamentMm);
+
+        _currentPosition = finalPoint;
+
+        _stringBuilder
+                .append("G3")
+                .append(" E").append(BigDecimalUtils.ToGCode(_currentExtrusion))
+                .append(" X").append(BigDecimalUtils.ToGCode(finalPoint.GetX()))
+                .append(" Y").append(BigDecimalUtils.ToGCode(finalPoint.GetY()))
+                .append(" Z").append(BigDecimalUtils.ToGCode(finalPoint.GetZ()))
+                .append(" I").append(BigDecimalUtils.ToGCode(centerPoint.GetX()))
+                .append(" J").append(BigDecimalUtils.ToGCode(centerPoint.GetY()))
+                .append('\n');
+
+        return new ExpressionValue(Type.Void);
+    }
+
+    @Override
     public ExpressionValue Visit(SqrtNode sqrtNode) throws Exception {
         var parameters = sqrtNode.GetChild().GetChildren();
         var number = parameters.get(0).Accept(this).GetNumber();

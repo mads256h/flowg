@@ -32,8 +32,10 @@ public class RuntimeSymbolTable {
         if (_variableMap.containsKey(identifier)) {
             _variableMap.put(identifier, expressionValue);
         }
-        else
-        {
+        else if (_parent != null) {
+            _parent.SetValue(identifier, expressionValue);
+        }
+        else {
             throw new IllegalStateException();
         }
     }
