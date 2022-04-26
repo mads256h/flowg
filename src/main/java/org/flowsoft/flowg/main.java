@@ -101,6 +101,10 @@ public class main {
             writer.write(str);
             writer.close();
         }
+        catch (InvalidTokenException e) {
+            System.err.format("%s:%d:%d: error: invalid token\n", e.GetLeft().getUnit(), e.GetLeft().getLine(), e.GetLeft().getColumn());
+            System.err.println(GetLine(file, e.GetLeft(), e.GetRight()));
+        }
         catch (ExpectedTypeException e) {
             System.err.format("%s:%d:%d: error: expected %s but got %s\n", e.GetLeft().getUnit(), e.GetLeft().getLine(), e.GetLeft().getColumn(), TypeHelper.TypeToString(e.GetExpected()), TypeHelper.TypeToString(e.GetActual()));
             System.err.println(GetLine(file, e.GetLeft(), e.GetRight()));

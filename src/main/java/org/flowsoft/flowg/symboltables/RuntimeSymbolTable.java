@@ -35,8 +35,10 @@ public class RuntimeSymbolTable {
         }else if(_parent != null){
             _parent.SetValue(identifier, expressionValue);
         }
-        else
-        {
+        else if (_parent != null) {
+            _parent.SetValue(identifier, expressionValue);
+        }
+        else {
             throw new IllegalStateException();
         }
     }
