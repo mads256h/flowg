@@ -59,6 +59,26 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     }
 
     @Override
+    public Type Visit(IncludeSysNode includeSysNode) throws TypeException {
+        return null;
+    }
+
+    @Override
+    public Type Visit(IncludeUserNode includeUserNode) throws TypeException {
+        return null;
+    }
+
+    @Override
+    public Type Visit(SysStringNode systringNode) throws TypeException {
+        return null;
+    }
+
+    @Override
+    public Type Visit(UserStringNode userStringNode) throws TypeException {
+        return null;
+    }
+
+    @Override
     public Type Visit(StatementListNode statementListNode) throws TypeException {
 
         for (var child : statementListNode.GetChildren()) {

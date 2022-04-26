@@ -9,7 +9,15 @@ import org.flowsoft.flowg.nodes.math.functions.*;
 import org.flowsoft.flowg.nodes.math.operators.*;
 
 public interface IVisitor<T, TException extends Exception> {
+
+    // Include
+    T Visit(IncludeSysNode includeSysNode) throws TException;
+    T Visit(IncludeUserNode includeUserNode) throws TException;
+    T Visit(SysStringNode systringNode) throws TException;
+    T Visit(UserStringNode userStringNode) throws TException;
+
     T Visit(StatementListNode statementListNode) throws TException;
+
 
     // Variable declaration and assignment
     T Visit(DeclarationNode declarationNode) throws TException;
@@ -66,4 +74,6 @@ public interface IVisitor<T, TException extends Exception> {
     T Visit(BooleanLiteralNode booleanLiteralNode) throws TException;
     T Visit(PointNode pointNode) throws TException;
     T Visit(PointEntryNode pointEntryNode) throws TException;
+
+
 }

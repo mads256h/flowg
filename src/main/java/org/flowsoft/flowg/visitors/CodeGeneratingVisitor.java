@@ -91,6 +91,26 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     }
 
     @Override
+    public ExpressionValue Visit(IncludeSysNode includeSysNode) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ExpressionValue Visit(IncludeUserNode includeUserNode) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ExpressionValue Visit(SysStringNode systringNode) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ExpressionValue Visit(UserStringNode userStringNode) throws Exception {
+        return null;
+    }
+
+    @Override
     public ExpressionValue Visit(StatementListNode statementListNode) throws Exception {
         for (var child : statementListNode.GetChildren()) {
             child.Accept(this);
