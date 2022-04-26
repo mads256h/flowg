@@ -545,6 +545,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
                 gCodeBody = preString + var + postString;
                 matcher = patternIdentifier.matcher(gCodeBody);
             }
+            _symbolTable = oldSymbolTable;
             _stringBuilder.append(gCodeBody);
             return new ExpressionValue(Type.Void);
         }
