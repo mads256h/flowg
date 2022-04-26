@@ -30,6 +30,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     private final static HashMap<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> MINUS_MAP = new HashMap<>() {
         {
             put(new TypePair(Type.Number, Type.Number), (left, right) -> new ExpressionValue(left.GetNumber().subtract(right.GetNumber())));
+            //put(new TypePair(Type.Void, Type.Number), (right) -> new ExpressionValue(right.GetNumber().negate()));
             put(new TypePair(Type.Point, Type.Point), (left, right) -> new ExpressionValue(left.GetPoint().Subtract(right.GetPoint())));
         }
     };
@@ -289,8 +290,14 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     @Override
     public ExpressionValue Visit(MinusExpressionNode minusExpressionNode) throws Exception {
-        var leftValue = minusExpressionNode.GetLeftChild().Accept(this);
         var rightValue = minusExpressionNode.GetRightChild().Accept(this);
+
+        var child = minusExpressionNode.GetLeftChild();
+        if (child == null) {
+            return new ExpressionValue(rightValue.GetNumber().negate());
+        }
+
+        var leftValue = child.Accept(this);
 
         return TryBoth(leftValue.GetType(), rightValue.GetType(), MINUS_MAP).apply(leftValue, rightValue);
     }
