@@ -30,3 +30,11 @@ void lline(point endpoint){
     gcodeLine(currentPosition, endpoint, filamentMm);
     currentPosition = endpoint;
 };
+
+void move(point endPoint){
+    gcodeMove(endPoint);
+};
+
+gcode gcodeMove(point endPoint){
+G0 X[endPoint.x] Y[endPoint.y] Z[endPoint.z]
+};
