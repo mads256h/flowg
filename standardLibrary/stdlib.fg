@@ -27,14 +27,6 @@ void lline(point endpoint){
     currentPosition = endpoint;
 };
 
-gcode gcodeMove(point endPoint){
-    G0 X[endPoint.x] Y[endPoint.y] Z[endPoint.z]
-};
-
-void mmove(point endPoint){
-    gcodeMove(endPoint);
-};
-
 point arc(point center, point wantedEndpoint){
     _arc(center, wantedEndpoint, true);
 };
@@ -64,4 +56,11 @@ point _arc(point center, point wantedEndpoint, bool is_cw){
     };
     currentPosition = realEndpoint;
     return currentPosition;
+};
+void mmove(point endpoint){
+    gcode gcodeMove(point endpoint){
+        G0 X[endpoint.x] Y[endpoint.y] Z[endpoint.z]
+    };
+    gcodeMove(endpoint);
+    currentPosition = endpoint;
 };
