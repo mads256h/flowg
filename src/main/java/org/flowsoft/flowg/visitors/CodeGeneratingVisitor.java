@@ -96,12 +96,28 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     @Override
     public ExpressionValue Visit(IncludeSysNode includeSysNode) throws Exception {
+        String filepath = "include/" + includeSysNode.GetChild().GetValue();
+
+        Yylex yylex;
+        try {
+            yylex = new Yylex(new FileReader(filepath), filepath);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException();
+        }
+
+        parser parser = new parser(yylex, new ComplexSymbolFactory());
+
+        Symbol symbol = parser.parse();
+
+
+        INode rootNode = (INode) symbol.value;
+        rootNode.Accept(this);
+
         return null;
     }
 
     @Override
     public ExpressionValue Visit(IncludeUserNode includeUserNode) throws Exception {
-
         String filepath = includeUserNode.GetChild().GetValue();
 
         Yylex yylex;

@@ -67,6 +67,31 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
     @Override
     public Type Visit(IncludeSysNode includeSysNode) throws TypeException {
+        String filepath = "include/" + includeSysNode.GetChild().GetValue();
+
+        Yylex yylex;
+        try {
+            yylex = new Yylex(new FileReader(filepath), filepath);
+        } catch (FileNotFoundException e) {
+            throw new IncludeNotFoundException();
+        }
+
+        parser parser = new parser(yylex, new ComplexSymbolFactory());
+
+        Symbol symbol;
+        try {
+            symbol = parser.parse();
+        }
+        catch (ParseException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            throw new ParseException(e);
+        }
+
+        INode rootNode = (INode) symbol.value;
+        rootNode.Accept(this);
+
         return null;
     }
 
