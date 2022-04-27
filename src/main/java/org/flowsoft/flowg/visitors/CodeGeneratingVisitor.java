@@ -393,6 +393,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         var first = pointNode.GetFirstNode().Accept(this);
         var second = pointNode.GetSecondNode().Accept(this);
         var third = pointNode.GetThirdNode().Accept(this);
+
         return new ExpressionValue(new Point(first.GetNumber(), second.GetNumber(), third.GetNumber()));
     }
 
@@ -419,14 +420,8 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     @Override
     public ExpressionValue Visit(MinusExpressionNode minusExpressionNode) throws Exception {
+        var leftValue = minusExpressionNode.GetLeftChild().Accept(this);
         var rightValue = minusExpressionNode.GetRightChild().Accept(this);
-
-        var child = minusExpressionNode.GetLeftChild();
-        if (child == null) {
-            return new ExpressionValue(rightValue.GetNumber().negate());
-        }
-
-        var leftValue = child.Accept(this);
 
         return TryBoth(leftValue.GetType(), rightValue.GetType(), MINUS_MAP).apply(leftValue, rightValue);
     }
@@ -456,6 +451,27 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     }
 
     @Override
+    public ExpressionValue Visit(ArithmeticNegationExpressionNode arithmeticNegationExpressionNode) throws Exception {
+        var childValue = arithmeticNegationExpressionNode.GetChild().Accept(this);
+
+        return new ExpressionValue(childValue.GetNumber().negate());
+    }
+
+    @Override
+    public ExpressionValue Visit(IncrementExpressionNode incrementExpressionNode) throws Exception {
+        var childValue = incrementExpressionNode.GetChild().Accept(this);
+
+        return new ExpressionValue(childValue.GetNumber().add(new BigDecimal("1")));
+    }
+
+    @Override
+    public ExpressionValue Visit(DecrementExpressionNode decrementExpressionNode) throws Exception {
+        var childValue = decrementExpressionNode.GetChild().Accept(this);
+
+        return new ExpressionValue(childValue.GetNumber().subtract(new BigDecimal("1")));
+    }
+
+    @Override
     public ExpressionValue Visit(NotExpressionNode notExpressionNode) throws Exception {
         var childBoolean = notExpressionNode.GetChild().Accept(this).GetBoolean();
 
@@ -466,6 +482,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     public ExpressionValue Visit(IdentifierExpressionNode identifierExpressionNode) throws Exception {
         var identifier = identifierExpressionNode.GetChild().GetValue();
         var variableEntry = _symbolTable.LookupVariable(identifier);
+
         return variableEntry;
     }
 
@@ -568,6 +585,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     public ExpressionValue Visit(GreaterThanExpressionNode greaterThanExpressionNode) throws Exception {
         var leftNumber = greaterThanExpressionNode.GetLeftChild().Accept(this).GetNumber();
         var rightNumber = greaterThanExpressionNode.GetRightChild().Accept(this).GetNumber();
+
         return new ExpressionValue(BigDecimalUtils.GreaterThan(leftNumber, rightNumber));
     }
 
@@ -575,6 +593,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     public ExpressionValue Visit(LessThanExpressionNode lessThanExpressionNode) throws Exception {
         var leftNumber = lessThanExpressionNode.GetLeftChild().Accept(this).GetNumber();
         var rightNumber = lessThanExpressionNode.GetRightChild().Accept(this).GetNumber();
+
         return new ExpressionValue(BigDecimalUtils.LessThan( leftNumber, rightNumber));
     }
 
@@ -593,6 +612,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     public ExpressionValue Visit(GreaterThanEqualsExpressionNode greaterThanEqualsExpressionNode) throws Exception {
         var leftNumber = greaterThanEqualsExpressionNode.GetLeftChild().Accept(this).GetNumber();
         var rightNumber = greaterThanEqualsExpressionNode.GetRightChild().Accept(this).GetNumber();
+
         return new ExpressionValue(BigDecimalUtils.GreaterThanEquals(leftNumber, rightNumber));
     }
 
@@ -600,6 +620,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     public ExpressionValue Visit(LessThanEqualsExpressionNode lessThanEqualsExpressionNode) throws Exception {
         var leftNumber = lessThanEqualsExpressionNode.GetLeftChild().Accept(this).GetNumber();
         var rightNumber = lessThanEqualsExpressionNode.GetRightChild().Accept(this).GetNumber();
+
         return new ExpressionValue(BigDecimalUtils.LessThanEquals(leftNumber, rightNumber));
     }
 

@@ -131,6 +131,10 @@ Anything = .
 "/" { return symbol("/", sym.DIVIDE); }
 "^" { return symbol("^", sym.POWER); }
 
+// Unary operators
+"++" { return symbol("++", sym.INCREMENT); }
+"--" { return symbol("--", sym.DECREMENT); }
+
 // Boolean operators
 ">" { return symbol(">", sym.GREATER_THAN); }
 "<" { return symbol("<", sym.LESS_THAN); }

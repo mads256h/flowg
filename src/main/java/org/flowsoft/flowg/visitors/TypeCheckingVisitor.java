@@ -312,18 +312,13 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     public Type Visit(PlusExpressionNode plusExpressionNode) throws TypeException {
         var leftType = plusExpressionNode.GetLeftChild().Accept(this);
         var rightType = plusExpressionNode.GetRightChild().Accept(this);
+
         return PlusMinusTypeCheckExpr(leftType, rightType, plusExpressionNode);
     }
 
     @Override
     public Type Visit(MinusExpressionNode minusExpressionNode) throws TypeException {
-        Type leftType;
-        if (minusExpressionNode.GetLeftChild() != null) {
-            leftType = minusExpressionNode.GetLeftChild().Accept(this);
-        } else {
-            leftType = Type.Void;
-        }
-
+        var leftType = minusExpressionNode.GetLeftChild().Accept(this);
         var rightType = minusExpressionNode.GetRightChild().Accept(this);
 
         return PlusMinusTypeCheckExpr(leftType, rightType, minusExpressionNode);
@@ -333,6 +328,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     public Type Visit(TimesExpressionNode multiplyExpressionNode) throws TypeException {
         var leftType = multiplyExpressionNode.GetLeftChild().Accept(this);
         var rightType = multiplyExpressionNode.GetRightChild().Accept(this);
+
         return TimesDivideTypeCheckExpr(leftType, rightType, multiplyExpressionNode);
     }
 
@@ -340,6 +336,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     public Type Visit(DivideExpressionNode divisionExpressionNode) throws TypeException {
         var leftType = divisionExpressionNode.GetLeftChild().Accept(this);
         var rightType = divisionExpressionNode.GetRightChild().Accept(this);
+
         return TimesDivideTypeCheckExpr(leftType, rightType, divisionExpressionNode);
     }
 
@@ -361,7 +358,43 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
         return Type.Number;
     }
-    
+
+    @Override
+    public Type Visit(ArithmeticNegationExpressionNode arithmeticNegationExpressionNode) throws TypeException {
+        var childNode = arithmeticNegationExpressionNode.GetChild();
+        var childType = childNode.Accept(this);
+
+        if (childType != Type.Number) {
+            throw new ExpectedTypeException(Type.Number, childType, childNode.GetLeft(), childNode.GetRight());
+        }
+
+        return Type.Number;
+    }
+
+    @Override
+    public Type Visit(IncrementExpressionNode incrementExpressionNode) throws TypeException {
+        var childNode = incrementExpressionNode.GetChild();
+        var childType = childNode.Accept(this);
+
+        if (childType != Type.Number) {
+            throw new ExpectedTypeException(Type.Number, childType, childNode.GetLeft(), childNode.GetRight());
+        }
+
+        return Type.Number;
+    }
+
+    @Override
+    public Type Visit(DecrementExpressionNode decrementExpressionNode) throws TypeException {
+        var childNode = decrementExpressionNode.GetChild();
+        var childType = childNode.Accept(this);
+
+        if (childType != Type.Number) {
+            throw new ExpectedTypeException(Type.Number, childType, childNode.GetLeft(), childNode.GetRight());
+        }
+
+        return Type.Number;
+    }
+
     @Override
     public Type Visit(NotExpressionNode notExpressionNode) throws TypeException {
         var childNode = notExpressionNode.GetChild();

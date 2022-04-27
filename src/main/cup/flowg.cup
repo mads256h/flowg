@@ -56,6 +56,10 @@ terminal TIMES;
 terminal DIVIDE;
 terminal POWER;
 
+// Unary operators
+terminal INCREMENT;
+terminal DECREMENT;
+
 // Boolean operators
 terminal GREATER_THAN;
 terminal LESS_THAN;
@@ -124,6 +128,7 @@ precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE;
 precedence left POWER;
 precedence left DOT;
+precedence left INCREMENT, DECREMENT;
 
 start with program;
 
@@ -258,8 +263,6 @@ expr ::=
         {: RESULT = new PlusExpressionNode(e1, e2, e1xleft, e2xright); :}
         | expr:e1 MINUS expr:e2
         {: RESULT = new MinusExpressionNode(e1, e2, e1xleft, e2xright); :}
-        | MINUS:b expr:e
-        {: RESULT = new MinusExpressionNode(e, bxleft, exright); :}
         | expr:e1 TIMES expr:e2
         {: RESULT = new TimesExpressionNode(e1, e2, e1xleft, e2xright); :}
         | expr:e1 DIVIDE expr:e2
@@ -270,6 +273,14 @@ expr ::=
         {: RESULT = new IdentifierExpressionNode(i, ixleft, ixright); :}
         | func_call:c
         {: RESULT = c; :}
+
+        // Unary operators
+        | MINUS:m expr:e
+        {: RESULT = new ArithmeticNegationExpressionNode(e, mxleft, exright); :}
+        | INCREMENT:i expr:e
+        {: RESULT = new IncrementExpressionNode(e, ixleft, exright); :}
+        | DECREMENT:d expr:e
+        {: RESULT = new DecrementExpressionNode(e, dxleft, exright); :}
 
         // Math builtins
         | sqrt:s

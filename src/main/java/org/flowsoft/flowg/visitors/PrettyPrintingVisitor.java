@@ -178,12 +178,7 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
 
     @Override
     public String Visit(MinusExpressionNode minusExpressionNode) throws NoException {
-        var child = minusExpressionNode.GetLeftChild();
-        if (child == null) {
-            return " -" + minusExpressionNode.GetRightChild().Accept(this);
-        } else {
-            return minusExpressionNode.GetLeftChild().Accept(this) + " - " + minusExpressionNode.GetRightChild().Accept(this);
-        }
+        return minusExpressionNode.GetLeftChild().Accept(this) + " - " + minusExpressionNode.GetRightChild().Accept(this);
     }
 
     @Override
@@ -200,7 +195,22 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     public String Visit(PowerExpressionNode powerExpressionNode) throws NoException {
         return powerExpressionNode.GetLeftChild().Accept(this) + "^" + powerExpressionNode.GetRightChild().Accept(this);
     }
-    
+
+    @Override
+    public String Visit(ArithmeticNegationExpressionNode arithmeticNegationExpressionNode) throws NoException {
+        return "-" + arithmeticNegationExpressionNode.GetChild().Accept(this);
+    }
+
+    @Override
+    public String Visit(IncrementExpressionNode incrementExpressionNode) throws NoException {
+        return "++" + incrementExpressionNode.GetChild().Accept(this);
+    }
+
+    @Override
+    public String Visit(DecrementExpressionNode decrementExpressionNode) throws NoException {
+        return "--" + decrementExpressionNode.GetChild().Accept(this);
+    }
+
     @Override
     public String Visit(NotExpressionNode notExpressionNode) throws NoException {
         return "!" + notExpressionNode.GetChild().Accept(this);
