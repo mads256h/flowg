@@ -22,7 +22,6 @@ public class FunctionDefinitionNode extends Node implements StatementNode {
         _statementListNode = statementListNode;
     }
 
-
     public TypeNode GetTypeNode() {
         return _typeNode;
     }

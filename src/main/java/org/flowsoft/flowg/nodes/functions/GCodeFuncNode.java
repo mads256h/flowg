@@ -1,25 +1,18 @@
 package org.flowsoft.flowg.nodes.functions;
-
 import org.flowsoft.flowg.nodes.IdentifierNode;
-import org.flowsoft.flowg.nodes.base.Node;
 import org.flowsoft.flowg.nodes.base.StatementNode;
+import org.flowsoft.flowg.nodes.base.TernaryNode;
 import org.flowsoft.flowg.visitors.IVisitor;
 import java_cup.runtime.ComplexSymbolFactory.Location;
 
-public class GCodeFuncNode extends Node implements StatementNode {
-    private final IdentifierNode _identifierNode;
-    private final FormalParameterListNode _formalParameterListNode;
-    private final GCodeCodeNode _gCodeCodeNode;
+public class GCodeFuncNode extends TernaryNode<IdentifierNode, FormalParameterListNode, GCodeCodeNode> implements StatementNode {
     public GCodeFuncNode(IdentifierNode identifierNode, FormalParameterListNode formalParameterListNode, GCodeCodeNode gCodeCodeNode, Location left, Location right){
-        super(left, right);
-        _identifierNode = identifierNode;
-        _formalParameterListNode = formalParameterListNode;
-        _gCodeCodeNode = gCodeCodeNode;
+        super(identifierNode, formalParameterListNode, gCodeCodeNode, left, right);
     }
 
-    public IdentifierNode GetIdentifierNode(){ return _identifierNode; }
-    public FormalParameterListNode GetFormalParameterListNode() { return _formalParameterListNode; }
-    public GCodeCodeNode GetGCodeCodeNode() { return _gCodeCodeNode; }
+    public IdentifierNode GetIdentifierNode(){ return GetFirstNode(); }
+    public FormalParameterListNode GetFormalParameterListNode() { return GetSecondNode(); }
+    public GCodeCodeNode GetGCodeCodeNode() { return GetThirdNode(); }
 
     @Override
     public <T, TException extends Exception> T Accept(IVisitor<T, TException> visitor) throws TException {

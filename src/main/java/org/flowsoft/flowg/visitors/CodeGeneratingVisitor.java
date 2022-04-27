@@ -13,6 +13,7 @@ import org.flowsoft.flowg.symboltables.RuntimeSymbolTable;
 import org.flowsoft.flowg.symboltables.SymbolTable;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -129,7 +130,6 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
         var pi = new BigDecimal(Math.PI);
         var filamentRadius = BigDecimalUtils.Divide(filamentDiameter, new BigDecimal(2));
-
 
         var filamentVolumeNeeded = distance.multiply(nozzleDiameter).multiply(layerHeight);
 
@@ -492,7 +492,6 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         }
 
         // Get and run the function body
-
         var oldSymbolTable = _symbolTable;
         _symbolTable = bodyTable;
 
@@ -588,7 +587,17 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
                 matcher = patternIdentifier.matcher(gCodeBody);
             }
             _symbolTable = oldSymbolTable;
-            _stringBuilder.append(gCodeBody);
+            String[] array = gCodeBody.split("\\n");
+            String gCode = "";
+            for  (String string : array){
+                String trimmedCode = string.trim();
+                if (trimmedCode != ""){
+                    gCode += string.trim() + "\n";
+                }
+
+            }
+
+            _stringBuilder.append(gCode);
             return new ExpressionValue(Type.Void);
         }
     }
