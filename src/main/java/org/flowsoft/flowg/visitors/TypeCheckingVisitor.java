@@ -17,42 +17,39 @@ import org.flowsoft.flowg.symboltables.SymbolTable;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
+public class TypeCheckingVisitor implements IVisitor<Type, TypeException> {
 
     private final static HashMap<TypePair, Type> PLUS_MINUS_TYPE_MAP = new HashMap<>() {
         {
             put(new TypePair(Type.Number, Type.Number), Type.Number);
             put(new TypePair(Type.Void, Type.Number), Type.Number);
             put(new TypePair(Type.Point, Type.Point), Type.Point);
-        }};
+        }
+    };
 
     private final static HashMap<TypePair, Type> MULTIPLY_DIVIDE_TYPE_MAP = new HashMap<>() {
         {
             put(new TypePair(Type.Number, Type.Number), Type.Number);
             put(new TypePair(Type.Point, Type.Number), Type.Point);
-        }};
-
-    private final static HashMap<TypePair, Type> GE_LE_EQGE_EQLE_TYPE_MAP = new HashMap<>() {
-        {
-            put(new TypePair(Type.Number, Type.Number), Type.Boolean);
-        }};
+        }
+    };
 
     private final static HashMap<TypePair, Type> EQ_TYPE_MAP = new HashMap<>() {
         {
-           put(new TypePair(Type.Number, Type.Number), Type.Boolean);
-           put(new TypePair(Type.Point, Type.Point), Type.Boolean);
-           put(new TypePair(Type.Boolean, Type.Boolean), Type.Boolean);
-        }};
+            put(new TypePair(Type.Number, Type.Number), Type.Boolean);
+            put(new TypePair(Type.Point, Type.Point), Type.Boolean);
+            put(new TypePair(Type.Boolean, Type.Boolean), Type.Boolean);
+        }
+    };
 
     private final static HashMap<TypePair, Type> AND_OR_TYPE_MAP = new HashMap<>() {
         {
-           put(new TypePair(Type.Boolean, Type.Boolean), Type.Boolean);
-        }};
+            put(new TypePair(Type.Boolean, Type.Boolean), Type.Boolean);
+        }
+    };
 
     private SymbolTable _symbolTable = new SymbolTable(null);
     private Type _functionReturnType = Type.Void;
@@ -82,11 +79,9 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         Symbol symbol;
         try {
             symbol = parser.parse();
-        }
-        catch (ParseException e) {
+        } catch (ParseException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new ParseException(e);
         }
 
@@ -111,12 +106,10 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
         Symbol symbol;
         try {
-           symbol = parser.parse();
-        }
-        catch (ParseException e) {
+            symbol = parser.parse();
+        } catch (ParseException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new ParseException(e);
         }
 
@@ -287,8 +280,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         if (typeNodeType == expressionNodeType) {
             _symbolTable.Enter(identifierNode.GetValue(), typeNodeType, declarationNode.GetLeft(), declarationNode.GetRight());
             return typeNodeType;
-        }
-        else {
+        } else {
             throw new ExpectedTypeException(typeNodeType, expressionNodeType, expressionNode.GetLeft(), expressionNode.GetRight());
         }
     }
@@ -503,8 +495,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         if (type != _functionReturnType) {
             if (child != null) {
                 throw new ExpectedTypeException(_functionReturnType, type, child.GetLeft(), child.GetRight());
-            }
-            else {
+            } else {
                 throw new ExpectedTypeException(_functionReturnType, type, returnNode.GetLeft(), returnNode.GetRight());
             }
         }

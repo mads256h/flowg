@@ -1,7 +1,8 @@
 package org.flowsoft.flowg.nodes.controlflow;
 
 import java_cup.runtime.ComplexSymbolFactory.Location;
-import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.DeclarationNode;
+import org.flowsoft.flowg.nodes.StatementListNode;
 import org.flowsoft.flowg.nodes.base.ExpressionNode;
 import org.flowsoft.flowg.nodes.base.StatementNode;
 import org.flowsoft.flowg.nodes.base.TernaryNode;

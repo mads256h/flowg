@@ -57,31 +57,43 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         {
             put(new TypePair(Type.Number, Type.Number), (left, right) -> new ExpressionValue(BigDecimalUtils.Equals(left.GetNumber(), right.GetNumber())));
             put(new TypePair(Type.Point, Type.Point), (left, right) -> {
-                    if (left.GetPoint().equals(right.GetPoint())) {
-                        return new ExpressionValue(true);
-                    } else {
-                        return new ExpressionValue(false);
-                    }
+                if (left.GetPoint().equals(right.GetPoint())) {
+                    return new ExpressionValue(true);
+                } else {
+                    return new ExpressionValue(false);
+                }
             });
             put(new TypePair(Type.Boolean, Type.Boolean), (left, right) -> {
-                    if (left.GetBoolean() == right.GetBoolean()) {
-                        return new ExpressionValue(true);
-                    } else {
-                        return new ExpressionValue(false);
-                    }
+                if (left.GetBoolean() == right.GetBoolean()) {
+                    return new ExpressionValue(true);
+                } else {
+                    return new ExpressionValue(false);
+                }
             });
         }
     };
-
-    private RuntimeSymbolTable _symbolTable;
-
     private final StringBuilder _stringBuilder = new StringBuilder();
-
+    private RuntimeSymbolTable _symbolTable;
     private Point _currentPosition = new Point(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
     private BigDecimal _currentExtrusion = new BigDecimal("0");
 
     public CodeGeneratingVisitor(SymbolTable symbolTable) {
         _symbolTable = new RuntimeSymbolTable(symbolTable, null);
+    }
+
+    private static BiFunction<ExpressionValue, ExpressionValue, ExpressionValue> TryBoth(Type left, Type right, Map<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> map) throws TypeException {
+        var pair = new TypePair(left, right);
+        if (map.containsKey(pair)) {
+            return map.get(pair);
+        }
+
+        pair = new TypePair(right, left);
+        if (map.containsKey(pair)) {
+            var func = map.get(pair);
+            return (e1, e2) -> func.apply(e2, e1);
+        }
+
+        throw new IllegalStateException();
     }
 
     public String GetCode() {
@@ -554,8 +566,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         try {
             var functionBody = functionEntry.GetFunctionBody();
             functionBody.Accept(this);
-        }
-        catch (ReturnException e) {
+        } catch (ReturnException e) {
             value = e.GetExpressionValue();
         }
 
@@ -581,8 +592,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
         if (booleanValue) {
             ifElseNode.GetSecondNode().Accept(this);
-        }
-        else {
+        } else {
             if (ifElseNode.GetThirdNode() != null) {
                 ifElseNode.GetThirdNode().Accept(this);
             }
@@ -599,7 +609,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
         return null;
     }
-    
+
     @Override
     public ExpressionValue Visit(ForToNode forToNode) throws Exception {
         var declNode = forToNode.GetFirstNode();
@@ -635,7 +645,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         var leftNumber = lessThanExpressionNode.GetLeftChild().Accept(this).GetNumber();
         var rightNumber = lessThanExpressionNode.GetRightChild().Accept(this).GetNumber();
 
-        return new ExpressionValue(BigDecimalUtils.LessThan( leftNumber, rightNumber));
+        return new ExpressionValue(BigDecimalUtils.LessThan(leftNumber, rightNumber));
     }
 
     @Override
@@ -679,21 +689,6 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         var rightBool = orExpressionNode.GetRightChild().Accept(this).GetBoolean();
 
         return new ExpressionValue(leftBool || rightBool);
-    }
-
-    private static BiFunction<ExpressionValue, ExpressionValue, ExpressionValue> TryBoth(Type left, Type right, Map<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> map) throws TypeException {
-        var pair = new TypePair(left, right);
-        if (map.containsKey(pair)) {
-            return map.get(pair);
-        }
-
-        pair = new TypePair(right, left);
-        if (map.containsKey(pair)) {
-            var func = map.get(pair);
-            return (e1, e2) -> func.apply(e2, e1);
-        }
-
-        throw new IllegalStateException();
     }
 
     public void run(INode node) throws Exception {

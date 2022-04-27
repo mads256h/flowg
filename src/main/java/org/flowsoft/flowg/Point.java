@@ -1,7 +1,6 @@
 package org.flowsoft.flowg;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.Objects;
 
 public final class Point {
@@ -33,11 +32,11 @@ public final class Point {
         return String.format("[%s, %s, %s]", _x, _y, _z);
     }
 
-    public Point Add(Point point){
+    public Point Add(Point point) {
         return new Point(_x.add(point._x), _y.add(point._y), _z.add(point._z));
     }
 
-    public Point Subtract(Point point){
+    public Point Subtract(Point point) {
         return new Point(_x.subtract(point._x), _y.subtract(point._y), _z.subtract(point._z));
     }
 
@@ -85,8 +84,8 @@ public final class Point {
         if (o == null || getClass() != o.getClass()) return false;
         Point point = (Point) o;
         return _x.compareTo(point._x) == 0 &&
-               _y.compareTo(point._y) == 0 &&
-               _z.compareTo(point._z) == 0;
+                _y.compareTo(point._y) == 0 &&
+                _z.compareTo(point._z) == 0;
     }
 
     @Override

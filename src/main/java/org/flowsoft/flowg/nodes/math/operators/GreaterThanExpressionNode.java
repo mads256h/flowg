@@ -5,7 +5,7 @@ import org.flowsoft.flowg.nodes.base.BinaryNode;
 import org.flowsoft.flowg.nodes.base.ExpressionNode;
 import org.flowsoft.flowg.visitors.IVisitor;
 
-public class GreaterThanExpressionNode extends BinaryNode<ExpressionNode, ExpressionNode> implements ExpressionNode{
+public class GreaterThanExpressionNode extends BinaryNode<ExpressionNode, ExpressionNode> implements ExpressionNode {
     public GreaterThanExpressionNode(ExpressionNode leftChild, ExpressionNode rightChild, Location left, Location right) {
         super(leftChild, rightChild, left, right);
     }

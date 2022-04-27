@@ -1,7 +1,7 @@
 package org.flowsoft.flowg.symboltables;
 
-import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.Cloneable;
+import org.flowsoft.flowg.Type;
 
 public class VariableEntry implements Cloneable<VariableEntry> {
     private final String _identifier;

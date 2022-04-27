@@ -1,8 +1,5 @@
 package org.flowsoft.flowg.tests;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertThrows;
-
 import java_cup.runtime.ComplexSymbolFactory;
 import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.Yylex;
@@ -21,35 +18,18 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertThrows;
+
 @RunWith(Theories.class)
 public class ParserTests {
 
+    @DataPoints
+    public static final String[] INVALID_SYNTAX = {
+            "number x = y = 2;",
+            "number number = 2"
+    };
     private static final ComplexSymbolFactory.Location N = new ComplexSymbolFactory.Location("test", 0, 0, 0);
-    private static class TextAstPair {
-        private final String _text;
-        private final INode _astTree;
-
-        public TextAstPair(String text, INode astTree) {
-            _text = text;
-            _astTree = astTree;
-        }
-
-        public String GetText() {
-            return _text;
-        }
-
-        public INode GetAstTree() {
-            return _astTree;
-        }
-
-        @Override
-        public String toString() {
-            return "TextAstPair{" +
-                    "_text='" + _text + '\'' +
-                    '}';
-        }
-    }
-
     @DataPoints
     public static final TextAstPair[] TEXT_AST_PAIRS = {
             new TextAstPair(
@@ -109,7 +89,7 @@ public class ParserTests {
             ),
             new TextAstPair(
                     "number x = 2;\n" +
-                         "number y = x + 2;",
+                            "number y = x + 2;",
                     new StatementListNode(
                             new ArrayList<>() {
                                 {
@@ -160,7 +140,7 @@ public class ParserTests {
                                             }, N, N), N, N
                                     ));
 
-                                    add (new FunctionCallNode(
+                                    add(new FunctionCallNode(
                                             new IdentifierNode("test", N, N),
                                             new ActualParameterListNode(
                                                     new ArrayList<>() {
@@ -176,20 +156,14 @@ public class ParserTests {
             )
     };
 
-    @DataPoints
-    public static final String[] INVALID_SYNTAX = {
-            "number x = y = 2;",
-            "number number = 2"
-    };
-
     @Theory
     public void TestParseSuccess(TextAstPair pair) throws Exception {
-            var ast = Parse(pair.GetText());
-            // We are using pretty printing to assert that two ast trees are equal.
-            // This probably not a good idea but I don't have a better one.
-            var actualString = ast.Accept(new PrettyPrintingVisitor());
-            var expectedString = pair.GetAstTree().Accept(new PrettyPrintingVisitor());
-            assertThat(actualString).isEqualTo(expectedString);
+        var ast = Parse(pair.GetText());
+        // We are using pretty printing to assert that two ast trees are equal.
+        // This probably not a good idea but I don't have a better one.
+        var actualString = ast.Accept(new PrettyPrintingVisitor());
+        var expectedString = pair.GetAstTree().Accept(new PrettyPrintingVisitor());
+        assertThat(actualString).isEqualTo(expectedString);
     }
 
     @Theory
@@ -197,10 +171,34 @@ public class ParserTests {
         assertThrows(Exception.class, () -> Parse(input));
     }
 
-
     private StatementListNode Parse(String input) throws Exception {
         Yylex lexer = new Yylex(new StringReader(input), "test");
         parser parser = new parser(lexer, new ComplexSymbolFactory());
         return (StatementListNode) parser.parse().value;
+    }
+
+    private static class TextAstPair {
+        private final String _text;
+        private final INode _astTree;
+
+        public TextAstPair(String text, INode astTree) {
+            _text = text;
+            _astTree = astTree;
+        }
+
+        public String GetText() {
+            return _text;
+        }
+
+        public INode GetAstTree() {
+            return _astTree;
+        }
+
+        @Override
+        public String toString() {
+            return "TextAstPair{" +
+                    "_text='" + _text + '\'' +
+                    '}';
+        }
     }
 }

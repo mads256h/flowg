@@ -142,19 +142,12 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
 
     @Override
     public String Visit(DeclarationNode declarationNode) throws NoException {
-        return declarationNode.GetFirstNode().Accept(this)
-                + " " + declarationNode.GetSecondNode().Accept(this)
-                + " ="
-                + " " + declarationNode.GetThirdNode().Accept(this);
+        return declarationNode.GetFirstNode().Accept(this) + " " + declarationNode.GetSecondNode().Accept(this) + " =" + " " + declarationNode.GetThirdNode().Accept(this);
     }
 
     @Override
     public String Visit(FunctionDefinitionNode functionDefinitionNode) throws NoException {
-        return
-                functionDefinitionNode.GetTypeNode().Accept(this) + " " +
-                functionDefinitionNode.GetIdentifierNode().Accept(this) + "(" +
-                functionDefinitionNode.GetFormalParameterListNode().Accept(this) + ") {\n" +
-                functionDefinitionNode.GetStatementListNode().Accept(this) + "}";
+        return functionDefinitionNode.GetTypeNode().Accept(this) + " " + functionDefinitionNode.GetIdentifierNode().Accept(this) + "(" + functionDefinitionNode.GetFormalParameterListNode().Accept(this) + ") {\n" + functionDefinitionNode.GetStatementListNode().Accept(this) + "}";
     }
 
     @Override
@@ -179,11 +172,7 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
 
     @Override
     public String Visit(PointNode pointNode) throws NoException {
-        return "["
-                + pointNode.GetFirstNode().Accept(this) + ", "
-                + pointNode.GetSecondNode().Accept(this) + ", "
-                + pointNode.GetThirdNode().Accept(this) +
-                "]";
+        return "[" + pointNode.GetFirstNode().Accept(this) + ", " + pointNode.GetSecondNode().Accept(this) + ", " + pointNode.GetThirdNode().Accept(this) + "]";
     }
 
     @Override
@@ -233,9 +222,7 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
 
     @Override
     public String Visit(FunctionCallNode functionCallNode) throws NoException {
-        return
-                functionCallNode.GetLeftChild().Accept(this) + "(" +
-                functionCallNode.GetRightChild().Accept(this) + ")";
+        return functionCallNode.GetLeftChild().Accept(this) + "(" + functionCallNode.GetRightChild().Accept(this) + ")";
     }
 
     @Override

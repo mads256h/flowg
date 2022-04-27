@@ -8,7 +8,7 @@ public class ParseException extends TypeException {
         _innerException = innerException;
     }
 
-    public Exception GetInnerException(){
+    public Exception GetInnerException() {
         return _innerException;
     }
 }

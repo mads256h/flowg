@@ -28,8 +28,7 @@ public final class BigDecimalUtils {
         try {
             //noinspection BigDecimalMethodWithoutRoundingCalled
             return left.divide(right);
-        }
-        catch (ArithmeticException e) {
+        } catch (ArithmeticException e) {
             return left.divide(right, DEFAULT_MATH_CONTEXT);
         }
     }
@@ -47,7 +46,7 @@ public final class BigDecimalUtils {
     }
 
     public static Boolean Equals(BigDecimal left, BigDecimal right) {
-        return  left.compareTo(right) == 0;
+        return left.compareTo(right) == 0;
     }
 
     public static Boolean GreaterThanEquals(BigDecimal left, BigDecimal right) {
