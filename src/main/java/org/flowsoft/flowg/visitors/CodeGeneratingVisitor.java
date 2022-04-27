@@ -3,6 +3,7 @@ package org.flowsoft.flowg.visitors;
 import ch.obermuhlner.math.big.BigDecimalMath;
 import org.flowsoft.flowg.*;
 import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.base.INode;
 import org.flowsoft.flowg.nodes.controlflow.ForToNode;
 import org.flowsoft.flowg.nodes.controlflow.IfElseNode;
 import org.flowsoft.flowg.nodes.controlflow.ReturnNode;
@@ -165,7 +166,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         // All distances in mm
         var a = _currentPosition.Distance2D(absoluteCenterPoint);
         var b = absoluteCenterPoint.Distance2D(finalPoint);
-        var c = _currentPosition.Distance2D(absoluteCenterPoint);
+        var c = _currentPosition.Distance2D(finalPoint);
 
         // cos(C) =
         //          a² + b² - c²
@@ -229,7 +230,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         // All distances in mm
         var a = _currentPosition.Distance2D(absoluteCenterPoint);
         var b = absoluteCenterPoint.Distance2D(finalPoint);
-        var c = _currentPosition.Distance2D(absoluteCenterPoint);
+        var c = _currentPosition.Distance2D(finalPoint);
 
         // cos(C) =
         //          a² + b² - c²
@@ -728,5 +729,13 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         }
 
         throw new IllegalStateException();
+    }
+
+    public void run(INode node) throws Exception {
+        try {
+            node.Accept(this);
+        } catch (ReturnException ignore) {
+
+        }
     }
 }

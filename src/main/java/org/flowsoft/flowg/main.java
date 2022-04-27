@@ -39,7 +39,7 @@ public class main {
             var typeCheckingVisitor = new TypeCheckingVisitor();
             rootNode.Accept(typeCheckingVisitor);
             var codeGeneratingVisitor = new CodeGeneratingVisitor(typeCheckingVisitor.GetSymbolTable());
-            rootNode.Accept(codeGeneratingVisitor);
+            codeGeneratingVisitor.run(rootNode);
             typeCheckingVisitor.PrintSymbolTable();
             System.out.println(codeGeneratingVisitor.GetCode());
             File f = new File(args[1]);
