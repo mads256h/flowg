@@ -111,21 +111,56 @@ public class CodeGeneratingTests {
             ),
             new Thing<>(
                     new BigDecimal("0"),
-                    new MinusExpressionNode(
+                    new ArithmeticNegationExpressionNode(
                             new NumberLiteralNode(new BigDecimal("0"), N, N),
                             N, N
                     )
             ),
             new Thing<>(
                     new BigDecimal("-1"),
-                    new MinusExpressionNode(
+                    new ArithmeticNegationExpressionNode(
                             new NumberLiteralNode(new BigDecimal("1"), N, N),
                             N, N
                     )
             ),
             new Thing<>(
                     new BigDecimal("1"),
-                    new MinusExpressionNode(
+                    new ArithmeticNegationExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("-1"), N, N),
+                            N, N
+                    )
+            ),
+            new Thing<>(
+                    new BigDecimal("1"),
+                    new IncrementExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("0"), N, N),
+                            N, N
+                    )
+            ),
+            new Thing<>(
+                    new BigDecimal("0"),
+                    new IncrementExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("-1"), N, N),
+                            N, N
+                    )
+            ),
+            new Thing<>(
+                    new BigDecimal("0"),
+                    new DecrementExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("1"), N, N),
+                            N, N
+                    )
+            ),
+            new Thing<>(
+                    new BigDecimal("-1"),
+                    new DecrementExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("0"), N, N),
+                            N, N
+                    )
+            ),
+            new Thing<>(
+                    new BigDecimal("-2"),
+                    new DecrementExpressionNode(
                             new NumberLiteralNode(new BigDecimal("-1"), N, N),
                             N, N
                     )
