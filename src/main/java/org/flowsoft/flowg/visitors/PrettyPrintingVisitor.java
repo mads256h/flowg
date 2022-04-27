@@ -202,16 +202,6 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
-    public String Visit(IncrementExpressionNode incrementExpressionNode) throws NoException {
-        return "++" + incrementExpressionNode.GetChild().Accept(this);
-    }
-
-    @Override
-    public String Visit(DecrementExpressionNode decrementExpressionNode) throws NoException {
-        return "--" + decrementExpressionNode.GetChild().Accept(this);
-    }
-
-    @Override
     public String Visit(NotExpressionNode notExpressionNode) throws NoException {
         return "!" + notExpressionNode.GetChild().Accept(this);
     }

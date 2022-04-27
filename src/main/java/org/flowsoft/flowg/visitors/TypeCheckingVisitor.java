@@ -372,30 +372,6 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     }
 
     @Override
-    public Type Visit(IncrementExpressionNode incrementExpressionNode) throws TypeException {
-        var childNode = incrementExpressionNode.GetChild();
-        var childType = childNode.Accept(this);
-
-        if (childType != Type.Number) {
-            throw new ExpectedTypeException(Type.Number, childType, childNode.GetLeft(), childNode.GetRight());
-        }
-
-        return Type.Number;
-    }
-
-    @Override
-    public Type Visit(DecrementExpressionNode decrementExpressionNode) throws TypeException {
-        var childNode = decrementExpressionNode.GetChild();
-        var childType = childNode.Accept(this);
-
-        if (childType != Type.Number) {
-            throw new ExpectedTypeException(Type.Number, childType, childNode.GetLeft(), childNode.GetRight());
-        }
-
-        return Type.Number;
-    }
-
-    @Override
     public Type Visit(NotExpressionNode notExpressionNode) throws TypeException {
         var childNode = notExpressionNode.GetChild();
         var childType = childNode.Accept(this);

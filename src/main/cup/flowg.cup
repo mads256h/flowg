@@ -57,8 +57,7 @@ terminal DIVIDE;
 terminal POWER;
 
 // Unary operators
-terminal INCREMENT;
-terminal DECREMENT;
+terminal UNARY_MINUS;
 
 // Boolean operators
 terminal GREATER_THAN;
@@ -127,8 +126,8 @@ precedence left EQUALS, GREATER_THAN, LESS_THAN, GREATER_THAN_EQUALS, LESS_THAN_
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE;
 precedence left POWER;
+precedence left UNARY_MINUS;
 precedence left DOT;
-precedence left INCREMENT, DECREMENT;
 
 start with program;
 
@@ -277,10 +276,7 @@ expr ::=
         // Unary operators
         | MINUS:m expr:e
         {: RESULT = new ArithmeticNegationExpressionNode(e, mxleft, exright); :}
-        | INCREMENT:i expr:e
-        {: RESULT = new IncrementExpressionNode(e, ixleft, exright); :}
-        | DECREMENT:d expr:e
-        {: RESULT = new DecrementExpressionNode(e, dxleft, exright); :}
+        %prec UNARY_MINUS
 
         // Math builtins
         | sqrt:s

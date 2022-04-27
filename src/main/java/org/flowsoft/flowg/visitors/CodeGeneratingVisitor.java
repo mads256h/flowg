@@ -31,7 +31,6 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     private final static HashMap<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> MINUS_MAP = new HashMap<>() {
         {
             put(new TypePair(Type.Number, Type.Number), (left, right) -> new ExpressionValue(left.GetNumber().subtract(right.GetNumber())));
-            //put(new TypePair(Type.Void, Type.Number), (right) -> new ExpressionValue(right.GetNumber().negate()));
             put(new TypePair(Type.Point, Type.Point), (left, right) -> new ExpressionValue(left.GetPoint().Subtract(right.GetPoint())));
         }
     };
@@ -39,7 +38,6 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     private final static HashMap<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> MULTIPLY_MAP = new HashMap<>() {
         {
             put(new TypePair(Type.Number, Type.Number), (left, right) -> new ExpressionValue(left.GetNumber().multiply(right.GetNumber())));
-
             put(new TypePair(Type.Point, Type.Number), (left, right) -> new ExpressionValue(left.GetPoint().MultiplyBy(right.GetNumber())));
         }
     };
@@ -47,7 +45,6 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     private final static HashMap<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> DIVIDE_MAP = new HashMap<>() {
         {
             put(new TypePair(Type.Number, Type.Number), (left, right) -> new ExpressionValue(BigDecimalUtils.Divide(left.GetNumber(), right.GetNumber())));
-
             put(new TypePair(Type.Point, Type.Number), (left, right) -> new ExpressionValue(left.GetPoint().DivideBy(right.GetNumber())));
         }
     };
@@ -455,20 +452,6 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         var childValue = arithmeticNegationExpressionNode.GetChild().Accept(this);
 
         return new ExpressionValue(childValue.GetNumber().negate());
-    }
-
-    @Override
-    public ExpressionValue Visit(IncrementExpressionNode incrementExpressionNode) throws Exception {
-        var childValue = incrementExpressionNode.GetChild().Accept(this);
-
-        return new ExpressionValue(childValue.GetNumber().add(new BigDecimal("1")));
-    }
-
-    @Override
-    public ExpressionValue Visit(DecrementExpressionNode decrementExpressionNode) throws Exception {
-        var childValue = decrementExpressionNode.GetChild().Accept(this);
-
-        return new ExpressionValue(childValue.GetNumber().subtract(new BigDecimal("1")));
     }
 
     @Override

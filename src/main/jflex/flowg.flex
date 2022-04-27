@@ -126,14 +126,10 @@ Anything = .
 
 // Arithmic operators
 "+" { return symbol("+", sym.PLUS); }
-"-" { return symbol("-", sym.MINUS); }
+"-" { return symbol("-", sym.MINUS); }    // Unary operator
 "*" { return symbol("*", sym.TIMES); }
 "/" { return symbol("/", sym.DIVIDE); }
 "^" { return symbol("^", sym.POWER); }
-
-// Unary operators
-"++" { return symbol("++", sym.INCREMENT); }
-"--" { return symbol("--", sym.DECREMENT); }
 
 // Boolean operators
 ">" { return symbol(">", sym.GREATER_THAN); }

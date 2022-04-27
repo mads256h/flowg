@@ -179,16 +179,6 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
-    public String Visit(IncrementExpressionNode incrementExpressionNode) throws NoException {
-        return PrintNode(incrementExpressionNode, incrementExpressionNode.GetChild());
-    }
-
-    @Override
-    public String Visit(DecrementExpressionNode decrementExpressionNode) throws NoException {
-        return PrintNode(decrementExpressionNode, decrementExpressionNode.GetChild());
-    }
-
-    @Override
     public String Visit(NotExpressionNode notExpressionNode) throws NoException {
         return PrintNode(notExpressionNode, notExpressionNode.GetChild());
     }

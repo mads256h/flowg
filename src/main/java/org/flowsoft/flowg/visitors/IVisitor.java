@@ -46,8 +46,6 @@ public interface IVisitor<T, TException extends Exception> {
 
     // Unary operators
     T Visit(ArithmeticNegationExpressionNode arithmeticNegationExpressionNode) throws TException;
-    T Visit(IncrementExpressionNode incrementExpressionNode) throws TException;
-    T Visit(DecrementExpressionNode decrementExpressionNode) throws TException;
 
     // Boolean operators
     T Visit(GreaterThanExpressionNode greaterThanExpressionNode) throws TException;
