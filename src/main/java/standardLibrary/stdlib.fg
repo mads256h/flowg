@@ -31,10 +31,10 @@ void lline(point endpoint){
     currentPosition = endpoint;
 };
 
-void move(point endPoint){
-    gcodeMove(endPoint);
-};
-
-gcode gcodeMove(point endPoint){
-G0 X[endPoint.x] Y[endPoint.y] Z[endPoint.z]
+void mmove(point endpoint){
+    gcode gcodeMove(point endpoint){
+        G0 X[endpoint.x] Y[endpoint.y] Z[endpoint.z]
+    };
+    gcodeMove(endpoint);
+    currentPosition = endpoint;
 };
