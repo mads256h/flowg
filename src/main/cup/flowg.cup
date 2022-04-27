@@ -61,6 +61,9 @@ terminal TIMES;
 terminal DIVIDE;
 terminal POWER;
 
+// Unary operators
+terminal UNARY_MINUS;
+
 // Boolean operators
 terminal GREATER_THAN;
 terminal LESS_THAN;
@@ -132,6 +135,7 @@ precedence left EQUALS, GREATER_THAN, LESS_THAN, GREATER_THAN_EQUALS, LESS_THAN_
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE;
 precedence left POWER;
+precedence left UNARY_MINUS;
 precedence left DOT;
 
 start with program;
@@ -289,6 +293,11 @@ expr ::=
         {: RESULT = new IdentifierExpressionNode(i, ixleft, ixright); :}
         | func_call:c
         {: RESULT = c; :}
+
+        // Unary operators
+        | MINUS:m expr:e
+        {: RESULT = new ArithmeticNegationExpressionNode(e, mxleft, exright); :}
+        %prec UNARY_MINUS
 
         // Math builtins
         | sqrt:s
