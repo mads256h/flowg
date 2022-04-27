@@ -164,7 +164,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         // All distances in mm
         var a = _currentPosition.Distance2D(absoluteCenterPoint);
         var b = absoluteCenterPoint.Distance2D(finalPoint);
-        var c = _currentPosition.Distance2D(absoluteCenterPoint);
+        var c = _currentPosition.Distance2D(finalPoint);
 
         // cos(C) =
         //          a² + b² - c²
@@ -228,7 +228,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         // All distances in mm
         var a = _currentPosition.Distance2D(absoluteCenterPoint);
         var b = absoluteCenterPoint.Distance2D(finalPoint);
-        var c = _currentPosition.Distance2D(absoluteCenterPoint);
+        var c = _currentPosition.Distance2D(finalPoint);
 
         // cos(C) =
         //          a² + b² - c²
