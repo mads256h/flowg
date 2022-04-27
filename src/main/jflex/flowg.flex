@@ -161,7 +161,7 @@ Anything = .
     ">" {yybegin(YYINITIAL); return symbol("sysstring", sym.SYSSTRING, new SysStringNode(_stringBuffer.toString(), leftLocation(), rightLocation())); }
 }
 
-<userstring>c{
+<userstring> {
     [^\"] {_stringBuffer.append((yytext()));}
     "\"" {yybegin(YYINITIAL); return symbol("userstring", sym.USERSTRING, new UserStringNode(_stringBuffer.toString(), leftLocation(), rightLocation())); }
 }
