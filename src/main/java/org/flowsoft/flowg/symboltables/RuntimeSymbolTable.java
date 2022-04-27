@@ -12,7 +12,7 @@ public class RuntimeSymbolTable {
 
     private final SymbolTable _base;
     private final RuntimeSymbolTable _parent;
-    
+
     private final Map<String, ExpressionValue> _variableMap = new HashMap<>();
 
     public RuntimeSymbolTable(SymbolTable base, RuntimeSymbolTable parent) {
@@ -31,11 +31,9 @@ public class RuntimeSymbolTable {
     public void SetValue(String identifier, ExpressionValue expressionValue) {
         if (_variableMap.containsKey(identifier)) {
             _variableMap.put(identifier, expressionValue);
-        }
-        else if (_parent != null) {
+        } else if (_parent != null) {
             _parent.SetValue(identifier, expressionValue);
-        }
-        else {
+        } else {
             throw new IllegalStateException();
         }
     }
@@ -43,7 +41,7 @@ public class RuntimeSymbolTable {
     public ExpressionValue LookupVariable(String identifier) {
         if (_variableMap.containsKey(identifier)) {
             var value = _variableMap.get(identifier);
-            assert(value != null);
+            assert (value != null);
             return value;
         }
 

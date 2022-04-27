@@ -175,7 +175,9 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
-    public String Visit(PlusExpressionNode plusExpressionNode) throws NoException { return PrintNode(plusExpressionNode, plusExpressionNode.GetLeftChild(), plusExpressionNode.GetRightChild()); }
+    public String Visit(PlusExpressionNode plusExpressionNode) throws NoException {
+        return PrintNode(plusExpressionNode, plusExpressionNode.GetLeftChild(), plusExpressionNode.GetRightChild());
+    }
 
     @Override
     public String Visit(MinusExpressionNode minusExpressionNode) throws NoException {
@@ -183,10 +185,14 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
-    public String Visit(TimesExpressionNode multiplyExpressionNode) throws NoException { return PrintNode(multiplyExpressionNode, multiplyExpressionNode.GetLeftChild(), multiplyExpressionNode.GetRightChild()); }
+    public String Visit(TimesExpressionNode multiplyExpressionNode) throws NoException {
+        return PrintNode(multiplyExpressionNode, multiplyExpressionNode.GetLeftChild(), multiplyExpressionNode.GetRightChild());
+    }
 
     @Override
-    public String Visit(DivideExpressionNode divisionExpressionNode) throws NoException { return PrintNode(divisionExpressionNode, divisionExpressionNode.GetLeftChild(), divisionExpressionNode.GetRightChild()); }
+    public String Visit(DivideExpressionNode divisionExpressionNode) throws NoException {
+        return PrintNode(divisionExpressionNode, divisionExpressionNode.GetLeftChild(), divisionExpressionNode.GetRightChild());
+    }
 
     @Override
     public String Visit(PowerExpressionNode powerExpressionNode) throws NoException {
@@ -237,7 +243,7 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     public String Visit(AssignmentNode assignmentNode) throws NoException {
         return PrintNode(assignmentNode, assignmentNode.GetLeftChild(), assignmentNode.GetRightChild());
     }
-    
+
     @Override
     public String Visit(ForToNode forToNode) throws NoException {
         return PrintNode(forToNode, forToNode.GetFirstNode(), forToNode.GetSecondNode(), forToNode.GetThirdNode());

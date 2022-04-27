@@ -1,9 +1,9 @@
 package org.flowsoft.flowg.symboltables;
 
-import org.flowsoft.flowg.Type;
-import org.flowsoft.flowg.nodes.functions.FormalParameterNode;
-import org.flowsoft.flowg.nodes.StatementListNode;
 import org.flowsoft.flowg.Cloneable;
+import org.flowsoft.flowg.Type;
+import org.flowsoft.flowg.nodes.StatementListNode;
+import org.flowsoft.flowg.nodes.functions.FormalParameterNode;
 
 import java.util.ArrayList;
 
@@ -38,7 +38,9 @@ public class FunctionEntry implements Cloneable<FunctionEntry> {
         return _functionBody;
     }
 
-    public SymbolTable GetSymbolTable() { return _symbolTable; }
+    public SymbolTable GetSymbolTable() {
+        return _symbolTable;
+    }
 
     @Override
     public FunctionEntry Clone() {

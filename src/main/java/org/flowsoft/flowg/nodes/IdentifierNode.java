@@ -10,7 +10,7 @@ public class IdentifierNode extends NullaryNode<String> {
     }
 
     @Override
-    public <T, TException extends Exception> T Accept(IVisitor<T, TException> visitor) throws TException{
+    public <T, TException extends Exception> T Accept(IVisitor<T, TException> visitor) throws TException {
         return visitor.Visit(this);
     }
 }

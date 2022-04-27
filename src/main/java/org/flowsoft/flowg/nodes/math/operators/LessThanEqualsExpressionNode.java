@@ -5,7 +5,7 @@ import org.flowsoft.flowg.nodes.base.BinaryNode;
 import org.flowsoft.flowg.nodes.base.ExpressionNode;
 import org.flowsoft.flowg.visitors.IVisitor;
 
-public class LessThanEqualsExpressionNode extends BinaryNode<ExpressionNode, ExpressionNode> implements ExpressionNode{
+public class LessThanEqualsExpressionNode extends BinaryNode<ExpressionNode, ExpressionNode> implements ExpressionNode {
     public LessThanEqualsExpressionNode(ExpressionNode leftChild, ExpressionNode rightChild, Location left, Location right) {
         super(leftChild, rightChild, left, right);
     }

@@ -1,8 +1,8 @@
 package org.flowsoft.flowg.nodes.base;
 
-import java.util.List;
-
 import java_cup.runtime.ComplexSymbolFactory.Location;
+
+import java.util.List;
 
 public abstract class ArrayNode<TNode extends INode> extends Node {
 

@@ -2,7 +2,6 @@ package org.flowsoft.flowg.visitors;
 
 import org.flowsoft.flowg.Point;
 import org.flowsoft.flowg.Type;
-import org.flowsoft.flowg.TypeException;
 
 import java.math.BigDecimal;
 
@@ -35,7 +34,7 @@ public class ExpressionValue {
     public ExpressionValue(Type type) {
         this(type, null, null, null);
 
-        assert(type == Type.Void);
+        assert (type == Type.Void);
     }
 
     public Type GetType() {
@@ -74,7 +73,8 @@ public class ExpressionValue {
         var str = "Type: " + _type + " Value: ";
         switch (_type) {
 
-            case Void -> {}
+            case Void -> {
+            }
             case Number -> str += _number;
             case Boolean -> str += _boolean;
             case Point -> str += _point.toString();

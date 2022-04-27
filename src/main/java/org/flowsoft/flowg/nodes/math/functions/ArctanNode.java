@@ -1,9 +1,9 @@
 package org.flowsoft.flowg.nodes.math.functions;
 
 import java_cup.runtime.ComplexSymbolFactory.Location;
-import org.flowsoft.flowg.nodes.functions.ActualParameterListNode;
 import org.flowsoft.flowg.nodes.base.ExpressionNode;
 import org.flowsoft.flowg.nodes.base.UnaryNode;
+import org.flowsoft.flowg.nodes.functions.ActualParameterListNode;
 import org.flowsoft.flowg.visitors.IVisitor;
 
 public class ArctanNode extends UnaryNode<ActualParameterListNode> implements ExpressionNode {

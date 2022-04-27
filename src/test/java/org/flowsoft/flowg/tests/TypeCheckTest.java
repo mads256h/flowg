@@ -3,7 +3,9 @@ package org.flowsoft.flowg.tests;
 import java_cup.runtime.ComplexSymbolFactory;
 import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.TypeException;
-import org.flowsoft.flowg.nodes.*;
+import org.flowsoft.flowg.nodes.BooleanLiteralNode;
+import org.flowsoft.flowg.nodes.NumberLiteralNode;
+import org.flowsoft.flowg.nodes.PointNode;
 import org.flowsoft.flowg.nodes.base.ExpressionNode;
 import org.flowsoft.flowg.nodes.functions.ActualParameterListNode;
 import org.flowsoft.flowg.nodes.functions.MoveNode;
@@ -12,31 +14,34 @@ import org.flowsoft.flowg.nodes.math.operators.MinusExpressionNode;
 import org.flowsoft.flowg.nodes.math.operators.PlusExpressionNode;
 import org.flowsoft.flowg.nodes.math.operators.TimesExpressionNode;
 import org.flowsoft.flowg.visitors.TypeCheckingVisitor;
-import org.junit.experimental.theories.*;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.FromDataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
-
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertThrows;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertThrows;
 
 @RunWith(Theories.class)
 public class TypeCheckTest {
     private static final ComplexSymbolFactory.Location N = new ComplexSymbolFactory.Location("test", 0, 0, 0);
 
     @DataPoints({"number", "notboolean", "notpoint"})
-    public static final ExpressionNode[] NUMBER_NODES = new ExpressionNode[] {
+    public static final ExpressionNode[] NUMBER_NODES = new ExpressionNode[]{
             new PlusExpressionNode(new NumberLiteralNode(new BigDecimal(1), N, N), new NumberLiteralNode(new BigDecimal(2), N, N), N, N),
             new MinusExpressionNode(new NumberLiteralNode(new BigDecimal(1), N, N), new NumberLiteralNode(new BigDecimal(2), N, N), N, N),
             new NumberLiteralNode(new BigDecimal(1), N, N)};
 
 
     @DataPoints({"boolean", "notnumber", "notpoint"})
-    public static final ExpressionNode[] BOOLEAN_NODES = new BooleanLiteralNode[] {new BooleanLiteralNode(true, N, N), new BooleanLiteralNode(false, N, N)};
+    public static final ExpressionNode[] BOOLEAN_NODES = new BooleanLiteralNode[]{new BooleanLiteralNode(true, N, N), new BooleanLiteralNode(false, N, N)};
 
     @DataPoints({"point", "notnumber", "notboolean"})
-    public static final ExpressionNode[] POINT_NODES = new PointNode[] {
+    public static final ExpressionNode[] POINT_NODES = new PointNode[]{
             new PointNode(new NumberLiteralNode(new BigDecimal(1), N, N), new NumberLiteralNode(new BigDecimal(2), N, N), new NumberLiteralNode(new BigDecimal(3), N, N), N, N)
     };
 
