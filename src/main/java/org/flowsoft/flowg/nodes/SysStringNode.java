@@ -5,8 +5,6 @@ import org.flowsoft.flowg.nodes.base.NullaryNode;
 import org.flowsoft.flowg.visitors.IVisitor;
 
 public class SysStringNode extends NullaryNode<String> {
-
-
     public SysStringNode(String s, ComplexSymbolFactory.Location left, ComplexSymbolFactory.Location right) {
         super(s, left, right);
     }
