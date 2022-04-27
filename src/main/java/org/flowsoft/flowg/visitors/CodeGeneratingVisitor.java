@@ -81,7 +81,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         _symbolTable = new RuntimeSymbolTable(symbolTable, null);
     }
 
-    private static BiFunction<ExpressionValue, ExpressionValue, ExpressionValue> TryBoth(Type left, Type right, Map<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> map) throws TypeException {
+    private static BiFunction<ExpressionValue, ExpressionValue, ExpressionValue> TryBoth(Type left, Type right, Map<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> map) {
         var pair = new TypePair(left, right);
         if (map.containsKey(pair)) {
             return map.get(pair);
