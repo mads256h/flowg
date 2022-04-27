@@ -1,8 +1,11 @@
 package org.flowsoft.flowg.visitors;
 
+import java_cup.runtime.ComplexSymbolFactory;
+import java_cup.runtime.Symbol;
 import org.flowsoft.flowg.*;
 import org.flowsoft.flowg.nodes.*;
 import org.flowsoft.flowg.nodes.base.ExpressionNode;
+import org.flowsoft.flowg.nodes.base.INode;
 import org.flowsoft.flowg.nodes.base.UnaryNode;
 import org.flowsoft.flowg.nodes.controlflow.ForToNode;
 import org.flowsoft.flowg.nodes.controlflow.IfElseNode;
@@ -12,6 +15,10 @@ import org.flowsoft.flowg.nodes.math.functions.*;
 import org.flowsoft.flowg.nodes.math.operators.*;
 import org.flowsoft.flowg.symboltables.SymbolTable;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -57,6 +64,76 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
     public SymbolTable GetSymbolTable() {
         return _symbolTable;
+    }
+
+    @Override
+    public Type Visit(IncludeSysNode includeSysNode) throws TypeException {
+        String filepath = "include/" + includeSysNode.GetChild().GetValue();
+
+        Yylex yylex;
+        try {
+            yylex = new Yylex(new FileReader(filepath), filepath);
+        } catch (FileNotFoundException e) {
+            throw new IncludeNotFoundException();
+        }
+
+        parser parser = new parser(yylex, new ComplexSymbolFactory());
+
+        Symbol symbol;
+        try {
+            symbol = parser.parse();
+        }
+        catch (ParseException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            throw new ParseException(e);
+        }
+
+        INode rootNode = (INode) symbol.value;
+        rootNode.Accept(this);
+
+        return null;
+    }
+
+    @Override
+    public Type Visit(IncludeUserNode includeUserNode) throws TypeException {
+        String filepath = includeUserNode.GetChild().GetValue();
+
+        Yylex yylex;
+        try {
+            yylex = new Yylex(new FileReader(filepath), filepath);
+        } catch (FileNotFoundException e) {
+            throw new IncludeNotFoundException();
+        }
+
+        parser parser = new parser(yylex, new ComplexSymbolFactory());
+
+        Symbol symbol;
+        try {
+           symbol = parser.parse();
+        }
+        catch (ParseException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            throw new ParseException(e);
+        }
+
+        INode rootNode = (INode) symbol.value;
+        rootNode.Accept(this);
+
+        return null;
+    }
+
+    @Override
+    public Type Visit(SysStringNode systringNode) throws TypeException {
+        return null;
+    }
+
+    @Override
+    public Type Visit(UserStringNode userStringNode) throws TypeException {
+        return null;
     }
 
     @Override

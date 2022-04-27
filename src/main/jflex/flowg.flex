@@ -34,6 +34,7 @@ import java.math.BigDecimal;
 
 %{
     private String _file = "unknown";
+    private StringBuffer _stringBuffer = new StringBuffer();
 
     private Location leftLocation() {
         return new Location(_file, yyline + 1, yycolumn + 1);
@@ -71,75 +72,99 @@ NewLine = \n
 Comment = \/\/[^\n]*
 Anything = .
 
+%state include
+%state sysstring
+%state userstring
+
 %%
 
-{Type} { return symbol("type", sym.TYPE, new TypeNode(TypeHelper.StringToType(yytext()), leftLocation(), rightLocation())); }
+<YYINITIAL> {
+    {Type} { return symbol("type", sym.TYPE, new TypeNode(TypeHelper.StringToType(yytext()), leftLocation(), rightLocation())); }
 
-// Boolean literals
-"true" { return symbol("true", sym.BOOLEAN_LITERAL, new BooleanLiteralNode(true, leftLocation(), rightLocation())); }
-"false" { return symbol("false", sym.BOOLEAN_LITERAL, new BooleanLiteralNode(false, leftLocation(), rightLocation())); }
-
-// Builtin functions
-"move" { return symbol("move", sym.MOVE); }
-"line" { return symbol("line", sym.LINE); }
-"cw_arc" { return symbol("cw_arc", sym.CW_ARC); }
-"ccw_arc" { return symbol("ccw_arc", sym.CCW_ARC); }
-
-// Math builtins
-"sqrt" { return symbol("sqrt", sym.SQRT); }
-"sin" { return symbol("sin", sym.SIN); }
-"cos" { return symbol("cos", sym.COS); }
-"tan" { return symbol("tan", sym.TAN); }
-"arcsin" { return symbol("arcsin", sym.ARCSIN); }
-"arccos" { return symbol("arccos", sym.ARCCOS); }
-"arctan" { return symbol("arctan", sym.ARCTAN); }
-
-// Control flow
-"for" { return symbol("for", sym.FOR); }
-"to" { return symbol("to", sym.TO); }
-"return" { return symbol("return", sym.RETURN); }
-"if" { return symbol("if", sym.IF); }
-"else" { return symbol("else", sym.ELSE); }
+    // Include statement
+    "#include" { yybegin(include); return symbol("#include", sym.INCLUDE); }
 
 
-{Identifier} { return symbol("identifier", sym.IDENTIFIER, new IdentifierNode(yytext(), leftLocation(), rightLocation())); }
+    // Boolean literals
+    "true" { return symbol("true", sym.BOOLEAN_LITERAL, new BooleanLiteralNode(true, leftLocation(), rightLocation())); }
+    "false" { return symbol("false", sym.BOOLEAN_LITERAL, new BooleanLiteralNode(false, leftLocation(), rightLocation())); }
 
-{Number} { return symbol("number literal", sym.NUMBER_LITERAL, new NumberLiteralNode(new BigDecimal(yytext()), leftLocation(), rightLocation())); }
+    // Builtin functions
+    "move" { return symbol("move", sym.MOVE); }
+    "line" { return symbol("line", sym.LINE); }
 
-{Whitespace} { /* Ignore */ }
+    // Math builtins
+    "sqrt" { return symbol("sqrt", sym.SQRT); }
+    "sin" { return symbol("sin", sym.SIN); }
+    "cos" { return symbol("cos", sym.COS); }
+    "tan" { return symbol("tan", sym.TAN); }
+    "arcsin" { return symbol("arcsin", sym.ARCSIN); }
+    "arccos" { return symbol("arccos", sym.ARCCOS); }
+    "arctan" { return symbol("arctan", sym.ARCTAN); }
 
-{Comment} { /* Ignore */ }
+    // Control flow
+    "for" { return symbol("for", sym.FOR); }
+    "to" { return symbol("to", sym.TO); }
+    "return" { return symbol("return", sym.RETURN); }
+    "if" { return symbol("if", sym.IF); }
+    "else" { return symbol("else", sym.ELSE); }
 
-"(" { return symbol("(", sym.L_PAREN); }
-")" { return symbol(")", sym.R_PAREN); }
 
-"{" { return symbol("{", sym.L_BRACKET); }
-"}" { return symbol("}", sym.R_BRACKET); }
+    {Identifier} { return symbol("identifier", sym.IDENTIFIER, new IdentifierNode(yytext(), leftLocation(), rightLocation())); }
 
-"[" { return symbol("[", sym.L_SQUARE_BRACKET); }
-"]" { return symbol("]", sym.R_SQUARE_BRACKET); }
+    {Number} { return symbol("number literal", sym.NUMBER_LITERAL, new NumberLiteralNode(new BigDecimal(yytext()), leftLocation(), rightLocation())); }
 
-"=" { return symbol("=", sym.ASSIGNMENT); }
-";" { return symbol(";", sym.SEMICOLON); }
-"," { return symbol(",", sym.COMMA); }
-"." { return symbol(".", sym.DOT); }
+    {Whitespace} { /* Ignore */ }
 
-// Arithmic operators
-"+" { return symbol("+", sym.PLUS); }
-"-" { return symbol("-", sym.MINUS); }    // Unary operator
-"*" { return symbol("*", sym.TIMES); }
-"/" { return symbol("/", sym.DIVIDE); }
-"^" { return symbol("^", sym.POWER); }
+    {Comment} { /* Ignore */ }
 
-// Boolean operators
-">" { return symbol(">", sym.GREATER_THAN); }
-"<" { return symbol("<", sym.LESS_THAN); }
-"==" { return symbol("==", sym.EQUALS); }
-">=" { return symbol(">=", sym.GREATER_THAN_EQUALS); }
-"<=" { return symbol("<=", sym.LESS_THAN_EQUALS); }
-"&&" { return symbol("&&", sym.AND); }
-"||" { return symbol("||", sym.OR); }
-"!" { return symbol("!", sym.NOT); }
+    "(" { return symbol("(", sym.L_PAREN); }
+    ")" { return symbol(")", sym.R_PAREN); }
+
+    "{" { return symbol("{", sym.L_BRACKET); }
+    "}" { return symbol("}", sym.R_BRACKET); }
+
+    "[" { return symbol("[", sym.L_SQUARE_BRACKET); }
+    "]" { return symbol("]", sym.R_SQUARE_BRACKET); }
+
+    "=" { return symbol("=", sym.ASSIGNMENT); }
+    ";" { return symbol(";", sym.SEMICOLON); }
+    "," { return symbol(",", sym.COMMA); }
+    "." { return symbol(".", sym.DOT); }
+
+    // Arithmic operators
+    "+" { return symbol("+", sym.PLUS); }
+    "-" { return symbol("-", sym.MINUS); }
+    "*" { return symbol("*", sym.TIMES); }
+    "/" { return symbol("/", sym.DIVIDE); }
+    "^" { return symbol("^", sym.POWER); }
+
+    // Boolean operators
+    ">" { return symbol(">", sym.GREATER_THAN); }
+    "<" { return symbol("<", sym.LESS_THAN); }
+    "==" { return symbol("==", sym.EQUALS); }
+    ">=" { return symbol(">=", sym.GREATER_THAN_EQUALS); }
+    "<=" { return symbol("<=", sym.LESS_THAN_EQUALS); }
+    "&&" { return symbol("&&", sym.AND); }
+    "||" { return symbol("||", sym.OR); }
+    "!" { return symbol("!", sym.NOT); }
+}
+
+<include> {
+    "<" {_stringBuffer.setLength(0); yybegin(sysstring);}
+    "\"" {_stringBuffer.setLength(0); yybegin(userstring);}
+    {Whitespace} {/* Ignore */}
+}
+
+<sysstring> {
+    [^>] {_stringBuffer.append(yytext());}
+    ">" {yybegin(YYINITIAL); return symbol("sysstring", sym.SYSSTRING, new SysStringNode(_stringBuffer.toString(), leftLocation(), rightLocation())); }
+}
+
+<userstring> {
+    [^\"] {_stringBuffer.append((yytext()));}
+    "\"" {yybegin(YYINITIAL); return symbol("userstring", sym.USERSTRING, new UserStringNode(_stringBuffer.toString(), leftLocation(), rightLocation())); }
+}
 
 // This catches any error.
 {Anything} { throw new InvalidTokenException(leftLocation(), rightLocation()); }

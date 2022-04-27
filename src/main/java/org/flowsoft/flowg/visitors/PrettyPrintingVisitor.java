@@ -13,6 +13,26 @@ import org.flowsoft.flowg.nodes.math.operators.*;
 
 public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     @Override
+    public String Visit(IncludeSysNode includeSysNode) throws NoException {
+        return "#include " + includeSysNode.GetChild().Accept(this);
+    }
+
+    @Override
+    public String Visit(IncludeUserNode includeUserNode) throws NoException {
+        return "#include " + includeUserNode.GetChild().Accept(this);
+    }
+
+    @Override
+    public String Visit(SysStringNode systringNode) throws NoException {
+        return "<" + systringNode.GetValue() + ">";
+    }
+
+    @Override
+    public String Visit(UserStringNode userStringNode) throws NoException {
+        return "\"" + userStringNode.GetValue() + "\"";
+    }
+
+    @Override
     public String Visit(StatementListNode statementListNode) throws NoException {
         var children = statementListNode.GetChildren();
         StringBuilder str = new StringBuilder();

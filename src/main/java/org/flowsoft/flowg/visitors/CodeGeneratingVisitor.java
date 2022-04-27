@@ -1,6 +1,8 @@
 package org.flowsoft.flowg.visitors;
 
 import ch.obermuhlner.math.big.BigDecimalMath;
+import java_cup.runtime.ComplexSymbolFactory;
+import java_cup.runtime.Symbol;
 import org.flowsoft.flowg.*;
 import org.flowsoft.flowg.nodes.*;
 import org.flowsoft.flowg.nodes.base.INode;
@@ -13,6 +15,8 @@ import org.flowsoft.flowg.nodes.math.operators.*;
 import org.flowsoft.flowg.symboltables.RuntimeSymbolTable;
 import org.flowsoft.flowg.symboltables.SymbolTable;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -86,6 +90,60 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     public RuntimeSymbolTable GetSymbolTable() {
         return _symbolTable;
+    }
+
+    @Override
+    public ExpressionValue Visit(IncludeSysNode includeSysNode) throws Exception {
+        String filepath = "include/" + includeSysNode.GetChild().GetValue();
+
+        Yylex yylex;
+        try {
+            yylex = new Yylex(new FileReader(filepath), filepath);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException();
+        }
+
+        parser parser = new parser(yylex, new ComplexSymbolFactory());
+
+        Symbol symbol = parser.parse();
+
+
+        INode rootNode = (INode) symbol.value;
+        rootNode.Accept(this);
+
+        return null;
+    }
+
+    @Override
+    public ExpressionValue Visit(IncludeUserNode includeUserNode) throws Exception {
+        String filepath = includeUserNode.GetChild().GetValue();
+
+        Yylex yylex;
+        try {
+            yylex = new Yylex(new FileReader(filepath), filepath);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException();
+        }
+
+        parser parser = new parser(yylex, new ComplexSymbolFactory());
+
+        Symbol symbol = parser.parse();
+
+
+        INode rootNode = (INode) symbol.value;
+        rootNode.Accept(this);
+
+        return null;
+    }
+
+    @Override
+    public ExpressionValue Visit(SysStringNode systringNode) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ExpressionValue Visit(UserStringNode userStringNode) throws Exception {
+        return null;
     }
 
     @Override
