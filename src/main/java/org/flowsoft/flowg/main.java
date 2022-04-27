@@ -9,23 +9,26 @@ import org.flowsoft.flowg.visitors.PrettyPrintingVisitor;
 import org.flowsoft.flowg.visitors.TreePrintingVisitor;
 import org.flowsoft.flowg.visitors.TypeCheckingVisitor;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class main {
     public static void main(String[] args) {
-        //Yylex.main(args);
+        if (args.length != 2) {
+            System.err.println("Usage: <input file> <output file>");
+            return;
+        }
+
+        var inputFile = args[0];
+        var outputFile = args[1];
 
         Yylex scanner;
         try {
-            scanner = new Yylex(new FileReader(args[0]), args[0]);
+            scanner = new Yylex(new FileReader(inputFile), inputFile);
         }
-        catch (Exception e) {
-            System.out.println("Usage: <file>");
+        catch (FileNotFoundException e) {
+            System.err.println("Input file not found!");
             e.printStackTrace();
             return;
         }
@@ -42,7 +45,7 @@ public class main {
                 rootNode.Accept(codeGeneratingVisitor);
                 typeCheckingVisitor.PrintSymbolTable();
                 System.out.println(codeGeneratingVisitor.GetCode());
-                File f = new File(args[1]);
+                File f = new File(outputFile);
                 FileWriter writer = new FileWriter(f);
                 var str =
                         """
