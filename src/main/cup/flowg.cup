@@ -16,6 +16,11 @@ terminal IdentifierNode IDENTIFIER;
 terminal NumberLiteralNode NUMBER_LITERAL;
 terminal BooleanLiteralNode BOOLEAN_LITERAL;
 
+// #include
+terminal INCLUDE;
+terminal SysStringNode SYSSTRING;
+terminal UserStringNode USERSTRING;
+
 // Builtin functions
 terminal MOVE;
 terminal LINE;
@@ -74,6 +79,10 @@ terminal IF;
 terminal ELSE;
 
 
+// non-terminal #include
+non terminal IncludeSysNode include_sys;
+non terminal IncludeUserNode include_user;
+
 non terminal StatementListNode program;
 non terminal StatementListNode stmt_list;
 non terminal ArrayList<StatementNode> stmt_list_impl;
@@ -130,6 +139,12 @@ start with program;
 program ::= stmt_list:l
             {: RESULT = l; :};
 
+include_sys ::= INCLUDE:b SYSSTRING:e
+            {: RESULT = new IncludeSysNode(e, bxleft, exright); :};
+
+include_user ::= INCLUDE:b USERSTRING:e
+            {: RESULT = new IncludeUserNode(e, bxleft, exright); :};
+
 stmt_list ::= stmt_list_impl:l
             {: RESULT = new StatementListNode(l, lxleft, lxright); :};
 
@@ -139,8 +154,14 @@ stmt_list_impl ::= stmt_list_impl:l stmt:s SEMICOLON
             {: var list = new ArrayList<StatementNode>(); list.add(s); RESULT = list; :};
 
 stmt ::=
+        // Includes
+        include_sys:i
+        {: RESULT = i; :}
+        | include_user:i
+        {: RESULT = i; :}
+
         // Variable declaration and assignment
-        decl:d
+        | decl:d
         {: RESULT = d; :}
         | assign:a
         {: RESULT = a; :}

@@ -1,0 +1,5 @@
+number distance(point a, point b) {
+    point d = a - b;
+    
+    return sqrt(d.x^2 + d.y^2 + d.z^2);
+};
