@@ -175,7 +175,7 @@ Anything = .
 
 <GcodeFunctionState> {
     {GCodeCode} { return symbol("GCodeCodeNode", sym.GCODECODE, new GCodeCodeNode(yytext(), leftLocation(), rightLocation())); }
-     "}" { yybegin(YYINITIAL); return symbol("}", sym.R_BRACKET); }
+    "}" { yybegin(YYINITIAL); return symbol("}", sym.R_BRACKET); }
 }
 <GCodePreState> {
     {Type} { return symbol("type", sym.TYPE, new TypeNode(TypeHelper.StringToType(yytext()), leftLocation(), rightLocation())); }
