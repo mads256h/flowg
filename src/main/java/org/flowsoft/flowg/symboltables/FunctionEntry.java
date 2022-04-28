@@ -5,6 +5,7 @@ import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.nodes.StatementListNode;
 import org.flowsoft.flowg.nodes.functions.FormalParameterNode;
 import org.flowsoft.flowg.nodes.functions.GCodeCodeNode;
+import org.flowsoft.flowg.nodes.functions.GCodeListNode;
 
 import java.util.ArrayList;
 
@@ -13,7 +14,7 @@ public class FunctionEntry implements Cloneable<FunctionEntry> {
     private final String _identifier;
     private final ArrayList<FormalParameterNode> _formalParameters;
     private final StatementListNode _functionBody;
-    private final GCodeCodeNode _gCodeBody;
+    private final GCodeListNode _gCodeBody;
     private final SymbolTable _symbolTable;
 
     public FunctionEntry(Type returnType, String identifier, ArrayList<FormalParameterNode> formalParameters, StatementListNode functionBody, SymbolTable symbolTable) {
@@ -25,7 +26,7 @@ public class FunctionEntry implements Cloneable<FunctionEntry> {
         _symbolTable = symbolTable;
     }
 
-    public FunctionEntry(String identifier, ArrayList<FormalParameterNode> formalParameters, GCodeCodeNode functionBody, SymbolTable parent) {
+    public FunctionEntry(String identifier, ArrayList<FormalParameterNode> formalParameters, GCodeListNode functionBody, SymbolTable parent) {
         _returnType = Type.Void;
         _identifier = identifier;
         _formalParameters = formalParameters;
@@ -50,7 +51,7 @@ public class FunctionEntry implements Cloneable<FunctionEntry> {
         return _functionBody;
     }
 
-    public GCodeCodeNode GetGCode() { return _gCodeBody; }
+    public GCodeListNode GetGCode() { return _gCodeBody; }
 
     public SymbolTable GetSymbolTable() { return _symbolTable; }
 

@@ -3,6 +3,7 @@ package org.flowsoft.flowg.visitors;
 import org.flowsoft.flowg.exceptions.NoException;
 import org.flowsoft.flowg.nodes.*;
 import org.flowsoft.flowg.nodes.base.ExpressionNode;
+import org.flowsoft.flowg.nodes.base.GCodeNode;
 import org.flowsoft.flowg.nodes.base.INode;
 import org.flowsoft.flowg.nodes.base.StatementNode;
 import org.flowsoft.flowg.nodes.controlflow.ForToNode;
@@ -146,12 +147,23 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
 
     @Override
     public String Visit(GCodeFuncNode gCodeFuncNode) throws NoException {
-        return PrintNode(gCodeFuncNode, gCodeFuncNode.GetIdentifierNode(),  gCodeFuncNode.GetFormalParameterListNode(), gCodeFuncNode.GetGCodeCodeNode());
+        return PrintNode(gCodeFuncNode, gCodeFuncNode.GetIdentifierNode(),  gCodeFuncNode.GetFormalParameterListNode(), gCodeFuncNode.GetGCodeListNode());
+    }
+
+    @Override
+    public String Visit(GCodeListNode gCodeListNode) throws NoException {
+        var array = gCodeListNode.GetChildren().toArray(new GCodeNode[0]);
+        return PrintNode(gCodeListNode, array);
     }
 
     @Override
     public String Visit(GCodeCodeNode gCodeCodeNode) throws NoException {
         return PrintNode(gCodeCodeNode);
+    }
+
+    @Override
+    public String Visit(GCodeExpressionNode gCodeExpressionNode) throws NoException {
+        return PrintNode(gCodeExpressionNode, gCodeExpressionNode.GetChild());
     }
 
     @Override

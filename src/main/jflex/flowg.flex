@@ -73,7 +73,7 @@ Number = [0-9]+(\.[0-9]+)?
 Whitespace = [\ \r\n]
 NewLine = \n
 Comment = \/\/[^\n]*
-GCodeCode = [^}]*
+GCodeCode = [^{}\[\]]*
 Anything = .
 
 %state include
@@ -81,6 +81,7 @@ Anything = .
 %state userstring
 %state gcode_prestate
 %state gcode_functionstate
+%state gcode_expression
 
 %%
 
@@ -156,7 +157,6 @@ Anything = .
     "&&" { return symbol("&&", sym.AND); }
     "||" { return symbol("||", sym.OR); }
     "!" { return symbol("!", sym.NOT); }
-    "\t" { throw new TabException(leftLocation(), rightLocation()); }
 }
 
 <include> {
@@ -176,8 +176,39 @@ Anything = .
 }
 
 <gcode_functionstate> {
-    {GCodeCode} { return symbol("GCodeCodeNode", sym.GCODECODE, new GCodeCodeNode(yytext(), leftLocation(), rightLocation())); }
+    {GCodeCode} { return symbol("gcode literal", sym.GCODECODE, new GCodeCodeNode(yytext(), leftLocation(), rightLocation())); }
+    "[" { yybegin(gcode_expression); return symbol("[", sym.L_SQUARE_BRACKET); }
     "}" { yybegin(YYINITIAL); return symbol("}", sym.R_BRACKET); }
+}
+
+<gcode_expression> {
+    // Math functions
+    "sqrt" { return symbol("sqrt", sym.SQRT); }
+    "sin" { return symbol("sin", sym.SIN); }
+    "cos" { return symbol("cos", sym.COS); }
+    "tan" { return symbol("tan", sym.TAN); }
+    "arcsin" { return symbol("arcsin", sym.ARCSIN); }
+    "arccos" { return symbol("arccos", sym.ARCCOS); }
+    "arctan" { return symbol("arctan", sym.ARCTAN); }
+
+    {Identifier} { return symbol("identifier", sym.IDENTIFIER, new IdentifierNode(yytext(), leftLocation(), rightLocation())); }
+    {Number} { return symbol("number literal", sym.NUMBER_LITERAL, new NumberLiteralNode(new BigDecimal(yytext()), leftLocation(), rightLocation())); }
+
+    "(" { return symbol("(", sym.L_PAREN); }
+    ")" { return symbol(")", sym.R_PAREN); }
+
+    "." { return symbol(".", sym.DOT); }
+
+    // Arithmic operators
+    "+" { return symbol("+", sym.PLUS); }
+    "-" { return symbol("-", sym.MINUS); }
+    "*" { return symbol("*", sym.TIMES); }
+    "/" { return symbol("/", sym.DIVIDE); }
+    "^" { return symbol("^", sym.POWER); }
+
+    "]" { yybegin(gcode_functionstate); return symbol("]", sym.R_SQUARE_BRACKET); }
+
+    {Whitespace} { /* Ignore */ }
 }
 
 <gcode_prestate> {
@@ -189,6 +220,8 @@ Anything = .
     "{" { yybegin(gcode_functionstate); return symbol("{", sym.L_BRACKET); }
     {Whitespace} { /* Ignore */ }
 }
+
+"\t" { throw new TabException(leftLocation(), rightLocation()); }
 
 // This catches any error.
 {Anything} { throw new InvalidTokenException(leftLocation(), rightLocation()); }

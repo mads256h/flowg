@@ -334,9 +334,9 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException> {
 
     @Override
     public Type Visit(GCodeFuncNode gCodeFuncNode) throws TypeException {
-        IdentifierNode identifierNode = gCodeFuncNode.GetIdentifierNode();
-        FormalParameterListNode formalParams = gCodeFuncNode.GetFormalParameterListNode();
-        GCodeCodeNode gCode = gCodeFuncNode.GetGCodeCodeNode();
+        var identifierNode = gCodeFuncNode.GetIdentifierNode();
+        var formalParams = gCodeFuncNode.GetFormalParameterListNode();
+        var gCode = gCodeFuncNode.GetGCodeListNode();
 
         SymbolTable parentSymbolTable = _symbolTable.Clone();
         SymbolTable bodySymbolTable = new SymbolTable(null);
@@ -345,8 +345,8 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException> {
             bodySymbolTable.Enter(param.GetRightChild().GetValue(), param.GetLeftChild().GetValue(), param.GetLeft(), param.GetRight());
         }
 
-        parentSymbolTable.Enter(identifierNode.GetValue(), (ArrayList<FormalParameterNode>) formalParams.GetChildren(), gCodeFuncNode.GetGCodeCodeNode(), bodySymbolTable, identifierNode.GetLeft(), identifierNode.GetRight());
-        _symbolTable.Enter(identifierNode.GetValue(), (ArrayList<FormalParameterNode>) formalParams.GetChildren(), gCodeFuncNode.GetGCodeCodeNode(), bodySymbolTable, identifierNode.GetLeft(), identifierNode.GetRight());
+        parentSymbolTable.Enter(identifierNode.GetValue(), (ArrayList<FormalParameterNode>) formalParams.GetChildren(), gCodeFuncNode.GetGCodeListNode(), bodySymbolTable, identifierNode.GetLeft(), identifierNode.GetRight());
+        _symbolTable.Enter(identifierNode.GetValue(), (ArrayList<FormalParameterNode>) formalParams.GetChildren(), gCodeFuncNode.GetGCodeListNode(), bodySymbolTable, identifierNode.GetLeft(), identifierNode.GetRight());
 
         var oldFunctionReturnType = _functionReturnType;
         var oldSymbolTable = _symbolTable;
@@ -363,8 +363,27 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException> {
     }
 
     @Override
+    public Type Visit(GCodeListNode gCodeListNode) throws TypeException {
+        for (var child : gCodeListNode.GetChildren()) {
+            child.Accept(this);
+        }
+
+        return null;
+    }
+
+    @Override
     public Type Visit(GCodeCodeNode gCodeCodeNode) throws TypeException {
         return null;
+    }
+
+    @Override
+    public Type Visit(GCodeExpressionNode gCodeExpressionNode) throws TypeException {
+        var type = gCodeExpressionNode.GetChild().Accept(this);
+        if (type != Type.Number) {
+            throw new ExpectedTypeException(Type.Number, type, gCodeExpressionNode.GetLeft(), gCodeExpressionNode.GetRight());
+        }
+
+        return type;
     }
 
     @Override

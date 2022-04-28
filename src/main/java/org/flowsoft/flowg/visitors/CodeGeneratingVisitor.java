@@ -111,7 +111,18 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     }
 
     public String GetCode() {
-        return _stringBuilder.toString();
+        var sb = new StringBuilder();
+        var strs = _stringBuilder.toString().split("\r\n|\n", -1);
+
+        for (var s : strs) {
+            if (s.isEmpty()) {
+                continue;
+            }
+            sb.append(s.trim());
+            sb.append('\n');
+        }
+
+        return sb.toString();
     }
 
     public RuntimeSymbolTable GetSymbolTable() {
@@ -462,7 +473,23 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     }
 
     @Override
+    public ExpressionValue Visit(GCodeListNode gCodeListNode) throws Exception {
+        for (var child : gCodeListNode.GetChildren()) {
+            child.Accept(this);
+        }
+
+        return null;
+    }
+
+    @Override
     public ExpressionValue Visit(GCodeCodeNode gCodeCodeNode) throws Exception {
+        _stringBuilder.append(gCodeCodeNode.GetValue());
+        return null;
+    }
+
+    @Override
+    public ExpressionValue Visit(GCodeExpressionNode gCodeExpressionNode) throws Exception {
+        _stringBuilder.append(BigDecimalUtils.ToGCode(gCodeExpressionNode.GetChild().Accept(this).GetNumber()));
         return null;
     }
 
@@ -605,96 +632,12 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
             return value;
         } else {
-            String gCodeBody = functionEntry.GetGCode().GetValue();
-            Pattern patternIdentifier = Pattern.compile("\\[[a-zA-Z][a-zA-Z0-9]*\\]|\\[[a-zA-Z][a-zA-Z0-9]*.[^\\]]*\\]", Pattern.MULTILINE);
-            Matcher matcher = patternIdentifier.matcher(gCodeBody);
+            // GCode function
 
-            while (matcher.find()) {
-                int start = matcher.start();
-                int end = matcher.end();
-                String Identifier;
-                String preString = "";
-                String var = "";
-                String postString = "";
+            functionEntry.GetGCode().Accept(this);
 
-                if (matcher.start() != 0) preString = gCodeBody.substring(0, start);
-                Identifier = gCodeBody.substring(start + 1, end - 1);
-                if (matcher.end() != gCodeBody.length()) postString = gCodeBody.substring(end, gCodeBody.length());
-
-
-                if (Identifier.contains(".")){
-                    String[] identifierArray = Identifier.split("\\.",2);
-
-                    String pointIdentifier = identifierArray[0];
-                    String identifierIndexer = identifierArray[1];
-                    Type identifierType;
-                    try {
-                        identifierType = _symbolTable.LookupVariable(pointIdentifier).GetType();
-                    }catch(Exception e){
-                        throw new SymbolNotFoundException(pointIdentifier, functionEntry.GetGCode().GetLeft(), functionEntry.GetGCode().GetRight());
-                    }
-
-                    switch (identifierType){
-                        case Point -> {
-                            Point point = _symbolTable.LookupVariable(pointIdentifier).GetPoint();
-                            switch (identifierIndexer){
-                                case "x" -> {
-                                    var = point.GetX().toPlainString();
-                                    break;
-                                }
-                                case "y" -> {
-                                    var = point.GetY().toPlainString();
-                                    break;
-                                }
-                                case "z" ->{
-                                    var = point.GetZ().toPlainString();
-                                    break;
-                                }
-                                default -> throw new WrongPointIndexingException(pointIdentifier, functionEntry.GetGCode().GetLeft(), functionEntry.GetGCode().GetRight());
-                            }
-                        }
-                        default -> throw new ExpectedTypeException(Type.Point, identifierType, functionEntry.GetGCode().GetLeft(), functionEntry.GetGCode().GetRight());
-                    }
-                }else{
-                    Type identifierType;
-                    try{
-                        identifierType = _symbolTable.LookupVariable(Identifier).GetType();
-                    }catch (Exception e){
-                        throw new SymbolNotFoundException(Identifier, functionEntry.GetGCode().GetLeft(), functionEntry.GetGCode().GetRight());
-                    }
-                    switch (identifierType){
-                        case Number -> {
-                            var = _symbolTable.LookupVariable(Identifier).GetNumber().toPlainString();
-                            break;
-                        }
-                        case Point -> {
-                            var = _symbolTable.LookupVariable(Identifier).GetPoint().toString();
-                            break;
-                        }
-                        case Boolean -> {
-                            var = _symbolTable.LookupVariable(Identifier).GetBoolean().toString();
-                            break;
-                        }
-                        case Void -> throw new ExpectedTypeException(Type.Number, Type.Void, functionEntry.GetGCode().GetLeft(), functionEntry.GetGCode().GetRight()) {
-                            //Technically not a correct error message
-                        };
-                    }
-                }
-                gCodeBody = preString + var + postString;
-                matcher = patternIdentifier.matcher(gCodeBody);
-            }
             _symbolTable = oldSymbolTable;
-            String[] array = gCodeBody.split("\\n");
-            String gCode = "";
-            for  (String string : array){
-                String trimmedCode = string.trim();
-                if (trimmedCode != ""){
-                    gCode += string.trim() + "\n";
-                }
 
-            }
-
-            _stringBuilder.append(gCode);
             return new ExpressionValue(Type.Void);
         }
     }

@@ -1,14 +1,15 @@
 package org.flowsoft.flowg.nodes.functions;
 
 import java_cup.runtime.ComplexSymbolFactory.Location;
+import org.flowsoft.flowg.nodes.base.ArrayNode;
 import org.flowsoft.flowg.nodes.base.GCodeNode;
-import org.flowsoft.flowg.nodes.base.NullaryNode;
-import org.flowsoft.flowg.nodes.base.StatementNode;
 import org.flowsoft.flowg.visitors.IVisitor;
 
-public class GCodeCodeNode extends NullaryNode<String> implements GCodeNode {
-    public GCodeCodeNode(String value, Location left, Location right) {
-        super(value, left, right);
+import java.util.List;
+
+public class GCodeListNode extends ArrayNode<GCodeNode> {
+    public GCodeListNode(List<GCodeNode> children, Location left, Location right) {
+        super(children, left, right);
     }
 
     @Override
