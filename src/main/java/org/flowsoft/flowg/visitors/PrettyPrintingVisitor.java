@@ -1,6 +1,6 @@
 package org.flowsoft.flowg.visitors;
 
-import org.flowsoft.flowg.NoException;
+import org.flowsoft.flowg.exceptions.NoException;
 import org.flowsoft.flowg.TypeHelper;
 import org.flowsoft.flowg.nodes.*;
 import org.flowsoft.flowg.nodes.base.UnaryNode;

@@ -2,7 +2,7 @@ package org.flowsoft.flowg.tests;
 
 import java_cup.runtime.ComplexSymbolFactory;
 import org.flowsoft.flowg.Type;
-import org.flowsoft.flowg.TypeException;
+import org.flowsoft.flowg.exceptions.type.TypeException;
 import org.flowsoft.flowg.nodes.BooleanLiteralNode;
 import org.flowsoft.flowg.nodes.NumberLiteralNode;
 import org.flowsoft.flowg.nodes.PointNode;

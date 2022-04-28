@@ -1,7 +1,7 @@
 package org.flowsoft.flowg.symboltables;
 
 import java_cup.runtime.ComplexSymbolFactory.Location;
-import org.flowsoft.flowg.TypeException;
+import org.flowsoft.flowg.exceptions.type.TypeException;
 import org.flowsoft.flowg.visitors.ExpressionValue;
 
 import java.util.HashMap;

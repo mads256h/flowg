@@ -1,7 +1,8 @@
 package org.flowsoft.flowg.tests;
 
-import org.flowsoft.flowg.InvalidTokenException;
+import org.flowsoft.flowg.exceptions.InvalidTokenException;
 import org.flowsoft.flowg.Yylex;
+import org.flowsoft.flowg.exceptions.TabException;
 import org.flowsoft.flowg.sym;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -34,7 +35,7 @@ public class LexerTests {
     };
 
     @Theory
-    public void TestLexerSuccess(TextSymbolPair pair) throws IOException, InvalidTokenException {
+    public void TestLexerSuccess(TextSymbolPair pair) throws IOException, InvalidTokenException, TabException {
         var lexer = new Yylex(new StringReader(pair.GetText()), "test");
         for (int symbol : pair.GetSymbols()) {
             assertThat(lexer.next_token().sym).isEqualTo(symbol);
@@ -43,7 +44,7 @@ public class LexerTests {
     }
 
     @Theory
-    public void TestLexerFailure(String input) throws IOException, InvalidTokenException {
+    public void TestLexerFailure(String input) throws IOException, InvalidTokenException, TabException {
         var lexer = new Yylex(new StringReader(input), "test");
         assertThrows(InvalidTokenException.class, lexer::next_token);
         assertThat(lexer.next_token().sym).isEqualTo(sym.EOF);

@@ -6,6 +6,9 @@ import org.flowsoft.flowg.nodes.functions.GCodeCodeNode;
 import java_cup.runtime.ComplexSymbolFactory.Location;
 import org.flowsoft.flowg.Cloneable;
 import org.flowsoft.flowg.*;
+import org.flowsoft.flowg.exceptions.type.RedeclarationException;
+import org.flowsoft.flowg.exceptions.type.SymbolNotFoundException;
+import org.flowsoft.flowg.exceptions.type.TypeException;
 import org.flowsoft.flowg.nodes.StatementListNode;
 import org.flowsoft.flowg.nodes.functions.FormalParameterNode;
 

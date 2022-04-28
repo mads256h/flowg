@@ -2,6 +2,8 @@ package org.flowsoft.flowg;
 
 import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.ComplexSymbolFactory.*;
+import org.flowsoft.flowg.exceptions.InvalidTokenException;
+import org.flowsoft.flowg.exceptions.TabException;
 import org.flowsoft.flowg.nodes.*;
 import org.flowsoft.flowg.nodes.base.INode;
 import org.flowsoft.flowg.nodes.functions.GCodeCodeNode;
@@ -21,7 +23,7 @@ import java.math.BigDecimal;
 %implements java_cup.runtime.Scanner
 %function next_token
 %type java_cup.runtime.Symbol
-%yylexthrow InvalidTokenException
+%yylexthrow InvalidTokenException, TabException
 %eofval{
   return symbol("EOF", sym.EOF);
 %eofval}
@@ -187,6 +189,7 @@ Anything = .
     {Whitespace} { /* Ignore */ }
 }
 
+"\t" { throw new TabException(leftLocation(), rightLocation()); }
 
 // This catches any error.
 {Anything} { throw new InvalidTokenException(leftLocation(), rightLocation()); }

@@ -4,6 +4,7 @@ import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.ComplexSymbolFactory.Location;
 import java_cup.runtime.Symbol;
 import org.flowsoft.flowg.*;
+import org.flowsoft.flowg.exceptions.type.*;
 import org.flowsoft.flowg.nodes.*;
 import org.flowsoft.flowg.nodes.base.ExpressionNode;
 import org.flowsoft.flowg.nodes.base.INode;
