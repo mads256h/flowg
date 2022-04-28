@@ -21,7 +21,9 @@ import java.io.FileReader;
 import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 
@@ -81,6 +83,9 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     private final Path _baseDir;
 
+    private final Set<String> _sysIncluded = new HashSet<>();
+    private final Set<String> _userIncluded = new HashSet<>();
+
     public CodeGeneratingVisitor(SymbolTable symbolTable, Path baseDir) {
         _symbolTable = new RuntimeSymbolTable(symbolTable, null);
         _baseDir = baseDir;
@@ -126,7 +131,16 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     @Override
     public ExpressionValue Visit(IncludeSysNode includeSysNode) throws Exception {
-        var path = Path.of("include", includeSysNode.GetChild().GetValue());
+        var str = includeSysNode.GetChild().GetValue();
+
+        if (_sysIncluded.contains(str)) {
+            return null;
+        }
+
+        _sysIncluded.add(str);
+
+
+        var path = Path.of("include", str);
 
         HandleInclude(path);
 
@@ -135,7 +149,17 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     @Override
     public ExpressionValue Visit(IncludeUserNode includeUserNode) throws Exception {
-        var path = _baseDir.resolve(includeUserNode.GetChild().GetValue());
+        var str = includeUserNode.GetChild().GetValue();
+
+        if (_userIncluded.contains(str)) {
+            return null;
+        }
+
+        _userIncluded.add(str);
+
+
+
+        var path = _baseDir.resolve(str);
 
         HandleInclude(path);
 
