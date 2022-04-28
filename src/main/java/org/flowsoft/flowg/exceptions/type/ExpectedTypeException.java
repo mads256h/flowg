@@ -1,6 +1,7 @@
-package org.flowsoft.flowg;
+package org.flowsoft.flowg.exceptions.type;
 
 import java_cup.runtime.ComplexSymbolFactory.Location;
+import org.flowsoft.flowg.Type;
 
 public class ExpectedTypeException extends TypeException {
     private final Type _expected;

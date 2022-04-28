@@ -1,4 +1,4 @@
-package org.flowsoft.flowg;
+package org.flowsoft.flowg.exceptions.type;
 
 import java_cup.runtime.ComplexSymbolFactory.Location;
 

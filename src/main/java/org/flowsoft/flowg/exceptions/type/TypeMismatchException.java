@@ -1,6 +1,7 @@
-package org.flowsoft.flowg;
+package org.flowsoft.flowg.exceptions.type;
 
 import java_cup.runtime.ComplexSymbolFactory.Location;
+import org.flowsoft.flowg.Type;
 
 public class TypeMismatchException extends TypeException {
     private final Type _leftType;
