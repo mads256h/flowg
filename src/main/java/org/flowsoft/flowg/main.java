@@ -2,6 +2,9 @@ package org.flowsoft.flowg;
 
 import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.ComplexSymbolFactory.Location;
+import org.flowsoft.flowg.exceptions.InvalidTokenException;
+import org.flowsoft.flowg.exceptions.TabException;
+import org.flowsoft.flowg.exceptions.type.*;
 import org.flowsoft.flowg.nodes.base.Node;
 import org.flowsoft.flowg.visitors.CodeGeneratingVisitor;
 import org.flowsoft.flowg.visitors.PrettyPrintingVisitor;
@@ -107,7 +110,9 @@ public class main {
                 throw e.GetInnerException();
             }
 
-
+        } catch (TabException e) {
+            System.err.format("%s:%d:%d: error: tabs are cringe and so are you\n", e.GetLeft().getUnit(), e.GetLeft().getLine(), e.GetLeft().getColumn());
+            System.err.println(GetLine(e.GetLeft().getUnit(), e.GetLeft(), e.GetRight()));
         } catch (InvalidTokenException e) {
             System.err.format("%s:%d:%d: error: invalid token\n", e.GetLeft().getUnit(), e.GetLeft().getLine(), e.GetLeft().getColumn());
             System.err.println(GetLine(e.GetLeft().getUnit(), e.GetLeft(), e.GetRight()));
