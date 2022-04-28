@@ -56,6 +56,12 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException> {
     private SymbolTable _symbolTable = new SymbolTable(null);
     private Type _functionReturnType = Type.Void;
 
+    private final Path _baseDir;
+
+    public TypeCheckingVisitor(Path baseDir) {
+        _baseDir = baseDir;
+    }
+
     public void PrintSymbolTable() {
         System.out.println("Printing symbol table");
         _symbolTable.Print();
@@ -99,7 +105,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException> {
 
     @Override
     public Type Visit(IncludeUserNode includeUserNode) throws TypeException {
-        var path = Path.of(includeUserNode.GetChild().GetValue());
+        var path = _baseDir.resolve(includeUserNode.GetChild().GetValue());
 
         HandleInclude(path, includeUserNode.GetLeft(), includeUserNode.GetRight());
 

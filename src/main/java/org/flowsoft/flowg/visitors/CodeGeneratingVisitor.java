@@ -78,8 +78,11 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     private Point _currentPosition = new Point(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
     private BigDecimal _currentExtrusion = new BigDecimal("0");
 
-    public CodeGeneratingVisitor(SymbolTable symbolTable) {
+    private final Path _baseDir;
+
+    public CodeGeneratingVisitor(SymbolTable symbolTable, Path baseDir) {
         _symbolTable = new RuntimeSymbolTable(symbolTable, null);
+        _baseDir = baseDir;
     }
 
     private static BiFunction<ExpressionValue, ExpressionValue, ExpressionValue> TryBoth(Type left, Type right, Map<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> map) {
@@ -131,7 +134,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
     @Override
     public ExpressionValue Visit(IncludeUserNode includeUserNode) throws Exception {
-        var path = Path.of(includeUserNode.GetChild().GetValue());
+        var path = _baseDir.resolve(includeUserNode.GetChild().GetValue());
 
         HandleInclude(path);
 

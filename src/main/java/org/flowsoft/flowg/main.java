@@ -22,6 +22,8 @@ public class main {
         var inputFile = args[0];
         var outputFile = args[1];
 
+        var baseDir = Path.of(inputFile).getParent();
+
         Yylex scanner;
         try {
             scanner = new Yylex(new FileReader(inputFile), inputFile);
@@ -38,9 +40,9 @@ public class main {
                 var rootNode = (Node) symbol.value;
                 System.out.println(rootNode.Accept(new TreePrintingVisitor()));
                 System.out.println(rootNode.Accept(new PrettyPrintingVisitor()));
-                var typeCheckingVisitor = new TypeCheckingVisitor();
+                var typeCheckingVisitor = new TypeCheckingVisitor(baseDir);
                 rootNode.Accept(typeCheckingVisitor);
-                var codeGeneratingVisitor = new CodeGeneratingVisitor(typeCheckingVisitor.GetSymbolTable());
+                var codeGeneratingVisitor = new CodeGeneratingVisitor(typeCheckingVisitor.GetSymbolTable(), baseDir);
                 codeGeneratingVisitor.run(rootNode);
                 typeCheckingVisitor.PrintSymbolTable();
                 System.out.println(codeGeneratingVisitor.GetCode());
