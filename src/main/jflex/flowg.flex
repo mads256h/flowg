@@ -115,7 +115,7 @@ Anything = .
     "else" { return symbol("else", sym.ELSE); }
 
     // GCODE
-    <YYINITIAL> "gcode" { yybegin(GCodePreState); return symbol("GCODE", sym.GCODE); }
+    "gcode" { yybegin(GCodePreState); return symbol("GCODE", sym.GCODE); }
 
     {Identifier} { return symbol("identifier", sym.IDENTIFIER, new IdentifierNode(yytext(), leftLocation(), rightLocation())); }
 
@@ -173,9 +173,20 @@ Anything = .
     "\"" {yybegin(YYINITIAL); return symbol("userstring", sym.USERSTRING, new UserStringNode(_stringBuffer.toString(), leftLocation(), rightLocation())); }
 }
 
-<GcodeFunctionState> {GCodeCode} { return symbol("GCodeCodeNode", sym.GCODECODE, new GCodeCodeNode(yytext(), leftLocation(), rightLocation())); }
-<GcodeFunctionState> "}" { yybegin(YYINITIAL); return symbol("}", sym.R_BRACKET); }
-<GCodePreState> "{" { yybegin(GcodeFunctionState); return symbol("{", sym.L_BRACKET); }
+<GcodeFunctionState> {
+    {GCodeCode} { return symbol("GCodeCodeNode", sym.GCODECODE, new GCodeCodeNode(yytext(), leftLocation(), rightLocation())); }
+     "}" { yybegin(YYINITIAL); return symbol("}", sym.R_BRACKET); }
+}
+<GCodePreState> {
+    {Type} { return symbol("type", sym.TYPE, new TypeNode(TypeHelper.StringToType(yytext()), leftLocation(), rightLocation())); }
+    {Identifier} { return symbol("identifier", sym.IDENTIFIER, new IdentifierNode(yytext(), leftLocation(), rightLocation())); }
+    "(" { return symbol("(", sym.L_PAREN); }
+    ")" { return symbol(")", sym.R_PAREN); }
+    "," { return symbol(",", sym.COMMA); }
+    "{" { yybegin(GcodeFunctionState); return symbol("{", sym.L_BRACKET); }
+    {Whitespace} { /* Ignore */ }
+}
+
 
 // This catches any error.
 {Anything} { throw new InvalidTokenException(leftLocation(), rightLocation()); }
