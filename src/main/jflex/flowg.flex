@@ -157,6 +157,7 @@ Anything = .
     "&&" { return symbol("&&", sym.AND); }
     "||" { return symbol("||", sym.OR); }
     "!" { return symbol("!", sym.NOT); }
+    "\t" { throw new TabException(leftLocation(), rightLocation()); }
 }
 
 <include> {
@@ -189,7 +190,7 @@ Anything = .
     {Whitespace} { /* Ignore */ }
 }
 
-"\t" { throw new TabException(leftLocation(), rightLocation()); }
+
 
 // This catches any error.
 {Anything} { throw new InvalidTokenException(leftLocation(), rightLocation()); }

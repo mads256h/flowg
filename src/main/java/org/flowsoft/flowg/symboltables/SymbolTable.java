@@ -1,7 +1,6 @@
 package org.flowsoft.flowg.symboltables;
 
 import org.flowsoft.flowg.Type;
-import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.nodes.functions.GCodeCodeNode;
 import java_cup.runtime.ComplexSymbolFactory.Location;
 import org.flowsoft.flowg.Cloneable;
