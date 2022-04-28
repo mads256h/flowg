@@ -400,7 +400,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException> {
         }
 
         if (!(identifier.equals("x") || identifier.equals("y") || identifier.equals("z"))) {
-            throw new SymbolNotFoundException(identifier, identifierNode.GetLeft(), identifierNode.GetRight());
+            throw new WrongPointIndexingException(identifier, identifierNode.GetLeft(), identifierNode.GetRight());
         }
 
         return Type.Number;

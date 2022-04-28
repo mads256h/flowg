@@ -1,8 +1,8 @@
-package org.flowsoft.flowg;
+package org.flowsoft.flowg.exceptions.type;
 
 import java_cup.runtime.ComplexSymbolFactory.Location;
 
-public class WrongPointIndexingException extends Exception {
+public class WrongPointIndexingException extends TypeException {
         private final String _indexer;
         private final Location _left;
         private final Location _right;
