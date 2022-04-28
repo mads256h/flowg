@@ -6,6 +6,7 @@ import org.flowsoft.flowg.exceptions.InvalidTokenException;
 import org.flowsoft.flowg.exceptions.TabException;
 import org.flowsoft.flowg.nodes.*;
 import org.flowsoft.flowg.nodes.base.INode;
+import org.flowsoft.flowg.nodes.functions.GCodeCodeNode;
 import java.math.BigDecimal;
 %%
 
@@ -72,11 +73,14 @@ Number = [0-9]+(\.[0-9]+)?
 Whitespace = [\ \r\n]
 NewLine = \n
 Comment = \/\/[^\n]*
+GCodeCode = [^}]*
 Anything = .
 
 %state include
 %state sysstring
 %state userstring
+%state gcode_prestate
+%state gcode_functionstate
 
 %%
 
@@ -111,6 +115,8 @@ Anything = .
     "if" { return symbol("if", sym.IF); }
     "else" { return symbol("else", sym.ELSE); }
 
+    // GCODE
+    "gcode" { yybegin(gcode_prestate); return symbol("GCODE", sym.GCODE); }
 
     {Identifier} { return symbol("identifier", sym.IDENTIFIER, new IdentifierNode(yytext(), leftLocation(), rightLocation())); }
 
@@ -150,6 +156,7 @@ Anything = .
     "&&" { return symbol("&&", sym.AND); }
     "||" { return symbol("||", sym.OR); }
     "!" { return symbol("!", sym.NOT); }
+    "\t" { throw new TabException(leftLocation(), rightLocation()); }
 }
 
 <include> {
@@ -168,7 +175,20 @@ Anything = .
     "\"" {yybegin(YYINITIAL); return symbol("userstring", sym.USERSTRING, new UserStringNode(_stringBuffer.toString(), leftLocation(), rightLocation())); }
 }
 
-"\t" { throw new TabException(leftLocation(), rightLocation()); }
+<gcode_functionstate> {
+    {GCodeCode} { return symbol("GCodeCodeNode", sym.GCODECODE, new GCodeCodeNode(yytext(), leftLocation(), rightLocation())); }
+    "}" { yybegin(YYINITIAL); return symbol("}", sym.R_BRACKET); }
+}
+
+<gcode_prestate> {
+    {Type} { return symbol("type", sym.TYPE, new TypeNode(TypeHelper.StringToType(yytext()), leftLocation(), rightLocation())); }
+    {Identifier} { return symbol("identifier", sym.IDENTIFIER, new IdentifierNode(yytext(), leftLocation(), rightLocation())); }
+    "(" { return symbol("(", sym.L_PAREN); }
+    ")" { return symbol(")", sym.R_PAREN); }
+    "," { return symbol(",", sym.COMMA); }
+    "{" { yybegin(gcode_functionstate); return symbol("{", sym.L_BRACKET); }
+    {Whitespace} { /* Ignore */ }
+}
 
 // This catches any error.
 {Anything} { throw new InvalidTokenException(leftLocation(), rightLocation()); }

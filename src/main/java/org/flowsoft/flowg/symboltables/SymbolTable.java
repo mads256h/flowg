@@ -1,5 +1,7 @@
 package org.flowsoft.flowg.symboltables;
 
+import org.flowsoft.flowg.Type;
+import org.flowsoft.flowg.nodes.functions.GCodeCodeNode;
 import java_cup.runtime.ComplexSymbolFactory.Location;
 import org.flowsoft.flowg.Cloneable;
 import org.flowsoft.flowg.*;
@@ -45,6 +47,16 @@ public class SymbolTable implements Cloneable<SymbolTable> {
         if (!_functionEntries.containsKey(identifier)) {
             _functionEntries.put(identifier, new FunctionEntry(returnType, identifier, formalParameters, functionBody, parent));
         } else {
+            throw new RedeclarationException(left, right);
+        }
+    }
+
+    //Gcodefunction
+    public void Enter(String identifier, ArrayList<FormalParameterNode> formalParameters, GCodeCodeNode functionBody, SymbolTable parent, Location left, Location right) throws TypeException {
+        if (!_functionEntries.containsKey(identifier)) {
+            _functionEntries.put(identifier, new FunctionEntry(identifier, formalParameters, functionBody, parent));
+        }
+        else {
             throw new RedeclarationException(left, right);
         }
     }

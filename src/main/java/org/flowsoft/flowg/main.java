@@ -110,6 +110,9 @@ public class main {
                 throw e.GetInnerException();
             }
 
+        catch (WrongPointIndexingException e) {
+            System.err.format("%s:%d:%d: error: Points can only be indexed by x, y and z. You used: \"%s\"\n", e.GetLeft().getUnit(), e.GetLeft().getLine(), e.GetLeft().getColumn(), e.GetIdentifier());
+        }
         } catch (TabException e) {
             System.err.format("%s:%d:%d: error: tabs are cringe and so are you\n", e.GetLeft().getUnit(), e.GetLeft().getLine(), e.GetLeft().getColumn());
             System.err.println(GetLine(e.GetLeft().getUnit(), e.GetLeft(), e.GetRight()));

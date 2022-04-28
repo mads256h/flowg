@@ -333,6 +333,41 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException> {
     }
 
     @Override
+    public Type Visit(GCodeFuncNode gCodeFuncNode) throws TypeException {
+        IdentifierNode identifierNode = gCodeFuncNode.GetIdentifierNode();
+        FormalParameterListNode formalParams = gCodeFuncNode.GetFormalParameterListNode();
+        GCodeCodeNode gCode = gCodeFuncNode.GetGCodeCodeNode();
+
+        SymbolTable parentSymbolTable = _symbolTable.Clone();
+        SymbolTable bodySymbolTable = new SymbolTable(null);
+
+        for (var param : formalParams.GetChildren()) {
+            bodySymbolTable.Enter(param.GetRightChild().GetValue(), param.GetLeftChild().GetValue(), param.GetLeft(), param.GetRight());
+        }
+
+        parentSymbolTable.Enter(identifierNode.GetValue(), (ArrayList<FormalParameterNode>) formalParams.GetChildren(), gCodeFuncNode.GetGCodeCodeNode(), bodySymbolTable, identifierNode.GetLeft(), identifierNode.GetRight());
+        _symbolTable.Enter(identifierNode.GetValue(), (ArrayList<FormalParameterNode>) formalParams.GetChildren(), gCodeFuncNode.GetGCodeCodeNode(), bodySymbolTable, identifierNode.GetLeft(), identifierNode.GetRight());
+
+        var oldFunctionReturnType = _functionReturnType;
+        var oldSymbolTable = _symbolTable;
+        _functionReturnType = Type.Void;
+        _symbolTable = bodySymbolTable;
+
+        gCode.Accept(this);
+
+        _symbolTable = oldSymbolTable;
+        _functionReturnType = oldFunctionReturnType;
+
+        return null;
+
+    }
+
+    @Override
+    public Type Visit(GCodeCodeNode gCodeCodeNode) throws TypeException {
+        return null;
+    }
+
+    @Override
     public Type Visit(TypeNode typeNode) {
         return typeNode.GetValue();
     }
@@ -388,7 +423,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException> {
         }
 
         if (!(identifier.equals("x") || identifier.equals("y") || identifier.equals("z"))) {
-            throw new SymbolNotFoundException(identifier, identifierNode.GetLeft(), identifierNode.GetRight());
+            throw new WrongPointIndexingException(identifier, identifierNode.GetLeft(), identifierNode.GetRight());
         }
 
         return Type.Number;

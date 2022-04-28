@@ -113,4 +113,8 @@ public interface IVisitor<T, TException extends Exception> {
     T Visit(PointNode pointNode) throws TException;
 
     T Visit(PointEntryNode pointEntryNode) throws TException;
+
+    // GCode
+    T Visit(GCodeFuncNode gCodeFuncNode) throws TException;
+    T Visit(GCodeCodeNode gCodeCodeNode) throws TException;
 }

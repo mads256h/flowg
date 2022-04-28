@@ -2,9 +2,11 @@ package org.flowsoft.flowg.visitors;
 
 import ch.obermuhlner.math.big.BigDecimalMath;
 import java_cup.runtime.ComplexSymbolFactory;
-import java_cup.runtime.Symbol;
 import org.flowsoft.flowg.*;
+import org.flowsoft.flowg.exceptions.type.ExpectedTypeException;
 import org.flowsoft.flowg.exceptions.type.ReturnException;
+import org.flowsoft.flowg.exceptions.type.SymbolNotFoundException;
+import org.flowsoft.flowg.exceptions.type.WrongPointIndexingException;
 import org.flowsoft.flowg.nodes.*;
 import org.flowsoft.flowg.nodes.base.INode;
 import org.flowsoft.flowg.nodes.controlflow.ForToNode;
@@ -25,6 +27,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exception> {
@@ -214,7 +218,6 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
 
         var pi = new BigDecimal(Math.PI);
         var filamentRadius = BigDecimalUtils.Divide(filamentDiameter, new BigDecimal(2));
-
 
         var filamentVolumeNeeded = distance.multiply(nozzleDiameter).multiply(layerHeight);
 
@@ -454,6 +457,16 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     }
 
     @Override
+    public ExpressionValue Visit(GCodeFuncNode gCodeFuncNode) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ExpressionValue Visit(GCodeCodeNode gCodeCodeNode) throws Exception {
+        return null;
+    }
+
+    @Override
     public ExpressionValue Visit(TypeNode typeNode) throws Exception {
         throw new RuntimeException("This should never be visited");
     }
@@ -580,17 +593,110 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         _symbolTable = bodyTable;
 
         ExpressionValue value = null;
+        if (functionEntry.GetFunctionBody() != null) {
+            try {
+                var functionBody = functionEntry.GetFunctionBody();
+                functionBody.Accept(this);
+            } catch (ReturnException e) {
+                value = e.GetExpressionValue();
+            }
 
-        try {
-            var functionBody = functionEntry.GetFunctionBody();
-            functionBody.Accept(this);
-        } catch (ReturnException e) {
-            value = e.GetExpressionValue();
+            _symbolTable = oldSymbolTable;
+
+            return value;
+        } else {
+            String gCodeBody = functionEntry.GetGCode().GetValue();
+            Pattern patternIdentifier = Pattern.compile("\\[[a-zA-Z][a-zA-Z0-9]*\\]|\\[[a-zA-Z][a-zA-Z0-9]*.[^\\]]*\\]", Pattern.MULTILINE);
+            Matcher matcher = patternIdentifier.matcher(gCodeBody);
+
+            while (matcher.find()) {
+                int start = matcher.start();
+                int end = matcher.end();
+                String Identifier;
+                String preString = "";
+                String var = "";
+                String postString = "";
+
+                if (matcher.start() != 0) preString = gCodeBody.substring(0, start);
+                Identifier = gCodeBody.substring(start + 1, end - 1);
+                if (matcher.end() != gCodeBody.length()) postString = gCodeBody.substring(end, gCodeBody.length());
+
+
+                if (Identifier.contains(".")){
+                    String[] identifierArray = Identifier.split("\\.",2);
+
+                    String pointIdentifier = identifierArray[0];
+                    String identifierIndexer = identifierArray[1];
+                    Type identifierType;
+                    try {
+                        identifierType = _symbolTable.LookupVariable(pointIdentifier).GetType();
+                    }catch(Exception e){
+                        throw new SymbolNotFoundException(pointIdentifier, functionEntry.GetGCode().GetLeft(), functionEntry.GetGCode().GetRight());
+                    }
+
+                    switch (identifierType){
+                        case Point -> {
+                            Point point = _symbolTable.LookupVariable(pointIdentifier).GetPoint();
+                            switch (identifierIndexer){
+                                case "x" -> {
+                                    var = point.GetX().toPlainString();
+                                    break;
+                                }
+                                case "y" -> {
+                                    var = point.GetY().toPlainString();
+                                    break;
+                                }
+                                case "z" ->{
+                                    var = point.GetZ().toPlainString();
+                                    break;
+                                }
+                                default -> throw new WrongPointIndexingException(pointIdentifier, functionEntry.GetGCode().GetLeft(), functionEntry.GetGCode().GetRight());
+                            }
+                        }
+                        default -> throw new ExpectedTypeException(Type.Point, identifierType, functionEntry.GetGCode().GetLeft(), functionEntry.GetGCode().GetRight());
+                    }
+                }else{
+                    Type identifierType;
+                    try{
+                        identifierType = _symbolTable.LookupVariable(Identifier).GetType();
+                    }catch (Exception e){
+                        throw new SymbolNotFoundException(Identifier, functionEntry.GetGCode().GetLeft(), functionEntry.GetGCode().GetRight());
+                    }
+                    switch (identifierType){
+                        case Number -> {
+                            var = _symbolTable.LookupVariable(Identifier).GetNumber().toPlainString();
+                            break;
+                        }
+                        case Point -> {
+                            var = _symbolTable.LookupVariable(Identifier).GetPoint().toString();
+                            break;
+                        }
+                        case Boolean -> {
+                            var = _symbolTable.LookupVariable(Identifier).GetBoolean().toString();
+                            break;
+                        }
+                        case Void -> throw new ExpectedTypeException(Type.Number, Type.Void, functionEntry.GetGCode().GetLeft(), functionEntry.GetGCode().GetRight()) {
+                            //Technically not a correct error message
+                        };
+                    }
+                }
+                gCodeBody = preString + var + postString;
+                matcher = patternIdentifier.matcher(gCodeBody);
+            }
+            _symbolTable = oldSymbolTable;
+            String[] array = gCodeBody.split("\\n");
+            String gCode = "";
+            for  (String string : array){
+                String trimmedCode = string.trim();
+                if (trimmedCode != ""){
+                    gCode += string.trim() + "\n";
+                }
+
+            }
+
+            _stringBuilder.append(gCode);
+            return new ExpressionValue(Type.Void);
         }
-
-        _symbolTable = oldSymbolTable;
-
-        return value;
     }
 
     @Override
