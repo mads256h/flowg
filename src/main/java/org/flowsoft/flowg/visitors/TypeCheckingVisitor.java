@@ -22,6 +22,8 @@ import java.io.FileReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TypeCheckingVisitor implements IVisitor<Type, TypeException> {
 
@@ -53,6 +55,9 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException> {
             put(new TypePair(Type.Boolean, Type.Boolean), Type.Boolean);
         }
     };
+
+    private final Set<String> _sysIncluded = new HashSet<>();
+    private final Set<String> _userIncluded = new HashSet<>();
 
     private SymbolTable _symbolTable = new SymbolTable(null);
     private Type _functionReturnType = Type.Void;
@@ -97,7 +102,16 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException> {
 
     @Override
     public Type Visit(IncludeSysNode includeSysNode) throws TypeException {
-        var path = Path.of("include", includeSysNode.GetChild().GetValue());
+        var str = includeSysNode.GetChild().GetValue();
+
+        if (_sysIncluded.contains(str)) {
+            return null;
+        }
+
+        _sysIncluded.add(str);
+
+
+        var path = Path.of("include", str);
 
         HandleInclude(path, includeSysNode.GetLeft(), includeSysNode.GetRight());
 
@@ -106,7 +120,16 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException> {
 
     @Override
     public Type Visit(IncludeUserNode includeUserNode) throws TypeException {
-        var path = _baseDir.resolve(includeUserNode.GetChild().GetValue());
+        var str = includeUserNode.GetChild().GetValue();
+
+        if (_userIncluded.contains(str)) {
+            return null;
+        }
+
+        _userIncluded.add(str);
+
+
+        var path = _baseDir.resolve(str);
 
         HandleInclude(path, includeUserNode.GetLeft(), includeUserNode.GetRight());
 
