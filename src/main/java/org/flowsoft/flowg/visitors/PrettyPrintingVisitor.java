@@ -154,12 +154,28 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     public String Visit(GCodeFuncNode gCodeFuncNode) throws NoException {
             return "gcode " + gCodeFuncNode.GetIdentifierNode().Accept(this) + " (" +
                     gCodeFuncNode.GetFormalParameterListNode().Accept(this) + ") {" +
-                    gCodeFuncNode.GetGCodeCodeNode().Accept(this) + "}";
+                    gCodeFuncNode.GetGCodeListNode().Accept(this) + "}";
+    }
+
+    @Override
+    public String Visit(GCodeListNode gCodeListNode) throws NoException {
+        var strbuilder = new StringBuilder();
+
+        for (var child : gCodeListNode.GetChildren()) {
+            strbuilder.append(child.Accept(this));
+        }
+
+        return strbuilder.toString();
     }
 
     @Override
     public String Visit(GCodeCodeNode gCodeCodeNode) throws NoException {
         return gCodeCodeNode.GetValue();
+    }
+
+    @Override
+    public String Visit(GCodeExpressionNode gCodeExpressionNode) throws NoException {
+        return "[" + gCodeExpressionNode.GetChild().Accept(this) + "]";
     }
 
     @Override

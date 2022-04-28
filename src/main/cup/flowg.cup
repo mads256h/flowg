@@ -135,6 +135,9 @@ non terminal IfElseNode if_else;
 
 // GCode
 non terminal GCodeFuncNode gcode_func;
+non terminal GCodeListNode gcode_list;
+non terminal ArrayList<GCodeNode> gcode_list_impl;
+non terminal GCodeNode gcode;
 
 precedence left NOT;
 precedence left AND, OR;
@@ -375,5 +378,18 @@ point_entry ::= expr:e DOT IDENTIFIER:i
         {: RESULT = new PointEntryNode(e, i, exleft, ixright); :};
 
 //GCode
-gcode_func ::= GCODE:b IDENTIFIER:i L_PAREN f_param_list:p R_PAREN L_BRACKET GCODECODE:g R_BRACKET:e
+gcode_func ::= GCODE:b IDENTIFIER:i L_PAREN f_param_list:p R_PAREN L_BRACKET gcode_list:g R_BRACKET:e
         {: RESULT = new GCodeFuncNode(i, p, g, bxleft, exright); :};
+
+gcode_list ::= gcode_list_impl:l
+        {: RESULT = new GCodeListNode(l, lxleft, lxright); :};
+
+gcode_list_impl::= gcode_list_impl:l gcode:g
+        {: l.add(g); RESULT = l; :}
+        | gcode:g
+        {: var l = new ArrayList<GCodeNode>(); l.add(g); RESULT = l; :};
+
+gcode ::= GCODECODE:g
+        {: RESULT = g; :}
+        | L_SQUARE_BRACKET expr:g R_SQUARE_BRACKET
+        {: RESULT = new GCodeExpressionNode(g, gxleft, gxright); :};

@@ -10,6 +10,7 @@ import org.flowsoft.flowg.exceptions.type.SymbolNotFoundException;
 import org.flowsoft.flowg.exceptions.type.TypeException;
 import org.flowsoft.flowg.nodes.StatementListNode;
 import org.flowsoft.flowg.nodes.functions.FormalParameterNode;
+import org.flowsoft.flowg.nodes.functions.GCodeListNode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +53,7 @@ public class SymbolTable implements Cloneable<SymbolTable> {
     }
 
     //Gcodefunction
-    public void Enter(String identifier, ArrayList<FormalParameterNode> formalParameters, GCodeCodeNode functionBody, SymbolTable parent, Location left, Location right) throws TypeException {
+    public void Enter(String identifier, ArrayList<FormalParameterNode> formalParameters, GCodeListNode functionBody, SymbolTable parent, Location left, Location right) throws TypeException {
         if (!_functionEntries.containsKey(identifier)) {
             _functionEntries.put(identifier, new FunctionEntry(identifier, formalParameters, functionBody, parent));
         }

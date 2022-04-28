@@ -116,5 +116,7 @@ public interface IVisitor<T, TException extends Exception> {
 
     // GCode
     T Visit(GCodeFuncNode gCodeFuncNode) throws TException;
+    T Visit(GCodeListNode gCodeListNode) throws TException;
     T Visit(GCodeCodeNode gCodeCodeNode) throws TException;
+    T Visit(GCodeExpressionNode gCodeExpressionNode) throws TException;
 }
