@@ -31,9 +31,6 @@ import java.math.BigDecimal;
 
 %debug
 
-
-%states GCodePreState, GcodeFunctionState
-
 %init{
     _file = file;
 %init}
@@ -82,6 +79,8 @@ Anything = .
 %state include
 %state sysstring
 %state userstring
+%state gcode_prestate
+%state gcode_functionstate
 
 %%
 
@@ -117,7 +116,7 @@ Anything = .
     "else" { return symbol("else", sym.ELSE); }
 
     // GCODE
-    "gcode" { yybegin(GCodePreState); return symbol("GCODE", sym.GCODE); }
+    "gcode" { yybegin(gcode_prestate); return symbol("GCODE", sym.GCODE); }
 
     {Identifier} { return symbol("identifier", sym.IDENTIFIER, new IdentifierNode(yytext(), leftLocation(), rightLocation())); }
 
@@ -176,21 +175,20 @@ Anything = .
     "\"" {yybegin(YYINITIAL); return symbol("userstring", sym.USERSTRING, new UserStringNode(_stringBuffer.toString(), leftLocation(), rightLocation())); }
 }
 
-<GcodeFunctionState> {
+<gcode_functionstate> {
     {GCodeCode} { return symbol("GCodeCodeNode", sym.GCODECODE, new GCodeCodeNode(yytext(), leftLocation(), rightLocation())); }
     "}" { yybegin(YYINITIAL); return symbol("}", sym.R_BRACKET); }
 }
-<GCodePreState> {
+
+<gcode_prestate> {
     {Type} { return symbol("type", sym.TYPE, new TypeNode(TypeHelper.StringToType(yytext()), leftLocation(), rightLocation())); }
     {Identifier} { return symbol("identifier", sym.IDENTIFIER, new IdentifierNode(yytext(), leftLocation(), rightLocation())); }
     "(" { return symbol("(", sym.L_PAREN); }
     ")" { return symbol(")", sym.R_PAREN); }
     "," { return symbol(",", sym.COMMA); }
-    "{" { yybegin(GcodeFunctionState); return symbol("{", sym.L_BRACKET); }
+    "{" { yybegin(gcode_functionstate); return symbol("{", sym.L_BRACKET); }
     {Whitespace} { /* Ignore */ }
 }
-
-
 
 // This catches any error.
 {Anything} { throw new InvalidTokenException(leftLocation(), rightLocation()); }

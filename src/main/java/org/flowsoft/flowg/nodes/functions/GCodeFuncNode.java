@@ -10,7 +10,7 @@ public class GCodeFuncNode extends TernaryNode<IdentifierNode, FormalParameterLi
         super(identifierNode, formalParameterListNode, gCodeCodeNode, left, right);
     }
 
-    public IdentifierNode GetIdentifierNode(){ return GetFirstNode(); }
+    public IdentifierNode GetIdentifierNode() { return GetFirstNode(); }
     public FormalParameterListNode GetFormalParameterListNode() { return GetSecondNode(); }
     public GCodeCodeNode GetGCodeCodeNode() { return GetThirdNode(); }
 
