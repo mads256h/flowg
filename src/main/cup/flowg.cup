@@ -180,16 +180,6 @@ stmt ::=
         | assign:a
         {: RESULT = a; :}
 
-        // Builtin functions
-        | move:m
-        {: RESULT = m; :}
-        | line:l
-        {: RESULT = l; :}
-        | cw_arc:c
-        {: RESULT = c; :}
-        | ccw_arc:c
-        {: RESULT = c; :}
-
         // User supplied functions
         | func_def:d
         {: RESULT = d; :}
@@ -225,18 +215,6 @@ assign ::= IDENTIFIER:i ASSIGNMENT expr:e
         | IDENTIFIER:i POWER ASSIGNMENT expr:e
         {: RESULT = new AssignmentNode(i, new PowerExpressionNode(new IdentifierExpressionNode(i, ixleft, ixright), e, ixleft, exright), ixleft, exright); :};
 
-// Builtin functions
-move ::= MOVE:b L_PAREN a_param_list:p R_PAREN:e
-        {: RESULT = new MoveNode(p, bxleft, exright); :};
-
-line ::= LINE:b L_PAREN a_param_list:p R_PAREN:e
-        {: RESULT = new LineNode(p, bxleft, exright); :};
-
-cw_arc ::= CW_ARC:b L_PAREN a_param_list:p R_PAREN:e
-        {: RESULT = new CWArcNode(p, bxleft, exright); :};
-
-ccw_arc ::= CCW_ARC:b L_PAREN a_param_list:p R_PAREN:e
-        {: RESULT = new CCWArcNode(p, bxleft, exright); :};
 
 // User defined functions
 func_def ::= TYPE:t IDENTIFIER:i L_PAREN f_param_list:p R_PAREN L_BRACKET stmt_list:l R_BRACKET:e

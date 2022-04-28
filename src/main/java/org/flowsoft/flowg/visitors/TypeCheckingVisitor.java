@@ -157,65 +157,6 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException> {
         return null;
     }
 
-    @Override
-    public Type Visit(MoveNode moveNode) throws TypeException {
-        var params = moveNode.GetChild().GetChildren();
-        if (params.size() != 1) {
-            throw new ParameterCountException(1, params.size(), moveNode.GetChild().GetLeft(), moveNode.GetChild().GetRight());
-        }
-
-        var param = params.get(0);
-        var type = param.Accept(this);
-        if (type != Type.Point) {
-            throw new ExpectedTypeException(Type.Point, type, param.GetLeft(), param.GetRight());
-        }
-
-        return Type.Void;
-    }
-
-    @Override
-    public Type Visit(LineNode lineNode) throws TypeException {
-        var params = lineNode.GetChild().GetChildren();
-        if (params.size() != 1) {
-            throw new ParameterCountException(1, params.size(), lineNode.GetChild().GetLeft(), lineNode.GetChild().GetRight());
-        }
-
-        var param = params.get(0);
-        var type = param.Accept(this);
-        if (type != Type.Point) {
-            throw new ExpectedTypeException(Type.Point, type, param.GetLeft(), param.GetRight());
-        }
-
-        return Type.Void;
-    }
-
-    @Override
-    public Type Visit(CWArcNode cwArcNode) throws TypeException {
-        var params = cwArcNode.GetChild().GetChildren();
-        if (params.size() != 2) {
-            throw new ParameterCountException(2, params.size(), cwArcNode.GetChild().GetLeft(), cwArcNode.GetChild().GetRight());
-        }
-
-        var firstParam = params.get(0);
-        var firstType = firstParam.Accept(this);
-        if (firstType != Type.Point) {
-            throw new ExpectedTypeException(Type.Point, firstType, firstParam.GetLeft(), firstParam.GetRight());
-        }
-
-        var lastParam = params.get(1);
-        var lastType = lastParam.Accept(this);
-        if (lastType != Type.Point) {
-            throw new ExpectedTypeException(Type.Point, lastType, lastParam.GetLeft(), lastParam.GetRight());
-        }
-
-        return Type.Void;
-    }
-
-    @Override
-    public Type Visit(CCWArcNode ccwArcNode) throws TypeException {
-        return null;
-    }
-
     // Handles builtin function typechecking on the form number func(number)
     private Type TypeCheckMathFunc(UnaryNode<ActualParameterListNode> funcNode) throws TypeException {
         var params = funcNode.GetChild().GetChildren();

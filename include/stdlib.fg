@@ -1,13 +1,17 @@
-/*
-Indsæt resten af defaultværdier
-*/
 number filamentDiameter = 2.85;
 number nozzleDiameter = 0.4;
 number layerHeight = 0.1;
 number pi = 3.14159265358979323846264338327950288419716939937510582097494459;
 point currentPosition = [0,0,0];
 
-void lline(point endpoint){
+number _calculateFilamentVolumeNeeded(number length){
+    number filamentNeeded = length * nozzleDiameter * layerHeight;
+    number filamentArea = (filamentDiameter / 2)^2 * pi;
+    number filamentMM = filamentNeeded / filamentArea;
+    return filamentMM;
+};
+
+void line(point endpoint){
     number x = currentPosition.x - endpoint.x;
     number y = currentPosition.y - endpoint.y;
     number z = currentPosition.z - endpoint.z;
@@ -17,14 +21,49 @@ void lline(point endpoint){
     number z2 = z^2;
 
     number distance = sqrt(x2+y2+z2);
-    number filamentVolumeNeeded = distance * nozzleDiameter * layerHeight;
-    number filamentArea = (filamentDiameter / 2)^2 * pi;
-    number filamentMm = filamentVolumeNeeded / filamentArea;
+    number filamentMm = _calculateFilamentVolumeNeeded(distance);
+
     gcode gcodeLine(point currentPosition, point endpoint, number filament){
     	G1 E[filament] X[endpoint.x] Y[endpoint.y] Z[endpoint.z]
     };
     gcodeLine(currentPosition, endpoint, filamentMm);
     currentPosition = endpoint;
+};
+
+point _arc(point center, point wantedEndpoint, bool is_cw){
+    number i = center.x - currentPosition.x;
+    number j = center.y - currentPosition.y;
+    // We calculate the point where the circle ends
+    point vector = wantedEndpoint - center;
+    point normalizedVector = [vector.x / sqrt(vector.x^2 + vector.y^2),vector.y / sqrt(vector.x^2 + vector.y^2),0];
+    number radius = sqrt((center.x - currentPosition.x)^2 + (center.y - currentPosition.y)^2);
+    point realEndpoint = (normalizedVector * radius) + center;
+
+    // We calculate the other sides and the C angle (in radians) with trigonometry
+    number c = sqrt((realEndpoint.x - currentPosition.x)^2 + (realEndpoint.y - currentPosition.y)^2);
+    number cosC = (2 *radius^2 - c^2) / (2 * radius^2);
+    number C = cos(cosC);
+    //We calculate the circumference and divide it by the percentage of the circle that is filled out
+    number circumference = radius * 2 * pi;
+
+    number filledCircumference = circumference / (C / (2 * pi));
+
+    // We use this to calculate the needed extrusion
+    number filamentMM = _calculateFilamentVolumeNeeded(filledCircumference);
+
+    if (is_cw) {
+        gcode gcodeCArc(point endpoint, number i, number j, number e){
+            G2 E[e] X[endpoint.x] Y[endpoint.y] I[i] J[j]
+        };
+        gcodeCArc(realEndpoint, i, j, filamentMM);
+    } else {
+        gcode gcodeCWArc(point endpoint, number i, number j, number e){
+            G3 E[e] X[endpoint.x] Y[endpoint.y] I[i] J[j]
+        };
+        gcodeCWArc(realEndpoint, i, j, filamentMM);
+    };
+    currentPosition = realEndpoint;
+    return currentPosition;
 };
 
 point arc(point center, point wantedEndpoint){
@@ -35,29 +74,7 @@ point cArc(point center, point wantedEndpoint){
     _arc(center, wantedEndpoint, false);
 };
 
-point _arc(point center, point wantedEndpoint, bool is_cw){
-    number i = center.x - currentPosition.x;
-    number j = center.y - currentPosition.y;
-    point vector = wantedEndpoint - center;
-    point normalizedVector = [vector.x / sqrt(vector.x^2 + vector.y^2),vector.y / sqrt(vector.x^2 + vector.y^2),0];
-    number radius = sqrt((center.x - currentPosition.x)^2 + (center.y - currentPosition.y)^2);
-    point realEndpoint = (normalizedVector * radius) + center;
-
-    if (is_cw) {
-        gcode gcodeCArc(point endpoint, number i, number j){
-            G2 X[endpoint.x] Y[endpoint.y] I[i] J[j]
-        };
-        gcodeCArc(realEndpoint, i, j);
-    } else {
-        gcode gcodeCWArc(point endpoint, number i, number j){
-            G3 X[endpoint.x] Y[endpoint.y] I[i] J[j]
-        };
-        gcodeCWArc(realEndpoint, i, j);
-    };
-    currentPosition = realEndpoint;
-    return currentPosition;
-};
-void mmove(point endpoint){
+void move(point endpoint){
     gcode gcodeMove(point endpoint){
         G0 X[endpoint.x] Y[endpoint.y] Z[endpoint.z]
     };

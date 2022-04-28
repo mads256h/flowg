@@ -96,9 +96,14 @@ Anything = .
     "[" { return symbol("[", sym.L_SQUARE_BRACKET); }
     "]" { return symbol("]", sym.R_SQUARE_BRACKET); }
 
-    // Builtin functions
-    "move" { return symbol("move", sym.MOVE); }
-    "line" { return symbol("line", sym.LINE); }
+    // Math builtins
+    "sqrt" { return symbol("sqrt", sym.SQRT); }
+    "sin" { return symbol("sin", sym.SIN); }
+    "cos" { return symbol("cos", sym.COS); }
+    "tan" { return symbol("tan", sym.TAN); }
+    "arcsin" { return symbol("arcsin", sym.ARCSIN); }
+    "arccos" { return symbol("arccos", sym.ARCCOS); }
+    "arctan" { return symbol("arctan", sym.ARCTAN); }
 
     // Control flow
     "for" { return symbol("for", sym.FOR); }

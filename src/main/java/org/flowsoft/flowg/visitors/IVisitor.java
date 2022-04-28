@@ -27,15 +27,6 @@ public interface IVisitor<T, TException extends Exception> {
 
     T Visit(AssignmentNode assignmentNode) throws TException;
 
-    // Builtin functions
-    T Visit(MoveNode moveNode) throws TException;
-
-    T Visit(LineNode lineNode) throws TException;
-
-    T Visit(CWArcNode cwArcNode) throws TException;
-
-    T Visit(CCWArcNode ccwArcNode) throws TException;
-
     // Math builtins
     T Visit(SqrtNode sqrtNode) throws TException;
 
