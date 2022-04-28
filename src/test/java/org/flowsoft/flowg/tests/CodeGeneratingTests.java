@@ -20,6 +20,7 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 import java.math.BigDecimal;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -27,6 +28,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(Theories.class)
 public class CodeGeneratingTests {
+    private static final Path P = Path.of("");
     private static final Location N = new Location("test", 0, 0, 0);
     @DataPoints("number")
     public static final Thing<BigDecimal>[] NUMBER_PLUS_THING = new Thing[]{
@@ -494,7 +496,7 @@ public class CodeGeneratingTests {
         var node = thing.GetNode();
         var expected = thing.GetExpected();
 
-        var value = node.Accept(new CodeGeneratingVisitor(new SymbolTable(null)));
+        var value = node.Accept(new CodeGeneratingVisitor(new SymbolTable(null), P));
         var actual = value.GetNumber();
 
         assertThat(value.GetType()).isEqualTo(Type.Number);
@@ -506,7 +508,7 @@ public class CodeGeneratingTests {
         var node = thing.GetNode();
         var expected = thing.GetExpected();
 
-        var value = node.Accept(new CodeGeneratingVisitor(new SymbolTable(null)));
+        var value = node.Accept(new CodeGeneratingVisitor(new SymbolTable(null), P));
         var actual = value.GetPoint();
 
         assertThat(value.GetType()).isEqualTo(Type.Point);
@@ -518,7 +520,7 @@ public class CodeGeneratingTests {
         var node = thing.GetNode();
         var expected = thing.GetExpected();
 
-        var value = node.Accept(new CodeGeneratingVisitor(new SymbolTable(null)));
+        var value = node.Accept(new CodeGeneratingVisitor(new SymbolTable(null), P));
         var actual = value.GetBoolean();
 
         assertThat(value.GetType()).isEqualTo(Type.Boolean);
@@ -534,10 +536,10 @@ public class CodeGeneratingTests {
             }
         }, N, N);
 
-        var typeChecker = new TypeCheckingVisitor();
+        var typeChecker = new TypeCheckingVisitor(Path.of(""));
         node.Accept(typeChecker);
 
-        var codeGen = new CodeGeneratingVisitor(typeChecker.GetSymbolTable());
+        var codeGen = new CodeGeneratingVisitor(typeChecker.GetSymbolTable(), P);
         node.Accept(codeGen);
 
 
@@ -597,10 +599,10 @@ public class CodeGeneratingTests {
             }
         }, N, N);
 
-        var typeChecker = new TypeCheckingVisitor();
+        var typeChecker = new TypeCheckingVisitor(Path.of(""));
         node.Accept(typeChecker);
 
-        var codeGen = new CodeGeneratingVisitor(typeChecker.GetSymbolTable());
+        var codeGen = new CodeGeneratingVisitor(typeChecker.GetSymbolTable(), P);
         node.Accept(codeGen);
 
 

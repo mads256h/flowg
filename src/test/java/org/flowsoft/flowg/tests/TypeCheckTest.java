@@ -21,6 +21,7 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 import java.math.BigDecimal;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -28,6 +29,7 @@ import static org.junit.Assert.assertThrows;
 
 @RunWith(Theories.class)
 public class TypeCheckTest {
+    private static final Path P = Path.of("");
     private static final ComplexSymbolFactory.Location N = new ComplexSymbolFactory.Location("test", 0, 0, 0);
 
     @DataPoints({"number", "notboolean", "notpoint"})
@@ -53,10 +55,10 @@ public class TypeCheckTest {
         var n3 = new TimesExpressionNode(left, right, N, N);
         var n4 = new DivideExpressionNode(left, right, N, N);
 
-        assertThat(n1.Accept(new TypeCheckingVisitor())).isEqualTo(Type.Number);
-        assertThat(n2.Accept(new TypeCheckingVisitor())).isEqualTo(Type.Number);
-        assertThat(n3.Accept(new TypeCheckingVisitor())).isEqualTo(Type.Number);
-        assertThat(n4.Accept(new TypeCheckingVisitor())).isEqualTo(Type.Number);
+        assertThat(n1.Accept(new TypeCheckingVisitor(P))).isEqualTo(Type.Number);
+        assertThat(n2.Accept(new TypeCheckingVisitor(P))).isEqualTo(Type.Number);
+        assertThat(n3.Accept(new TypeCheckingVisitor(P))).isEqualTo(Type.Number);
+        assertThat(n4.Accept(new TypeCheckingVisitor(P))).isEqualTo(Type.Number);
     }
 
     @Theory
@@ -68,11 +70,11 @@ public class TypeCheckTest {
         var n4 = new DivideExpressionNode(right, left, N, N);
 
 
-        assertThat(n1.Accept(new TypeCheckingVisitor())).isEqualTo(Type.Point);
-        assertThat(n2.Accept(new TypeCheckingVisitor())).isEqualTo(Type.Point);
+        assertThat(n1.Accept(new TypeCheckingVisitor(P))).isEqualTo(Type.Point);
+        assertThat(n2.Accept(new TypeCheckingVisitor(P))).isEqualTo(Type.Point);
 
-        assertThat(n3.Accept(new TypeCheckingVisitor())).isEqualTo(Type.Point);
-        assertThat(n4.Accept(new TypeCheckingVisitor())).isEqualTo(Type.Point);
+        assertThat(n3.Accept(new TypeCheckingVisitor(P))).isEqualTo(Type.Point);
+        assertThat(n4.Accept(new TypeCheckingVisitor(P))).isEqualTo(Type.Point);
     }
 
     @Theory
@@ -90,17 +92,17 @@ public class TypeCheckTest {
         var n8 = new DivideExpressionNode(right, left, N, N);
 
 
-        assertThrows(TypeException.class, () -> n1.Accept(new TypeCheckingVisitor()));
-        assertThrows(TypeException.class, () -> n2.Accept(new TypeCheckingVisitor()));
+        assertThrows(TypeException.class, () -> n1.Accept(new TypeCheckingVisitor(P)));
+        assertThrows(TypeException.class, () -> n2.Accept(new TypeCheckingVisitor(P)));
 
-        assertThrows(TypeException.class, () -> n3.Accept(new TypeCheckingVisitor()));
-        assertThrows(TypeException.class, () -> n4.Accept(new TypeCheckingVisitor()));
+        assertThrows(TypeException.class, () -> n3.Accept(new TypeCheckingVisitor(P)));
+        assertThrows(TypeException.class, () -> n4.Accept(new TypeCheckingVisitor(P)));
 
-        assertThrows(TypeException.class, () -> n5.Accept(new TypeCheckingVisitor()));
-        assertThrows(TypeException.class, () -> n6.Accept(new TypeCheckingVisitor()));
+        assertThrows(TypeException.class, () -> n5.Accept(new TypeCheckingVisitor(P)));
+        assertThrows(TypeException.class, () -> n6.Accept(new TypeCheckingVisitor(P)));
 
-        assertThrows(TypeException.class, () -> n7.Accept(new TypeCheckingVisitor()));
-        assertThrows(TypeException.class, () -> n8.Accept(new TypeCheckingVisitor()));
+        assertThrows(TypeException.class, () -> n7.Accept(new TypeCheckingVisitor(P)));
+        assertThrows(TypeException.class, () -> n8.Accept(new TypeCheckingVisitor(P)));
     }
 
 
@@ -112,7 +114,7 @@ public class TypeCheckTest {
         var n = new MoveNode(new ActualParameterListNode(list, N, N), N, N);
 
         // Move has type void
-        assertThat(n.Accept(new TypeCheckingVisitor())).isEqualTo(Type.Void);
+        assertThat(n.Accept(new TypeCheckingVisitor(P))).isEqualTo(Type.Void);
     }
 
     @Theory
@@ -122,6 +124,6 @@ public class TypeCheckTest {
 
         var n = new MoveNode(new ActualParameterListNode(list, N, N), N, N);
 
-        assertThrows(TypeException.class, () -> n.Accept(new TypeCheckingVisitor()));
+        assertThrows(TypeException.class, () -> n.Accept(new TypeCheckingVisitor(P)));
     }
 }

@@ -19,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -80,8 +81,11 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     private Point _currentPosition = new Point(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
     private BigDecimal _currentExtrusion = new BigDecimal("0");
 
-    public CodeGeneratingVisitor(SymbolTable symbolTable) {
+    private final Path _baseDir;
+
+    public CodeGeneratingVisitor(SymbolTable symbolTable, Path baseDir) {
         _symbolTable = new RuntimeSymbolTable(symbolTable, null);
+        _baseDir = baseDir;
     }
 
     private static BiFunction<ExpressionValue, ExpressionValue, ExpressionValue> TryBoth(Type left, Type right, Map<TypePair, BiFunction<ExpressionValue, ExpressionValue, ExpressionValue>> map) {
@@ -107,46 +111,35 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         return _symbolTable;
     }
 
-    @Override
-    public ExpressionValue Visit(IncludeSysNode includeSysNode) throws Exception {
-        String filepath = "include/" + includeSysNode.GetChild().GetValue();
-
-        Yylex yylex;
+    private void HandleInclude(Path path) throws Exception {
+        Yylex lexer;
         try {
-            yylex = new Yylex(new FileReader(filepath), filepath);
+            lexer = new Yylex(new FileReader(path.toString()), path.toString());
         } catch (FileNotFoundException e) {
             throw new IllegalStateException();
         }
 
-        parser parser = new parser(yylex, new ComplexSymbolFactory());
+        var parser = new parser(lexer, new ComplexSymbolFactory());
 
-        Symbol symbol = parser.parse();
-
-
+        var symbol = parser.parse();
         INode rootNode = (INode) symbol.value;
         rootNode.Accept(this);
+    }
+
+    @Override
+    public ExpressionValue Visit(IncludeSysNode includeSysNode) throws Exception {
+        var path = Path.of("include", includeSysNode.GetChild().GetValue());
+
+        HandleInclude(path);
 
         return null;
     }
 
     @Override
     public ExpressionValue Visit(IncludeUserNode includeUserNode) throws Exception {
-        String filepath = includeUserNode.GetChild().GetValue();
+        var path = _baseDir.resolve(includeUserNode.GetChild().GetValue());
 
-        Yylex yylex;
-        try {
-            yylex = new Yylex(new FileReader(filepath), filepath);
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException();
-        }
-
-        parser parser = new parser(yylex, new ComplexSymbolFactory());
-
-        Symbol symbol = parser.parse();
-
-
-        INode rootNode = (INode) symbol.value;
-        rootNode.Accept(this);
+        HandleInclude(path);
 
         return null;
     }
