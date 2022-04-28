@@ -1,8 +1,11 @@
 package org.flowsoft.flowg.visitors;
 
+import java_cup.runtime.ComplexSymbolFactory;
+import java_cup.runtime.Symbol;
 import org.flowsoft.flowg.*;
 import org.flowsoft.flowg.nodes.*;
 import org.flowsoft.flowg.nodes.base.ExpressionNode;
+import org.flowsoft.flowg.nodes.base.INode;
 import org.flowsoft.flowg.nodes.base.UnaryNode;
 import org.flowsoft.flowg.nodes.controlflow.ForToNode;
 import org.flowsoft.flowg.nodes.controlflow.IfElseNode;
@@ -12,39 +15,41 @@ import org.flowsoft.flowg.nodes.math.functions.*;
 import org.flowsoft.flowg.nodes.math.operators.*;
 import org.flowsoft.flowg.symboltables.SymbolTable;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
+public class TypeCheckingVisitor implements IVisitor<Type, TypeException> {
 
     private final static HashMap<TypePair, Type> PLUS_MINUS_TYPE_MAP = new HashMap<>() {
         {
             put(new TypePair(Type.Number, Type.Number), Type.Number);
+            put(new TypePair(Type.Void, Type.Number), Type.Number);
             put(new TypePair(Type.Point, Type.Point), Type.Point);
-        }};
+        }
+    };
 
     private final static HashMap<TypePair, Type> MULTIPLY_DIVIDE_TYPE_MAP = new HashMap<>() {
         {
             put(new TypePair(Type.Number, Type.Number), Type.Number);
             put(new TypePair(Type.Point, Type.Number), Type.Point);
-        }};
-
-    private final static HashMap<TypePair, Type> GE_LE_EQGE_EQLE_TYPE_MAP = new HashMap<>() {
-        {
-            put(new TypePair(Type.Number, Type.Number), Type.Boolean);
-        }};
+        }
+    };
 
     private final static HashMap<TypePair, Type> EQ_TYPE_MAP = new HashMap<>() {
         {
-           put(new TypePair(Type.Number, Type.Number), Type.Boolean);
-           put(new TypePair(Type.Point, Type.Point), Type.Boolean);
-           put(new TypePair(Type.Boolean, Type.Boolean), Type.Boolean);
-        }};
+            put(new TypePair(Type.Number, Type.Number), Type.Boolean);
+            put(new TypePair(Type.Point, Type.Point), Type.Boolean);
+            put(new TypePair(Type.Boolean, Type.Boolean), Type.Boolean);
+        }
+    };
 
     private final static HashMap<TypePair, Type> AND_OR_TYPE_MAP = new HashMap<>() {
         {
-           put(new TypePair(Type.Boolean, Type.Boolean), Type.Boolean);
-        }};
+            put(new TypePair(Type.Boolean, Type.Boolean), Type.Boolean);
+        }
+    };
 
     private SymbolTable _symbolTable = new SymbolTable(null);
     private Type _functionReturnType = Type.Void;
@@ -56,6 +61,72 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
     public SymbolTable GetSymbolTable() {
         return _symbolTable;
+    }
+
+    @Override
+    public Type Visit(IncludeSysNode includeSysNode) throws TypeException {
+        String filepath = "include/" + includeSysNode.GetChild().GetValue();
+
+        Yylex yylex;
+        try {
+            yylex = new Yylex(new FileReader(filepath), filepath);
+        } catch (FileNotFoundException e) {
+            throw new IncludeNotFoundException();
+        }
+
+        parser parser = new parser(yylex, new ComplexSymbolFactory());
+
+        Symbol symbol;
+        try {
+            symbol = parser.parse();
+        } catch (ParseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ParseException(e);
+        }
+
+        INode rootNode = (INode) symbol.value;
+        rootNode.Accept(this);
+
+        return null;
+    }
+
+    @Override
+    public Type Visit(IncludeUserNode includeUserNode) throws TypeException {
+        String filepath = includeUserNode.GetChild().GetValue();
+
+        Yylex yylex;
+        try {
+            yylex = new Yylex(new FileReader(filepath), filepath);
+        } catch (FileNotFoundException e) {
+            throw new IncludeNotFoundException();
+        }
+
+        parser parser = new parser(yylex, new ComplexSymbolFactory());
+
+        Symbol symbol;
+        try {
+            symbol = parser.parse();
+        } catch (ParseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ParseException(e);
+        }
+
+        INode rootNode = (INode) symbol.value;
+        rootNode.Accept(this);
+
+        return null;
+    }
+
+    @Override
+    public Type Visit(SysStringNode systringNode) throws TypeException {
+        return null;
+    }
+
+    @Override
+    public Type Visit(UserStringNode userStringNode) throws TypeException {
+        return null;
     }
 
     @Override
@@ -209,8 +280,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         if (typeNodeType == expressionNodeType) {
             _symbolTable.Enter(identifierNode.GetValue(), typeNodeType, declarationNode.GetLeft(), declarationNode.GetRight());
             return typeNodeType;
-        }
-        else {
+        } else {
             throw new ExpectedTypeException(typeNodeType, expressionNodeType, expressionNode.GetLeft(), expressionNode.GetRight());
         }
     }
@@ -346,6 +416,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     public Type Visit(PlusExpressionNode plusExpressionNode) throws TypeException {
         var leftType = plusExpressionNode.GetLeftChild().Accept(this);
         var rightType = plusExpressionNode.GetRightChild().Accept(this);
+
         return PlusMinusTypeCheckExpr(leftType, rightType, plusExpressionNode);
     }
 
@@ -353,6 +424,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     public Type Visit(MinusExpressionNode minusExpressionNode) throws TypeException {
         var leftType = minusExpressionNode.GetLeftChild().Accept(this);
         var rightType = minusExpressionNode.GetRightChild().Accept(this);
+
         return PlusMinusTypeCheckExpr(leftType, rightType, minusExpressionNode);
     }
 
@@ -360,6 +432,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     public Type Visit(TimesExpressionNode multiplyExpressionNode) throws TypeException {
         var leftType = multiplyExpressionNode.GetLeftChild().Accept(this);
         var rightType = multiplyExpressionNode.GetRightChild().Accept(this);
+
         return TimesDivideTypeCheckExpr(leftType, rightType, multiplyExpressionNode);
     }
 
@@ -367,6 +440,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
     public Type Visit(DivideExpressionNode divisionExpressionNode) throws TypeException {
         var leftType = divisionExpressionNode.GetLeftChild().Accept(this);
         var rightType = divisionExpressionNode.GetRightChild().Accept(this);
+
         return TimesDivideTypeCheckExpr(leftType, rightType, divisionExpressionNode);
     }
 
@@ -388,7 +462,19 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
 
         return Type.Number;
     }
-    
+
+    @Override
+    public Type Visit(ArithmeticNegationExpressionNode arithmeticNegationExpressionNode) throws TypeException {
+        var childNode = arithmeticNegationExpressionNode.GetChild();
+        var childType = childNode.Accept(this);
+
+        if (childType != Type.Number) {
+            throw new ExpectedTypeException(Type.Number, childType, childNode.GetLeft(), childNode.GetRight());
+        }
+
+        return Type.Number;
+    }
+
     @Override
     public Type Visit(NotExpressionNode notExpressionNode) throws TypeException {
         var childNode = notExpressionNode.GetChild();
@@ -444,8 +530,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException>{
         if (type != _functionReturnType) {
             if (child != null) {
                 throw new ExpectedTypeException(_functionReturnType, type, child.GetLeft(), child.GetRight());
-            }
-            else {
+            } else {
                 throw new ExpectedTypeException(_functionReturnType, type, returnNode.GetLeft(), returnNode.GetRight());
             }
         }

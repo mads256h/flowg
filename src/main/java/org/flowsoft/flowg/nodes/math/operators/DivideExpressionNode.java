@@ -5,7 +5,7 @@ import org.flowsoft.flowg.nodes.base.BinaryNode;
 import org.flowsoft.flowg.nodes.base.ExpressionNode;
 import org.flowsoft.flowg.visitors.IVisitor;
 
-public class DivideExpressionNode extends BinaryNode<ExpressionNode, ExpressionNode> implements ExpressionNode{
+public class DivideExpressionNode extends BinaryNode<ExpressionNode, ExpressionNode> implements ExpressionNode {
 
     public DivideExpressionNode(ExpressionNode leftChild, ExpressionNode rightChild, ComplexSymbolFactory.Location left, ComplexSymbolFactory.Location right) {
         super(leftChild, rightChild, left, right);

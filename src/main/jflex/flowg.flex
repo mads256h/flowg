@@ -38,6 +38,7 @@ import java.math.BigDecimal;
 
 %{
     private String _file = "unknown";
+    private StringBuffer _stringBuffer = new StringBuffer();
 
     private Location leftLocation() {
         return new Location(_file, yyline + 1, yycolumn + 1);
@@ -76,82 +77,105 @@ Comment = \/\/[^\n]*
 GCodeCode = [^}]*
 Anything = .
 
+%state include
+%state sysstring
+%state userstring
+
 %%
 
-<YYINITIAL> {Type} { return symbol("type", sym.TYPE, new TypeNode(TypeHelper.StringToType(yytext()), leftLocation(), rightLocation())); }
+<YYINITIAL> {
+    {Type} { return symbol("type", sym.TYPE, new TypeNode(TypeHelper.StringToType(yytext()), leftLocation(), rightLocation())); }
 
-// Boolean literals
-<YYINITIAL> "true" { return symbol("true", sym.BOOLEAN_LITERAL, new BooleanLiteralNode(true, leftLocation(), rightLocation())); }
-<YYINITIAL> "false" { return symbol("false", sym.BOOLEAN_LITERAL, new BooleanLiteralNode(false, leftLocation(), rightLocation())); }
+    // Include statement
+    "#include" { yybegin(include); return symbol("#include", sym.INCLUDE); }
 
-// Builtin functions
-<YYINITIAL> "move" { return symbol("move", sym.MOVE); }
-<YYINITIAL> "line" { return symbol("line", sym.LINE); }
-<YYINITIAL> "cw_arc" { return symbol("cw_arc", sym.CW_ARC); }
-<YYINITIAL> "ccw_arc" { return symbol("ccw_arc", sym.CCW_ARC); }
 
-// Math builtins
-<YYINITIAL> "sqrt" { return symbol("sqrt", sym.SQRT); }
-<YYINITIAL> "sin" { return symbol("sin", sym.SIN); }
-<YYINITIAL> "cos" { return symbol("cos", sym.COS); }
-<YYINITIAL> "tan" { return symbol("tan", sym.TAN); }
-<YYINITIAL> "arcsin" { return symbol("arcsin", sym.ARCSIN); }
-<YYINITIAL> "arccos" { return symbol("arccos", sym.ARCCOS); }
-<YYINITIAL> "arctan" { return symbol("arctan", sym.ARCTAN); }
+    // Boolean literals
+    "true" { return symbol("true", sym.BOOLEAN_LITERAL, new BooleanLiteralNode(true, leftLocation(), rightLocation())); }
+    "false" { return symbol("false", sym.BOOLEAN_LITERAL, new BooleanLiteralNode(false, leftLocation(), rightLocation())); }
 
-// Control flow
-<YYINITIAL> "for" { return symbol("for", sym.FOR); }
-<YYINITIAL> "to" { return symbol("to", sym.TO); }
-<YYINITIAL> "return" { return symbol("return", sym.RETURN); }
-<YYINITIAL> "if" { return symbol("if", sym.IF); }
-<YYINITIAL> "else" { return symbol("else", sym.ELSE); }
+    // Builtin functions
+    "move" { return symbol("move", sym.MOVE); }
+    "line" { return symbol("line", sym.LINE); }
 
-// GCode
-<YYINITIAL> "gcode" { yybegin(GCodePreState); return symbol("GCODE", sym.GCODE); }
+    // Math builtins
+    "sqrt" { return symbol("sqrt", sym.SQRT); }
+    "sin" { return symbol("sin", sym.SIN); }
+    "cos" { return symbol("cos", sym.COS); }
+    "tan" { return symbol("tan", sym.TAN); }
+    "arcsin" { return symbol("arcsin", sym.ARCSIN); }
+    "arccos" { return symbol("arccos", sym.ARCCOS); }
+    "arctan" { return symbol("arctan", sym.ARCTAN); }
 
+    // Control flow
+    "for" { return symbol("for", sym.FOR); }
+    "to" { return symbol("to", sym.TO); }
+    "return" { return symbol("return", sym.RETURN); }
+    "if" { return symbol("if", sym.IF); }
+    "else" { return symbol("else", sym.ELSE); }
+
+    // GCODE
+    <YYINITIAL> "gcode" { yybegin(GCodePreState); return symbol("GCODE", sym.GCODE); }
+
+    {Identifier} { return symbol("identifier", sym.IDENTIFIER, new IdentifierNode(yytext(), leftLocation(), rightLocation())); }
+
+    {Number} { return symbol("number literal", sym.NUMBER_LITERAL, new NumberLiteralNode(new BigDecimal(yytext()), leftLocation(), rightLocation())); }
+
+    {Whitespace} { /* Ignore */ }
+
+    {Comment} { /* Ignore */ }
+
+    "(" { return symbol("(", sym.L_PAREN); }
+    ")" { return symbol(")", sym.R_PAREN); }
+
+    "{" { return symbol("{", sym.L_BRACKET); }
+    "}" { return symbol("}", sym.R_BRACKET); }
+
+    "[" { return symbol("[", sym.L_SQUARE_BRACKET); }
+    "]" { return symbol("]", sym.R_SQUARE_BRACKET); }
+
+    "=" { return symbol("=", sym.ASSIGNMENT); }
+    ";" { return symbol(";", sym.SEMICOLON); }
+    "," { return symbol(",", sym.COMMA); }
+    "." { return symbol(".", sym.DOT); }
+
+    // Arithmic operators
+    "+" { return symbol("+", sym.PLUS); }
+    "-" { return symbol("-", sym.MINUS); }
+    "*" { return symbol("*", sym.TIMES); }
+    "/" { return symbol("/", sym.DIVIDE); }
+    "^" { return symbol("^", sym.POWER); }
+
+    // Boolean operators
+    ">" { return symbol(">", sym.GREATER_THAN); }
+    "<" { return symbol("<", sym.LESS_THAN); }
+    "==" { return symbol("==", sym.EQUALS); }
+    ">=" { return symbol(">=", sym.GREATER_THAN_EQUALS); }
+    "<=" { return symbol("<=", sym.LESS_THAN_EQUALS); }
+    "&&" { return symbol("&&", sym.AND); }
+    "||" { return symbol("||", sym.OR); }
+    "!" { return symbol("!", sym.NOT); }
+}
+
+<include> {
+    "<" {_stringBuffer.setLength(0); yybegin(sysstring);}
+    "\"" {_stringBuffer.setLength(0); yybegin(userstring);}
+    {Whitespace} {/* Ignore */}
+}
+
+<sysstring> {
+    [^>] {_stringBuffer.append(yytext());}
+    ">" {yybegin(YYINITIAL); return symbol("sysstring", sym.SYSSTRING, new SysStringNode(_stringBuffer.toString(), leftLocation(), rightLocation())); }
+}
+
+<userstring> {
+    [^\"] {_stringBuffer.append((yytext()));}
+    "\"" {yybegin(YYINITIAL); return symbol("userstring", sym.USERSTRING, new UserStringNode(_stringBuffer.toString(), leftLocation(), rightLocation())); }
+}
 
 <GcodeFunctionState> {GCodeCode} { return symbol("GCodeCodeNode", sym.GCODECODE, new GCodeCodeNode(yytext(), leftLocation(), rightLocation())); }
-
-<YYINITIAL> {Identifier} { return symbol("identifier", sym.IDENTIFIER, new IdentifierNode(yytext(), leftLocation(), rightLocation())); }
-
-<YYINITIAL> {Number} { return symbol("number literal", sym.NUMBER_LITERAL, new NumberLiteralNode(new BigDecimal(yytext()), leftLocation(), rightLocation())); }
-
-<YYINITIAL> {Whitespace} { /* Ignore */ }
-
-<YYINITIAL> {Comment} { /* Ignore */ }
-
-<YYINITIAL> "(" { return symbol("(", sym.L_PAREN); }
-<YYINITIAL> ")" { return symbol(")", sym.R_PAREN); }
-
-<GCodePreState> "{" { yybegin(GcodeFunctionState); return symbol("{", sym.L_BRACKET); }
 <GcodeFunctionState> "}" { yybegin(YYINITIAL); return symbol("}", sym.R_BRACKET); }
-<YYINITIAL> "{" { return symbol("{", sym.L_BRACKET); }
-<YYINITIAL> "}" { return symbol("}", sym.R_BRACKET); }
-
-<YYINITIAL> "[" { return symbol("[", sym.L_SQUARE_BRACKET); }
-<YYINITIAL> "]" { return symbol("]", sym.R_SQUARE_BRACKET); }
-
-<YYINITIAL> "=" { return symbol("=", sym.ASSIGNMENT); }
-<YYINITIAL> ";" { return symbol(";", sym.SEMICOLON); }
-<YYINITIAL> "," { return symbol(",", sym.COMMA); }
-<YYINITIAL> "." { return symbol(".", sym.DOT); }
-
-// Arithmic operators
-<YYINITIAL> "+" { return symbol("+", sym.PLUS); }
-<YYINITIAL> "-" { return symbol("-", sym.MINUS); }
-<YYINITIAL> "*" { return symbol("*", sym.TIMES); }
-<YYINITIAL> "/" { return symbol("/", sym.DIVIDE); }
-<YYINITIAL> "^" { return symbol("^", sym.POWER); }
-
-// Boolean operators
-<YYINITIAL> ">" { return symbol(">", sym.GREATER_THAN); }
-<YYINITIAL> "<" { return symbol("<", sym.LESS_THAN); }
-<YYINITIAL> "==" { return symbol("==", sym.EQUALS); }
-<YYINITIAL> ">=" { return symbol(">=", sym.GREATER_THAN_EQUALS); }
-<YYINITIAL> "<=" { return symbol("<=", sym.LESS_THAN_EQUALS); }
-<YYINITIAL> "&&" { return symbol("&&", sym.AND); }
-<YYINITIAL> "||" { return symbol("||", sym.OR); }
-<YYINITIAL> "!" { return symbol("!", sym.NOT); }
+<GCodePreState> "{" { yybegin(GcodeFunctionState); return symbol("{", sym.L_BRACKET); }
 
 // This catches any error.
 {Anything} { throw new InvalidTokenException(leftLocation(), rightLocation()); }

@@ -4,11 +4,10 @@ import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.TypeException;
 import org.flowsoft.flowg.nodes.functions.GCodeCodeNode;
 import java_cup.runtime.ComplexSymbolFactory.Location;
-import org.flowsoft.flowg.*;
 import org.flowsoft.flowg.Cloneable;
-
-import org.flowsoft.flowg.nodes.functions.FormalParameterNode;
+import org.flowsoft.flowg.*;
 import org.flowsoft.flowg.nodes.StatementListNode;
+import org.flowsoft.flowg.nodes.functions.FormalParameterNode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,8 +36,7 @@ public class SymbolTable implements Cloneable<SymbolTable> {
     public void Enter(String identifier, Type type, Location left, Location right) throws TypeException {
         if (!_variableEntries.containsKey(identifier)) {
             _variableEntries.put(identifier, new VariableEntry(identifier, type));
-        }
-        else {
+        } else {
             throw new RedeclarationException(left, right);
         }
     }
@@ -46,8 +44,7 @@ public class SymbolTable implements Cloneable<SymbolTable> {
     public void Enter(Type returnType, String identifier, ArrayList<FormalParameterNode> formalParameters, StatementListNode functionBody, SymbolTable parent, Location left, Location right) throws TypeException {
         if (!_functionEntries.containsKey(identifier)) {
             _functionEntries.put(identifier, new FunctionEntry(returnType, identifier, formalParameters, functionBody, parent));
-        }
-        else {
+        } else {
             throw new RedeclarationException(left, right);
         }
     }

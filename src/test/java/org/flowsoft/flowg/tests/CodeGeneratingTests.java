@@ -6,41 +6,28 @@ import org.flowsoft.flowg.Point;
 import org.flowsoft.flowg.Type;
 import org.flowsoft.flowg.nodes.*;
 import org.flowsoft.flowg.nodes.base.INode;
+import org.flowsoft.flowg.nodes.controlflow.ReturnNode;
 import org.flowsoft.flowg.nodes.functions.*;
 import org.flowsoft.flowg.nodes.math.operators.*;
 import org.flowsoft.flowg.symboltables.SymbolTable;
-import org.flowsoft.flowg.visitors.*;
+import org.flowsoft.flowg.visitors.CodeGeneratingVisitor;
+import org.flowsoft.flowg.visitors.TypeCheckingVisitor;
 import org.junit.Test;
-import org.junit.experimental.theories.*;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.FromDataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Theories.class)
 public class CodeGeneratingTests {
     private static final Location N = new Location("test", 0, 0, 0);
-    private static class Thing<T> {
-        private final T _expected;
-        private final INode _node;
-
-        public Thing(T expected, INode node) {
-            _expected = expected;
-            _node = node;
-        }
-
-        public T GetExpected() {
-            return _expected;
-        }
-
-        public INode GetNode() {
-            return _node;
-        }
-    }
-
     @DataPoints("number")
     public static final Thing<BigDecimal>[] NUMBER_PLUS_THING = new Thing[]{
             new Thing<>(
@@ -67,7 +54,6 @@ public class CodeGeneratingTests {
                     )
             )
     };
-
     @DataPoints("point")
     public static final Thing<Point>[] POINT_PLUS_THING = new Thing[]{
             new Thing<>(
@@ -89,9 +75,8 @@ public class CodeGeneratingTests {
                     )
             )
     };
-
     @DataPoints("number")
-    public static final Thing<BigDecimal>[] NUMBER_MINUS_THING = new Thing[] {
+    public static final Thing<BigDecimal>[] NUMBER_MINUS_THING = new Thing[]{
             new Thing<>(
                     new BigDecimal("0"),
                     new MinusExpressionNode(
@@ -107,11 +92,31 @@ public class CodeGeneratingTests {
                             new NumberLiteralNode(new BigDecimal("-1"), N, N),
                             N, N
                     )
+            ),
+            new Thing<>(
+                    new BigDecimal("0"),
+                    new ArithmeticNegationExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("0"), N, N),
+                            N, N
+                    )
+            ),
+            new Thing<>(
+                    new BigDecimal("-1"),
+                    new ArithmeticNegationExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("1"), N, N),
+                            N, N
+                    )
+            ),
+            new Thing<>(
+                    new BigDecimal("1"),
+                    new ArithmeticNegationExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("-1"), N, N),
+                            N, N
+                    )
             )
     };
-
     @DataPoints("point")
-    public static final Thing<Point>[] POINT_MINUS_THING = new Thing[] {
+    public static final Thing<Point>[] POINT_MINUS_THING = new Thing[]{
             new Thing<>(
                     new Point(new BigDecimal("1"), new BigDecimal("1"), new BigDecimal("1")),
                     new MinusExpressionNode(
@@ -131,9 +136,8 @@ public class CodeGeneratingTests {
                     )
             )
     };
-
     @DataPoints("number")
-    public static final Thing<BigDecimal>[] NUMBER_TIMES_THING = new Thing[] {
+    public static final Thing<BigDecimal>[] NUMBER_TIMES_THING = new Thing[]{
             new Thing<>(
                     new BigDecimal("6"),
                     new TimesExpressionNode(
@@ -151,9 +155,8 @@ public class CodeGeneratingTests {
                     )
             )
     };
-
     @DataPoints("point")
-    public static final Thing<Point>[] POINT_TIMES_THING = new Thing[] {
+    public static final Thing<Point>[] POINT_TIMES_THING = new Thing[]{
             new Thing<>(
                     new Point(new BigDecimal("2"), new BigDecimal("4"), new BigDecimal("6")),
                     new TimesExpressionNode(
@@ -181,9 +184,8 @@ public class CodeGeneratingTests {
                     )
             )
     };
-
     @DataPoints("number")
-    public static final Thing<BigDecimal>[] NUMBER_DIVIDE_THING = new Thing[] {
+    public static final Thing<BigDecimal>[] NUMBER_DIVIDE_THING = new Thing[]{
             new Thing<>(
                     new BigDecimal("1"),
                     new DivideExpressionNode(
@@ -209,9 +211,8 @@ public class CodeGeneratingTests {
                     )
             )
     };
-
     @DataPoints("point")
-    public static final Thing<Point>[] POINT_DIVIDE_THING = new Thing[] {
+    public static final Thing<Point>[] POINT_DIVIDE_THING = new Thing[]{
             new Thing<>(
                     new Point(new BigDecimal("1"), new BigDecimal("2"), new BigDecimal("3")),
                     new DivideExpressionNode(
@@ -226,9 +227,8 @@ public class CodeGeneratingTests {
                     )
             )
     };
-
     @DataPoints("bool")
-    public static final Thing<Boolean>[] BOOL_EXPR_THING = new Thing[] {
+    public static final Thing<Boolean>[] BOOL_EXPR_THING = new Thing[]{
             new Thing<>(
                     true,
                     new GreaterThanExpressionNode(
@@ -613,5 +613,23 @@ public class CodeGeneratingTests {
         funcSymbolTable.LookupVariable("z", N, N);
 
         assertThat(codeGen.GetCode()).isEqualTo("G0 X2 Y4 Z6\n");
+    }
+
+    private static class Thing<T> {
+        private final T _expected;
+        private final INode _node;
+
+        public Thing(T expected, INode node) {
+            _expected = expected;
+            _node = node;
+        }
+
+        public T GetExpected() {
+            return _expected;
+        }
+
+        public INode GetNode() {
+            return _node;
+        }
     }
 }

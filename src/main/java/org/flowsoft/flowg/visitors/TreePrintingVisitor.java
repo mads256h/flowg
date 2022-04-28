@@ -33,6 +33,26 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
+    public String Visit(IncludeSysNode includeSysNode) throws NoException {
+        return PrintNode(includeSysNode, includeSysNode.GetChild());
+    }
+
+    @Override
+    public String Visit(IncludeUserNode includeUserNode) throws NoException {
+        return PrintNode(includeUserNode, includeUserNode.GetChild());
+    }
+
+    @Override
+    public String Visit(SysStringNode systringNode) throws NoException {
+        return PrintNode(systringNode);
+    }
+
+    @Override
+    public String Visit(UserStringNode userStringNode) throws NoException {
+        return PrintNode(userStringNode);
+    }
+
+    @Override
     public String Visit(StatementListNode statementListNode) throws NoException {
         StatementNode[] array = statementListNode.GetChildren().toArray(new StatementNode[0]);
 
@@ -165,20 +185,33 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
-    public String Visit(PlusExpressionNode plusExpressionNode) throws NoException { return PrintNode(plusExpressionNode, plusExpressionNode.GetLeftChild(), plusExpressionNode.GetRightChild()); }
+    public String Visit(PlusExpressionNode plusExpressionNode) throws NoException {
+        return PrintNode(plusExpressionNode, plusExpressionNode.GetLeftChild(), plusExpressionNode.GetRightChild());
+    }
 
     @Override
-    public String Visit(MinusExpressionNode minusExpressionNode) throws NoException { return PrintNode(minusExpressionNode, minusExpressionNode.GetLeftChild(), minusExpressionNode.GetRightChild()); }
+    public String Visit(MinusExpressionNode minusExpressionNode) throws NoException {
+        return PrintNode(minusExpressionNode, minusExpressionNode.GetLeftChild(), minusExpressionNode.GetRightChild());
+    }
 
     @Override
-    public String Visit(TimesExpressionNode multiplyExpressionNode) throws NoException { return PrintNode(multiplyExpressionNode, multiplyExpressionNode.GetLeftChild(), multiplyExpressionNode.GetRightChild()); }
+    public String Visit(TimesExpressionNode multiplyExpressionNode) throws NoException {
+        return PrintNode(multiplyExpressionNode, multiplyExpressionNode.GetLeftChild(), multiplyExpressionNode.GetRightChild());
+    }
 
     @Override
-    public String Visit(DivideExpressionNode divisionExpressionNode) throws NoException { return PrintNode(divisionExpressionNode, divisionExpressionNode.GetLeftChild(), divisionExpressionNode.GetRightChild()); }
+    public String Visit(DivideExpressionNode divisionExpressionNode) throws NoException {
+        return PrintNode(divisionExpressionNode, divisionExpressionNode.GetLeftChild(), divisionExpressionNode.GetRightChild());
+    }
 
     @Override
     public String Visit(PowerExpressionNode powerExpressionNode) throws NoException {
         return PrintNode(powerExpressionNode, powerExpressionNode.GetLeftChild(), powerExpressionNode.GetRightChild());
+    }
+
+    @Override
+    public String Visit(ArithmeticNegationExpressionNode arithmeticNegationExpressionNode) throws NoException {
+        return PrintNode(arithmeticNegationExpressionNode, arithmeticNegationExpressionNode.GetChild());
     }
 
     @Override
@@ -220,7 +253,7 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     public String Visit(AssignmentNode assignmentNode) throws NoException {
         return PrintNode(assignmentNode, assignmentNode.GetLeftChild(), assignmentNode.GetRightChild());
     }
-    
+
     @Override
     public String Visit(ForToNode forToNode) throws NoException {
         return PrintNode(forToNode, forToNode.GetFirstNode(), forToNode.GetSecondNode(), forToNode.GetThirdNode());
