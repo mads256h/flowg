@@ -71,7 +71,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException> {
         try {
             yylex = new Yylex(new FileReader(filepath), filepath);
         } catch (FileNotFoundException e) {
-            throw new IncludeNotFoundException();
+            throw new IncludeNotFoundException(includeSysNode.GetChild().GetValue(), includeSysNode.GetLeft(), includeSysNode.GetRight());
         }
 
         parser parser = new parser(yylex, new ComplexSymbolFactory());
@@ -99,7 +99,7 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException> {
         try {
             yylex = new Yylex(new FileReader(filepath), filepath);
         } catch (FileNotFoundException e) {
-            throw new IncludeNotFoundException();
+            throw new IncludeNotFoundException(includeUserNode.GetChild().GetValue(), includeUserNode.GetLeft(), includeUserNode.GetRight());
         }
 
         parser parser = new parser(yylex, new ComplexSymbolFactory());

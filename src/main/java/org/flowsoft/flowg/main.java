@@ -112,6 +112,9 @@ public class main {
         } catch (ExpectedTypeException e) {
             System.err.format("%s:%d:%d: error: expected %s but got %s\n", e.GetLeft().getUnit(), e.GetLeft().getLine(), e.GetLeft().getColumn(), TypeHelper.TypeToString(e.GetExpected()), TypeHelper.TypeToString(e.GetActual()));
             System.err.println(GetLine(e.GetLeft().getUnit(), e.GetLeft(), e.GetRight()));
+        } catch (IncludeNotFoundException e) {
+            System.err.format("%s:%d:%d: error: included file '%s' not found\n", e.GetLeft().getUnit(), e.GetLeft().getLine(), e.GetLeft().getColumn(), e.GetFilename());
+            System.err.println(GetLine(e.GetLeft().getUnit(), e.GetLeft(), e.GetRight()));
         } catch (SymbolNotFoundException e) {
             System.err.format("%s:%d:%d: error: symbol '%s' not found\n", e.GetLeft().getUnit(), e.GetLeft().getLine(), e.GetLeft().getColumn(), e.GetIdentifier());
             System.err.println(GetLine(e.GetLeft().getUnit(), e.GetLeft(), e.GetRight()));
