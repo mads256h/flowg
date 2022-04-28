@@ -18,6 +18,7 @@ import org.flowsoft.flowg.symboltables.SymbolTable;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.math.BigDecimal;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -104,46 +105,35 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         return _symbolTable;
     }
 
-    @Override
-    public ExpressionValue Visit(IncludeSysNode includeSysNode) throws Exception {
-        String filepath = "include/" + includeSysNode.GetChild().GetValue();
-
-        Yylex yylex;
+    private void HandleInclude(Path path) throws Exception {
+        Yylex lexer;
         try {
-            yylex = new Yylex(new FileReader(filepath), filepath);
+            lexer = new Yylex(new FileReader(path.toString()), path.toString());
         } catch (FileNotFoundException e) {
             throw new IllegalStateException();
         }
 
-        parser parser = new parser(yylex, new ComplexSymbolFactory());
+        var parser = new parser(lexer, new ComplexSymbolFactory());
 
-        Symbol symbol = parser.parse();
-
-
+        var symbol = parser.parse();
         INode rootNode = (INode) symbol.value;
         rootNode.Accept(this);
+    }
+
+    @Override
+    public ExpressionValue Visit(IncludeSysNode includeSysNode) throws Exception {
+        var path = Path.of("include", includeSysNode.GetChild().GetValue());
+
+        HandleInclude(path);
 
         return null;
     }
 
     @Override
     public ExpressionValue Visit(IncludeUserNode includeUserNode) throws Exception {
-        String filepath = includeUserNode.GetChild().GetValue();
+        var path = Path.of(includeUserNode.GetChild().GetValue());
 
-        Yylex yylex;
-        try {
-            yylex = new Yylex(new FileReader(filepath), filepath);
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException();
-        }
-
-        parser parser = new parser(yylex, new ComplexSymbolFactory());
-
-        Symbol symbol = parser.parse();
-
-
-        INode rootNode = (INode) symbol.value;
-        rootNode.Accept(this);
+        HandleInclude(path);
 
         return null;
     }
