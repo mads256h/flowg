@@ -70,6 +70,7 @@ terminal LESS_THAN;
 terminal EQUALS;
 terminal GREATER_THAN_EQUALS;
 terminal LESS_THAN_EQUALS;
+terminal NOT_EQUALS;
 terminal AND;
 terminal OR;
 terminal NOT;
@@ -141,7 +142,7 @@ non terminal GCodeNode gcode;
 
 precedence left NOT;
 precedence left AND, OR;
-precedence left EQUALS, GREATER_THAN, LESS_THAN, GREATER_THAN_EQUALS, LESS_THAN_EQUALS;
+precedence left EQUALS, NOT_EQUALS, GREATER_THAN, LESS_THAN, GREATER_THAN_EQUALS, LESS_THAN_EQUALS;
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE;
 precedence left POWER;
@@ -346,6 +347,8 @@ expr ::=
         {: RESULT = new LessThanExpressionNode(b1, b2, b1xleft, b2xright); :}
         | expr:e1 EQUALS expr:e2
         {: RESULT = new EqualsExpressionNode(e1, e2, e1xleft, e2xright); :}
+        | expr:e1 NOT_EQUALS expr:e2
+        {: RESULT = new NotEqualsExpressionNode(e1, e2, e1xleft, e2xleft); :}
         | expr:b1 GREATER_THAN_EQUALS expr:b2
         {: RESULT = new GreaterThanEqualsExpressionNode(b1, b2, b1xleft, b2xright); :}
         | expr:b1 LESS_THAN_EQUALS expr:b2

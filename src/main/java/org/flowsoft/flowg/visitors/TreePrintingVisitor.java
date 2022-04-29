@@ -232,6 +232,11 @@ public class TreePrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
+    public String Visit(NotEqualsExpressionNode notEqualsExpressionNode) throws NoException {
+        return PrintNode(notEqualsExpressionNode, notEqualsExpressionNode.GetLeftChild(), notEqualsExpressionNode.GetRightChild());
+    }
+
+    @Override
     public String Visit(IdentifierExpressionNode identifierExpressionNode) throws NoException {
         return PrintNode(identifierExpressionNode, identifierExpressionNode.GetChild());
     }

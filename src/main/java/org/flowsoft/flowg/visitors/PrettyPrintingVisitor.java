@@ -244,6 +244,11 @@ public class PrettyPrintingVisitor implements IVisitor<String, NoException> {
     }
 
     @Override
+    public String Visit(NotEqualsExpressionNode notEqualsExpressionNode) throws NoException {
+        return notEqualsExpressionNode.GetLeftChild().Accept(this) + " != " + notEqualsExpressionNode.GetRightChild().Accept(this);
+    }
+
+    @Override
     public String Visit(IdentifierExpressionNode identifierExpressionNode) throws NoException {
         return identifierExpressionNode.GetChild().Accept(this);
     }

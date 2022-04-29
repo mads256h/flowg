@@ -443,6 +443,80 @@ public class CodeGeneratingTests {
             ),
             new Thing<>(
                     false,
+                    new NotEqualsExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("1"), N, N),
+                            new NumberLiteralNode(new BigDecimal("1"), N, N),
+                            N, N
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new NotEqualsExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("0"), N, N),
+                            new NumberLiteralNode(new BigDecimal("0"), N, N),
+                            N, N
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new NotEqualsExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("-1"), N, N),
+                            new NumberLiteralNode(new BigDecimal("-1"), N, N),
+                            N, N
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new NotEqualsExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("1"), N, N),
+                            new NumberLiteralNode(new BigDecimal("0"), N, N),
+                            N, N
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new NotEqualsExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("0"), N, N),
+                            new NumberLiteralNode(new BigDecimal("1"), N, N),
+                            N, N
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new NotEqualsExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("-1"), N, N),
+                            new NumberLiteralNode(new BigDecimal("1"), N, N),
+                            N, N
+                    )
+            ),
+            new Thing<>(
+                    true,
+                    new NotEqualsExpressionNode(
+                            new NumberLiteralNode(new BigDecimal("1"), N, N),
+                            new NumberLiteralNode(new BigDecimal("-1"), N, N),
+                            N, N
+                    )
+            ),
+            new Thing<>(
+                    false,
+                    new NotEqualsExpressionNode(
+                            new PointNode(
+                                    new NumberLiteralNode(new BigDecimal("1"), N, N),
+                                    new NumberLiteralNode(new BigDecimal("2"), N, N),
+                                    new NumberLiteralNode(new BigDecimal("3"), N, N),
+                                    N, N
+                            ),
+                            new PointNode(
+                                    new NumberLiteralNode(new BigDecimal("1"), N, N),
+                                    new NumberLiteralNode(new BigDecimal("2"), N, N),
+                                    new NumberLiteralNode(new BigDecimal("3"), N, N),
+                                    N, N
+                            ),
+                            N, N
+                    )
+            ),
+            new Thing<>(
+                    false,
                     new EqualsExpressionNode(
                             new PointNode(
                                     new NumberLiteralNode(new BigDecimal("1"), N, N),
