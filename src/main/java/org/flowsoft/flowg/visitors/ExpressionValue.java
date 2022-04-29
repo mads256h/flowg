@@ -69,12 +69,12 @@ public class ExpressionValue {
     }
 
     public boolean Compare(ExpressionValue expressionValue) {
-        switch (this.GetType()) {
-            case Number -> { return this.GetNumber().compareTo(expressionValue.GetNumber()) == 1;}
-            case Boolean -> { return this.GetBoolean() == expressionValue.GetBoolean();}
-            case Point -> { return this.GetPoint().equals(expressionValue.GetPoint());}
+        return switch (this.GetType()) {
+            case Number -> this.GetNumber().compareTo(expressionValue.GetNumber()) == 1;
+            case Boolean -> this.GetBoolean() == expressionValue.GetBoolean();
+            case Point -> this.GetPoint().equals(expressionValue.GetPoint());
             default -> throw new IllegalStateException();
-        }
+        };
     }
 
     @Override
