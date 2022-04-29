@@ -115,10 +115,11 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         var strs = _stringBuilder.toString().split("\r\n|\n", -1);
 
         for (var s : strs) {
-            if (s.isEmpty()) {
+            var ns = s.trim();
+            if (ns.isEmpty()) {
                 continue;
             }
-            sb.append(s.trim());
+            sb.append(ns);
             sb.append('\n');
         }
 

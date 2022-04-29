@@ -122,42 +122,8 @@ point move(point endpoint){
     return _currentPosition;
 };
 
-
-gcode setup(number bedTemperature, number hotendTemperature){
-    M140 S[bedTemperature]
-    M104 S[hotendTemperature]
-    M190 S[bedTemperature]
-    M109 S[hotendTemperature]
-    M82
-    G21
-    G90
-    G28 X0 Y0 Z0
-    G1 X15 Y0 F4000
-    G1 Z15.0 F9000
-    G92 E0
-    G1 Y50 F9000
-    G92 E0
-    G1 F1000 X0 Y0
-    M106 S255
-};
-
-gcode cleanup(){
-    M140 S0
-    M104 S0
-    G91
-    G1 E-1 F300
-    G1 Z+0.5 E-5 X-20 Y-20 F9000
-    G28 X0 Y0
-};
-
-void setupParameters(number filamentDiameter, number nozzleDiameter, number layerHeight){
-    _filamentDiameter = filamentDiameter;
-    _nozzleDiameter = nozzleDiameter;
-    _layerHeight = layerHeight;
-};
-
 // Minor G-code functions
-gcode turnOnFan(number spindleSpeed){
+gcode setFanSpeed(number spindleSpeed){
     M106 S[spindleSpeed]
 };
 
@@ -180,3 +146,46 @@ gcode setHotendTemperature(number temperature){
 gcode waitHotendTemperature(number temperature){
     M109 S[temperature]
 };
+
+
+void setup(number bedTemp, number hotendTemp) {
+    setBedTemperature(bedTemp);
+    setHotendTemperature(hotendTemp);
+    waitBedTemperature(bedTemp);
+    waitHotendTemperature(hotendTemp);
+    gcode additional_setup() {
+        M82
+        G21
+        G90
+        G28 X0 Y0 Z0
+        G1 X15 Y0 F4000
+        G1 Z15.0 F9000
+        G92 E0
+        G1 Y50 F9000
+        G92 E0
+        G1 F1000 X0 Y0
+    };
+    additional_setup();
+    setFanSpeed(255);
+};
+
+void cleanup() {
+    setBedTemperature(0);
+    setHotendTemperature(0);
+    gcode additional_cleanup(){
+        M140 S0
+        M104 S0
+        G91
+        G1 E-1 F300
+        G1 Z+0.5 E-5 X-20 Y-20 F9000
+        G28 X0 Y0
+    };
+    additional_cleanup();
+};
+
+void setupParameters(number filamentDiameter, number nozzleDiameter, number layerHeight){
+    _filamentDiameter = filamentDiameter;
+    _nozzleDiameter = nozzleDiameter;
+    _layerHeight = layerHeight;
+};
+
