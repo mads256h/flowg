@@ -86,28 +86,19 @@ Anything = .
 %%
 
 <YYINITIAL> {
-    {Type} { return symbol("type", sym.TYPE, new TypeNode(TypeHelper.StringToType(yytext()), leftLocation(), rightLocation())); }
 
     // Include statement
     "#include" { yybegin(include); return symbol("#include", sym.INCLUDE); }
 
+    "=" { return symbol("=", sym.ASSIGNMENT); }
+    ";" { return symbol(";", sym.SEMICOLON); }
 
-    // Boolean literals
-    "true" { return symbol("true", sym.BOOLEAN_LITERAL, new BooleanLiteralNode(true, leftLocation(), rightLocation())); }
-    "false" { return symbol("false", sym.BOOLEAN_LITERAL, new BooleanLiteralNode(false, leftLocation(), rightLocation())); }
+    "[" { return symbol("[", sym.L_SQUARE_BRACKET); }
+    "]" { return symbol("]", sym.R_SQUARE_BRACKET); }
 
     // Builtin functions
     "move" { return symbol("move", sym.MOVE); }
     "line" { return symbol("line", sym.LINE); }
-
-    // Math builtins
-    "sqrt" { return symbol("sqrt", sym.SQRT); }
-    "sin" { return symbol("sin", sym.SIN); }
-    "cos" { return symbol("cos", sym.COS); }
-    "tan" { return symbol("tan", sym.TAN); }
-    "arcsin" { return symbol("arcsin", sym.ARCSIN); }
-    "arccos" { return symbol("arccos", sym.ARCCOS); }
-    "arctan" { return symbol("arctan", sym.ARCTAN); }
 
     // Control flow
     "for" { return symbol("for", sym.FOR); }
@@ -119,26 +110,39 @@ Anything = .
     // GCODE
     "gcode" { yybegin(gcode_prestate); return symbol("GCODE", sym.GCODE); }
 
-    {Identifier} { return symbol("identifier", sym.IDENTIFIER, new IdentifierNode(yytext(), leftLocation(), rightLocation())); }
-
-    {Number} { return symbol("number literal", sym.NUMBER_LITERAL, new NumberLiteralNode(new BigDecimal(yytext()), leftLocation(), rightLocation())); }
-
     {Whitespace} { /* Ignore */ }
 
     {Comment} { /* Ignore */ }
 
+}
+
+<YYINITIAL, gcode_expression, gcode_prestate> {
+    {Type} { return symbol("type", sym.TYPE, new TypeNode(TypeHelper.StringToType(yytext()), leftLocation(), rightLocation())); }
+
     "(" { return symbol("(", sym.L_PAREN); }
     ")" { return symbol(")", sym.R_PAREN); }
+    "," { return symbol(",", sym.COMMA); }
+}
+
+// Used in normal code and gcode_expressions
+<YYINITIAL, gcode_expression> {
+    // Boolean literals
+    "true" { return symbol("true", sym.BOOLEAN_LITERAL, new BooleanLiteralNode(true, leftLocation(), rightLocation())); }
+    "false" { return symbol("false", sym.BOOLEAN_LITERAL, new BooleanLiteralNode(false, leftLocation(), rightLocation())); }
+
+    // Math builtins
+    "sqrt" { return symbol("sqrt", sym.SQRT); }
+    "sin" { return symbol("sin", sym.SIN); }
+    "cos" { return symbol("cos", sym.COS); }
+    "tan" { return symbol("tan", sym.TAN); }
+    "arcsin" { return symbol("arcsin", sym.ARCSIN); }
+    "arccos" { return symbol("arccos", sym.ARCCOS); }
+    "arctan" { return symbol("arctan", sym.ARCTAN); }
+
 
     "{" { return symbol("{", sym.L_BRACKET); }
     "}" { return symbol("}", sym.R_BRACKET); }
 
-    "[" { return symbol("[", sym.L_SQUARE_BRACKET); }
-    "]" { return symbol("]", sym.R_SQUARE_BRACKET); }
-
-    "=" { return symbol("=", sym.ASSIGNMENT); }
-    ";" { return symbol(";", sym.SEMICOLON); }
-    "," { return symbol(",", sym.COMMA); }
     "." { return symbol(".", sym.DOT); }
 
     // Arithmic operators
@@ -157,7 +161,15 @@ Anything = .
     "&&" { return symbol("&&", sym.AND); }
     "||" { return symbol("||", sym.OR); }
     "!" { return symbol("!", sym.NOT); }
+
+
+    {Number} { return symbol("number literal", sym.NUMBER_LITERAL, new NumberLiteralNode(new BigDecimal(yytext()), leftLocation(), rightLocation())); }
 }
+
+<YYINITIAL, gcode_expression, gcode_prestate> {
+    {Identifier} { return symbol("identifier", sym.IDENTIFIER, new IdentifierNode(yytext(), leftLocation(), rightLocation())); }
+}
+
 
 <include> {
     "<" {_stringBuffer.setLength(0); yybegin(sysstring);}
@@ -182,41 +194,12 @@ Anything = .
 }
 
 <gcode_expression> {
-    // Math functions
-    "sqrt" { return symbol("sqrt", sym.SQRT); }
-    "sin" { return symbol("sin", sym.SIN); }
-    "cos" { return symbol("cos", sym.COS); }
-    "tan" { return symbol("tan", sym.TAN); }
-    "arcsin" { return symbol("arcsin", sym.ARCSIN); }
-    "arccos" { return symbol("arccos", sym.ARCCOS); }
-    "arctan" { return symbol("arctan", sym.ARCTAN); }
-
-    {Identifier} { return symbol("identifier", sym.IDENTIFIER, new IdentifierNode(yytext(), leftLocation(), rightLocation())); }
-    {Number} { return symbol("number literal", sym.NUMBER_LITERAL, new NumberLiteralNode(new BigDecimal(yytext()), leftLocation(), rightLocation())); }
-
-    "(" { return symbol("(", sym.L_PAREN); }
-    ")" { return symbol(")", sym.R_PAREN); }
-
-    "." { return symbol(".", sym.DOT); }
-
-    // Arithmic operators
-    "+" { return symbol("+", sym.PLUS); }
-    "-" { return symbol("-", sym.MINUS); }
-    "*" { return symbol("*", sym.TIMES); }
-    "/" { return symbol("/", sym.DIVIDE); }
-    "^" { return symbol("^", sym.POWER); }
-
     "]" { yybegin(gcode_functionstate); return symbol("]", sym.R_SQUARE_BRACKET); }
 
     {Whitespace} { /* Ignore */ }
 }
 
 <gcode_prestate> {
-    {Type} { return symbol("type", sym.TYPE, new TypeNode(TypeHelper.StringToType(yytext()), leftLocation(), rightLocation())); }
-    {Identifier} { return symbol("identifier", sym.IDENTIFIER, new IdentifierNode(yytext(), leftLocation(), rightLocation())); }
-    "(" { return symbol("(", sym.L_PAREN); }
-    ")" { return symbol(")", sym.R_PAREN); }
-    "," { return symbol(",", sym.COMMA); }
     "{" { yybegin(gcode_functionstate); return symbol("{", sym.L_BRACKET); }
     {Whitespace} { /* Ignore */ }
 }
