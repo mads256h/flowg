@@ -40,7 +40,7 @@ point _arc(point center, point wantedEndpoint, bool is_cw){
     // We calculate the point where the circle ends
     point vector = wantedEndpoint - center;
     point normalizedVector = [vector.x / sqrt(vector.x^2 + vector.y^2),vector.y / sqrt(vector.x^2 + vector.y^2),0];
-    number radius = sqrt((center.x - _currentPosition.x)^2 + (center.y - _currentPosition.y)^2);
+    number radius = distance2D(center, _currentPosition);
     point realEndpoint = (normalizedVector * radius) + center;
     // We define the Gcode helper functions
 
