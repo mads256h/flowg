@@ -597,7 +597,7 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
         var leftValue = notEqualsExpressionNode.GetLeftChild().Accept(this);
         var rightValue = notEqualsExpressionNode.GetRightChild().Accept(this);
 
-        var expressionValue= TryBoth(leftType, rightType, EQ_MAP).apply(leftValue, rightValue);
+        var expressionValue = TryBoth(leftType, rightType, EQ_MAP).apply(leftValue, rightValue);
 
         return new ExpressionValue(!expressionValue.GetBoolean());
     }
