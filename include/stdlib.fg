@@ -27,7 +27,7 @@ point line(point endpoint){
     number filamentMm = _calculateFilamentVolumeNeeded(dist);
 
     gcode gcodeLine(point endpoint, number filament){
-    	G1 E[filament] X[endpoint.x] Y[endpoint.y] Z[endpoint.z]
+        G1 E[filament] X[endpoint.x] Y[endpoint.y] Z[endpoint.z]
     };
     gcodeLine(endpoint, filamentMm);
     _currentPosition = endpoint;

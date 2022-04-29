@@ -73,7 +73,7 @@ Number = [0-9]+(\.[0-9]+)?
 Whitespace = [\ \r\n]
 NewLine = \n
 Comment = \/\/[^\n]*
-GCodeCode = [^{}\[\]]*
+GCodeCode = [^{}\[\]\t]*
 Anything = .
 
 %state include
