@@ -70,7 +70,7 @@ point _arc(point center, point wantedEndpoint, bool is_cw){
         gcodeCArc(realEndpoint, i, j, filamentMM);
     } else {
         gcode gcodeCWArc(point endpoint, number i, number j, number e){
-            G3 E[e] X[realEndpoint.x] Y[endpoint.y] I[i] J[j]
+            G3 E[e] X[endpoint.x] Y[endpoint.y] I[i] J[j]
         };
         gcodeCWArc(realEndpoint, i, j, filamentMM);
     };
