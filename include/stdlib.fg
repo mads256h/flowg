@@ -105,7 +105,7 @@ point _arc(point center, point wantedEndpoint, bool is_cw){
         } else {
         if (cClockwiseIsSmallest){
             gcodeCWArc(realEndpoint, i, j, smallestFilamentMM);
-        }else {
+        } else {
             gcodeCWArc(realEndpoint, i, j, biggestFilamentMM);
         };
     };
