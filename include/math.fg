@@ -14,5 +14,13 @@ number distance2D(point a, point b) {
 };
 
 point normalize2DVector(point vector){
-    return [vector.x / sqrt(vector.x^2 + vector.y^2),vector.y / sqrt(vector.x^2 + vector.y^2),0];
+    number x = 0;
+    number y = 0;
+    if (sqrt(vector.x^2 + vector.y^2) != 0){
+        x = vector.x / sqrt(vector.x^2 + vector.y^2);
+    };
+    if (sqrt(vector.x^2 + vector.y^2) != 0){
+        y = vector.y / sqrt(vector.x^2 + vector.y^2);
+    };
+    return [x, y, 0];
 };
