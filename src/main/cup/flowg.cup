@@ -213,7 +213,17 @@ decl ::= TYPE:t IDENTIFIER:i ASSIGNMENT expr:e
         {: RESULT = new DeclarationNode(t, i, e, txleft, exright); :};
 
 assign ::= IDENTIFIER:i ASSIGNMENT expr:e
-        {: RESULT = new AssignmentNode(i, e, ixleft, exright); :};
+        {: RESULT = new AssignmentNode(i, e, ixleft, exright); :}
+        | IDENTIFIER:i PLUS ASSIGNMENT expr:e
+        {: RESULT = new AssignmentNode(i, new PlusExpressionNode(new IdentifierExpressionNode(i, ixleft, ixright), e, ixleft, exright), ixleft, exright);:}
+        | IDENTIFIER:i MINUS ASSIGNMENT expr:e
+        {: RESULT = new AssignmentNode(i, new MinusExpressionNode(new IdentifierExpressionNode(i, ixleft, ixright), e, ixleft, exright), ixleft, exright); :}
+        | IDENTIFIER:i TIMES ASSIGNMENT expr:e
+        {: RESULT = new AssignmentNode(i, new TimesExpressionNode(new IdentifierExpressionNode(i, ixleft, ixright), e, ixleft, exright), ixleft, exright); :}
+        | IDENTIFIER:i DIVIDE ASSIGNMENT expr:e
+        {: RESULT = new AssignmentNode(i, new DivideExpressionNode(new IdentifierExpressionNode(i, ixleft, ixright), e, ixleft, exright), ixleft, exright); :}
+        | IDENTIFIER:i POWER ASSIGNMENT expr:e
+        {: RESULT = new AssignmentNode(i, new PowerExpressionNode(new IdentifierExpressionNode(i, ixleft, ixright), e, ixleft, exright), ixleft, exright); :};
 
 // Builtin functions
 move ::= MOVE:b L_PAREN a_param_list:p R_PAREN:e
