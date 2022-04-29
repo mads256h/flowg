@@ -21,12 +21,6 @@ terminal INCLUDE;
 terminal SysStringNode SYSSTRING;
 terminal UserStringNode USERSTRING;
 
-// Builtin functions
-terminal MOVE;
-terminal LINE;
-terminal CW_ARC;
-terminal CCW_ARC;
-
 // Math builtins
 terminal SQRT;
 terminal SIN;
@@ -97,12 +91,6 @@ non terminal StatementNode stmt;
 
 non terminal DeclarationNode decl;
 non terminal AssignmentNode assign;
-
-// Builtin functions
-non terminal MoveNode move;
-non terminal LineNode line;
-non terminal CWArcNode cw_arc;
-non terminal CCWArcNode ccw_arc;
 
 // Math builtins
 non terminal SqrtNode sqrt;

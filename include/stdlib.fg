@@ -1,20 +1,31 @@
-number filamentDiameter = 2.85;
-number nozzleDiameter = 0.4;
-number layerHeight = 0.1;
+number _filamentDiameter = 0;
+number _nozzleDiameter = 0;
+number _layerHeight = 0;
+point _currentPosition = [0,0,0];
+// Default for ultimaker 2
+//number _filamentDiameter = 2.85;
+//number _nozzleDiameter = 0.4;
+//number _layerHeight = 0.1;
+//point _currentPosition = [0,0,0];
+
 number pi = 3.14159265358979323846264338327950288419716939937510582097494459;
-point currentPosition = [0,0,0];
 
 number _calculateFilamentVolumeNeeded(number length){
-    number filamentNeeded = length * nozzleDiameter * layerHeight;
-    number filamentArea = (filamentDiameter / 2)^2 * pi;
-    number filamentMM = filamentNeeded / filamentArea;
-    return filamentMM;
+    number filamentNeeded = length * _nozzleDiameter * _layerHeight;
+    number filamentArea = (_filamentDiameter / 2)^2 * pi;
+    if (!(filamentArea == 0)){
+        number filamentMM = filamentNeeded / filamentArea;
+        return filamentMM;
+    }
+    else{
+        return 0;
+    };
 };
 
-void line(point endpoint){
-    number x = currentPosition.x - endpoint.x;
-    number y = currentPosition.y - endpoint.y;
-    number z = currentPosition.z - endpoint.z;
+point line(point endpoint){
+    number x = _currentPosition.x - endpoint.x;
+    number y = _currentPosition.y - endpoint.y;
+    number z = _currentPosition.z - endpoint.z;
 
     number x2 = x^2;
     number y2 = y^2;
@@ -23,24 +34,25 @@ void line(point endpoint){
     number distance = sqrt(x2+y2+z2);
     number filamentMm = _calculateFilamentVolumeNeeded(distance);
 
-    gcode gcodeLine(point currentPosition, point endpoint, number filament){
+    gcode gcodeLine(point endpoint, number filament){
     	G1 E[filament] X[endpoint.x] Y[endpoint.y] Z[endpoint.z]
     };
-    gcodeLine(currentPosition, endpoint, filamentMm);
-    currentPosition = endpoint;
+    gcodeLine(endpoint, filamentMm);
+    _currentPosition = endpoint;
+    return _currentPosition;
 };
 
 point _arc(point center, point wantedEndpoint, bool is_cw){
-    number i = center.x - currentPosition.x;
-    number j = center.y - currentPosition.y;
+    number i = center.x - _currentPosition.x;
+    number j = center.y - _currentPosition.y;
     // We calculate the point where the circle ends
     point vector = wantedEndpoint - center;
     point normalizedVector = [vector.x / sqrt(vector.x^2 + vector.y^2),vector.y / sqrt(vector.x^2 + vector.y^2),0];
-    number radius = sqrt((center.x - currentPosition.x)^2 + (center.y - currentPosition.y)^2);
+    number radius = sqrt((center.x - _currentPosition.x)^2 + (center.y - _currentPosition.y)^2);
     point realEndpoint = (normalizedVector * radius) + center;
 
     // We calculate the other sides and the C angle (in radians) with trigonometry
-    number c = sqrt((realEndpoint.x - currentPosition.x)^2 + (realEndpoint.y - currentPosition.y)^2);
+    number c = sqrt((realEndpoint.x - _currentPosition.x)^2 + (realEndpoint.y - _currentPosition.y)^2);
     number cosC = (2 *radius^2 - c^2) / (2 * radius^2);
     number C = cos(cosC);
     //We calculate the circumference and divide it by the percentage of the circle that is filled out
@@ -58,26 +70,86 @@ point _arc(point center, point wantedEndpoint, bool is_cw){
         gcodeCArc(realEndpoint, i, j, filamentMM);
     } else {
         gcode gcodeCWArc(point endpoint, number i, number j, number e){
-            G3 E[e] X[endpoint.x] Y[endpoint.y] I[i] J[j]
+            G3 E[e] X[realEndpoint.x] Y[endpoint.y] I[i] J[j]
         };
         gcodeCWArc(realEndpoint, i, j, filamentMM);
     };
-    currentPosition = realEndpoint;
-    return currentPosition;
+    _currentPosition = realEndpoint;
+    return _currentPosition;
 };
 
 point arc(point center, point wantedEndpoint){
-    _arc(center, wantedEndpoint, true);
+    return _arc(center, wantedEndpoint, true);
 };
 
 point cArc(point center, point wantedEndpoint){
-    _arc(center, wantedEndpoint, false);
+    return _arc(center, wantedEndpoint, false);
 };
 
-void move(point endpoint){
+point move(point endpoint){
     gcode gcodeMove(point endpoint){
         G0 X[endpoint.x] Y[endpoint.y] Z[endpoint.z]
     };
     gcodeMove(endpoint);
-    currentPosition = endpoint;
+    _currentPosition = endpoint;
+    return _currentPosition;
+};
+
+
+gcode setup(number bedTemperature, number hotendTemperature){
+    M140 S[bedTemperature]
+    M104 S[hotendTemperature]
+    M190 S[bedTemperature]
+    M109 S[hotendTemperature]
+    M82
+    G21
+    G90
+    G28 X0 Y0 Z0
+    G1 X15 Y0 F4000
+    G1 Z15.0 F9000
+    G92 E0
+    G1 Y50 F9000
+    G92 E0
+    G1 F1000 X0 Y0
+    M106 S255
+};
+
+gcode cleanup(){
+    M140 S0
+    M104 S0
+    G91
+    G1 E-1 F300
+    G1 Z+0.5 E-5 X-20 Y-20 F9000
+    G28 X0 Y0
+};
+
+void setupParameters(number filamentDiameter, number nozzleDiameter, number layerHeight){
+    _filamentDiameter = filamentDiameter;
+    _nozzleDiameter = nozzleDiameter;
+    _layerHeight = layerHeight;
+};
+
+// Minor G-code functions
+gcode turnOnFan(number spindleSpeed){
+    M106 S[spindleSpeed]
+};
+
+gcode turnOffFan(number spindleSpeed){
+    M107
+};
+
+gcode setBedTemperature(number temperature){
+    M140 S[temperature]
+};
+
+gcode waitBedTemperature(number temperature){
+    M190 S[temperature]
+};
+
+gcode setHotendTemperature(number temperature){
+    M104 S[temperature]
+};
+
+gcode waitHotendTemperature(number temperature){
+    M109 S[temperature]
 };
