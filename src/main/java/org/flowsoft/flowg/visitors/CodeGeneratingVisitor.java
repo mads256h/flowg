@@ -590,6 +590,19 @@ public class CodeGeneratingVisitor implements IVisitor<ExpressionValue, Exceptio
     }
 
     @Override
+    public ExpressionValue Visit(NotEqualsExpressionNode notEqualsExpressionNode) throws Exception {
+        var leftType = notEqualsExpressionNode.GetLeftChild().Accept(this).GetType();
+        var rightType = notEqualsExpressionNode.GetRightChild().Accept(this).GetType();
+
+        var leftValue = notEqualsExpressionNode.GetLeftChild().Accept(this);
+        var rightValue = notEqualsExpressionNode.GetRightChild().Accept(this);
+
+        var expressionValue= TryBoth(leftType, rightType, EQ_MAP).apply(leftValue, rightValue);
+
+        return new ExpressionValue(!expressionValue.GetBoolean());
+    }
+
+    @Override
     public ExpressionValue Visit(IdentifierExpressionNode identifierExpressionNode) throws Exception {
         var identifier = identifierExpressionNode.GetChild().GetValue();
         var variableEntry = _symbolTable.LookupVariable(identifier);

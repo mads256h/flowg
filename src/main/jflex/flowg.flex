@@ -161,6 +161,7 @@ Anything = .
     "&&" { return symbol("&&", sym.AND); }
     "||" { return symbol("||", sym.OR); }
     "!" { return symbol("!", sym.NOT); }
+    "!=" { return symbol("!=", sym.NOT_EQUALS); }
 
 
     {Number} { return symbol("number literal", sym.NUMBER_LITERAL, new NumberLiteralNode(new BigDecimal(yytext()), leftLocation(), rightLocation())); }

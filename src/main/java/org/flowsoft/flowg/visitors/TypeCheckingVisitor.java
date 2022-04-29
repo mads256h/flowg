@@ -524,6 +524,18 @@ public class TypeCheckingVisitor implements IVisitor<Type, TypeException> {
     }
 
     @Override
+    public Type Visit(NotEqualsExpressionNode notEqualsExpressionNode) throws TypeException {
+        var leftChild = notEqualsExpressionNode.GetLeftChild().Accept(this);
+        var rightChild = notEqualsExpressionNode.GetRightChild().Accept(this);
+
+        if (leftChild != rightChild) {
+            throw new TypeMismatchException(leftChild, rightChild, notEqualsExpressionNode.GetLeft(), notEqualsExpressionNode.GetRight());
+        }
+
+        return Type.Boolean;
+    }
+
+    @Override
     public Type Visit(IdentifierExpressionNode identifierExpressionNode) throws TypeException {
         var identifier = identifierExpressionNode.GetChild().GetValue();
         return _symbolTable.LookupVariable(identifier, identifierExpressionNode.GetLeft(), identifierExpressionNode.GetRight()).GetType();

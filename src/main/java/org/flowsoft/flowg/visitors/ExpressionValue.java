@@ -68,6 +68,15 @@ public class ExpressionValue {
         return _point;
     }
 
+    public boolean Compare(ExpressionValue expressionValue) {
+        switch (this.GetType()) {
+            case Number -> { return this.GetNumber().compareTo(expressionValue.GetNumber()) == 1;}
+            case Boolean -> { return this.GetBoolean() == expressionValue.GetBoolean();}
+            case Point -> { return this.GetPoint().equals(expressionValue.GetPoint());}
+            default -> throw new IllegalStateException();
+        }
+    }
+
     @Override
     public String toString() {
         var str = "Type: " + _type + " Value: ";

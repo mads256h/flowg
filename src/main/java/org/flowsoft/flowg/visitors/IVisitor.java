@@ -93,6 +93,8 @@ public interface IVisitor<T, TException extends Exception> {
 
     T Visit(NotExpressionNode notExpressionNode) throws TException;
 
+    T Visit(NotEqualsExpressionNode notEqualsExpressionNode) throws TException;
+
     // Control flow
     T Visit(ForToNode forToNode) throws TException;
 
