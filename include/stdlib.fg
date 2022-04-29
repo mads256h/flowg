@@ -1,3 +1,5 @@
+#include <math.fg>;
+
 number _filamentDiameter = 0;
 number _nozzleDiameter = 0;
 number _layerHeight = 0;
@@ -7,8 +9,6 @@ point _currentPosition = [0,0,0];
 //number _nozzleDiameter = 0.4;
 //number _layerHeight = 0.1;
 //point _currentPosition = [0,0,0];
-
-number pi = 3.14159265358979323846264338327950288419716939937510582097494459;
 
 number _calculateFilamentVolumeNeeded(number length){
     number filamentNeeded = length * _nozzleDiameter * _layerHeight;
@@ -23,16 +23,8 @@ number _calculateFilamentVolumeNeeded(number length){
 };
 
 point line(point endpoint){
-    number x = _currentPosition.x - endpoint.x;
-    number y = _currentPosition.y - endpoint.y;
-    number z = _currentPosition.z - endpoint.z;
-
-    number x2 = x^2;
-    number y2 = y^2;
-    number z2 = z^2;
-
-    number distance = sqrt(x2+y2+z2);
-    number filamentMm = _calculateFilamentVolumeNeeded(distance);
+    number dist = distance(_currentPosition, endpoint);
+    number filamentMm = _calculateFilamentVolumeNeeded(dist);
 
     gcode gcodeLine(point endpoint, number filament){
     	G1 E[filament] X[endpoint.x] Y[endpoint.y] Z[endpoint.z]
