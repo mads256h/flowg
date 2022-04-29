@@ -50,29 +50,64 @@ point _arc(point center, point wantedEndpoint, bool is_cw){
     point normalizedVector = [vector.x / sqrt(vector.x^2 + vector.y^2),vector.y / sqrt(vector.x^2 + vector.y^2),0];
     number radius = sqrt((center.x - _currentPosition.x)^2 + (center.y - _currentPosition.y)^2);
     point realEndpoint = (normalizedVector * radius) + center;
+    // We define the Gcode helper functions
+
+    gcode gcodeCArc(point endpoint, number i, number j, number e){
+        G2 E[e] X[endpoint.x] Y[endpoint.y] I[i] J[j]
+    };
+
+    gcode gcodeCWArc(point endpoint, number i, number j, number e){
+        G3 E[e] X[endpoint.x] Y[endpoint.y] I[i] J[j]
+    };
 
     // We calculate the other sides and the C angle (in radians) with trigonometry
     number c = sqrt((realEndpoint.x - _currentPosition.x)^2 + (realEndpoint.y - _currentPosition.y)^2);
     number cosC = (2 *radius^2 - c^2) / (2 * radius^2);
-    number C = cos(cosC);
-    //We calculate the circumference and divide it by the percentage of the circle that is filled out
+    number C = arccos(cosC);
+    //We calculate the circumference and multiply it by the percentage of the circle that is filled out
     number circumference = radius * 2 * pi;
 
-    number filledCircumference = circumference / (C / (2 * pi));
+    //We now know the filament needed for each of the filled edges and now we need to calculate whether clockwise or
+    //counter clockwise has the biggest side
+    number smallestFilledCircumference = circumference * (C / (2 * pi));
+    number biggestFilledCircumference = circumference - smallestFilledCircumference;
+    number biggestFilamentMM = _calculateFilamentVolumeNeeded(biggestFilledCircumference);
+    number smallestFilamentMM = _calculateFilamentVolumeNeeded(smallestFilledCircumference);
 
-    // We use this to calculate the needed extrusion
-    number filamentMM = _calculateFilamentVolumeNeeded(filledCircumference);
+    // We figure out the function between the current position and center of circle
+    number a = 0;
+    number b = 0;
 
+    bool clockwiseIsSmallest = false;
+    bool cClockwiseIsSmallest = false;
+
+    //If current position.x == center.x both lines will be the same length
+    if (_currentPosition.x > center.x){
+        a = (_currentPosition.x - center.x) / (_currentPosition.y - center.y);
+        b = _currentPosition.y - _currentPosition.x * a;
+    }else{
+        a = (center.x - _currentPosition.x) / (center.y - _currentPosition.y);
+        b = center.y - center.x * a;
+    };
+    if (a * wantedEndpoint.x + b < wantedEndpoint.y){
+        clockwiseIsSmallest = true;
+    } else{
+        cClockwiseIsSmallest = true;
+    };
+
+    // We call the correct gcode function with the right parameters
     if (is_cw) {
-        gcode gcodeCArc(point endpoint, number i, number j, number e){
-            G2 E[e] X[endpoint.x] Y[endpoint.y] I[i] J[j]
+        if (clockwiseIsSmallest){
+            gcodeCArc(realEndpoint, i, j, smallestFilamentMM);
+        } else {
+            gcodeCArc(realEndpoint, i, j, biggestFilamentMM);
         };
-        gcodeCArc(realEndpoint, i, j, filamentMM);
-    } else {
-        gcode gcodeCWArc(point endpoint, number i, number j, number e){
-            G3 E[e] X[endpoint.x] Y[endpoint.y] I[i] J[j]
+        } else {
+        if (cClockwiseIsSmallest){
+            gcodeCWArc(realEndpoint, i, j, smallestFilamentMM);
+        }else {
+            gcodeCWArc(realEndpoint, i, j, biggestFilamentMM);
         };
-        gcodeCWArc(realEndpoint, i, j, filamentMM);
     };
     _currentPosition = realEndpoint;
     return _currentPosition;
