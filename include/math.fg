@@ -12,3 +12,7 @@ number distance2D(point a, point b) {
 
     return sqrt(d.x^2 + d.y^2);
 };
+
+point normalize2DVector(point vector){
+    return [vector.x / sqrt(vector.x^2 + vector.y^2),vector.y / sqrt(vector.x^2 + vector.y^2),0];
+};
