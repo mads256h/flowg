@@ -1,5 +1,14 @@
+// PI to a 100 decimals
+number pi = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679;
+
 number distance(point a, point b) {
     point d = a - b;
-    
+
     return sqrt(d.x^2 + d.y^2 + d.z^2);
+};
+
+number distance2D(point a, point b) {
+    point d = a - b;
+
+    return sqrt(d.x^2 + d.y^2);
 };

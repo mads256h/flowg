@@ -8,7 +8,6 @@ import org.flowsoft.flowg.nodes.NumberLiteralNode;
 import org.flowsoft.flowg.nodes.PointNode;
 import org.flowsoft.flowg.nodes.base.ExpressionNode;
 import org.flowsoft.flowg.nodes.functions.ActualParameterListNode;
-import org.flowsoft.flowg.nodes.functions.MoveNode;
 import org.flowsoft.flowg.nodes.math.operators.DivideExpressionNode;
 import org.flowsoft.flowg.nodes.math.operators.MinusExpressionNode;
 import org.flowsoft.flowg.nodes.math.operators.PlusExpressionNode;
@@ -105,7 +104,7 @@ public class TypeCheckTest {
         assertThrows(TypeException.class, () -> n8.Accept(new TypeCheckingVisitor(P)));
     }
 
-
+    /* Commented out because move does not exist
     @Theory
     public void TestMoveBuiltinSuccess(@FromDataPoints("point") ExpressionNode node) throws Exception {
         var list = new ArrayList<ExpressionNode>();
@@ -126,4 +125,6 @@ public class TypeCheckTest {
 
         assertThrows(TypeException.class, () -> n.Accept(new TypeCheckingVisitor(P)));
     }
+
+ */
 }

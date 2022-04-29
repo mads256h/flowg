@@ -621,8 +621,9 @@ public class CodeGeneratingTests {
 
         assertTrue(BigDecimalUtils.Equals(symbolTable.LookupVariable("x").GetNumber(), new BigDecimal("4")));
     }
-
+    /*
     @Test
+    Commented out because move has been removed
     public void TestFunctionCall() throws Exception {
         var node = new StatementListNode(new ArrayList<>() {
             {
@@ -690,6 +691,7 @@ public class CodeGeneratingTests {
 
         assertThat(codeGen.GetCode()).isEqualTo("G0 X2 Y4 Z6\n");
     }
+    */
 
     private static class Thing<T> {
         private final T _expected;
