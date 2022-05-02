@@ -1,0 +1,27 @@
+number x = 1;
+number y = 1;
+
+number f() {
+    y = x + 1;
+    return y;
+};
+
+number g() {
+    y = y + 1;
+    return y;
+};
+
+number t1 = g() + y;
+
+move([t1,t1,t1]);
+
+// G0 X4 Y4 Z4
+
+x = 1;
+y = 1;
+
+number t2 = y + g();
+
+move([t2,t2,t2]);
+
+// G0 X3 Y3 Z3
