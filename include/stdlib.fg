@@ -101,7 +101,7 @@ point _arc(point center, point wantedEndpoint, bool is_cw){
     return _currentPosition;
 };
 
-point cWarc(point center, point wantedEndpoint){
+point cWArc(point center, point wantedEndpoint){
     return _arc(center, wantedEndpoint, true);
 };
 
