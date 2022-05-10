@@ -1,5 +1,26 @@
+// PI to a 100 decimals
+number pi = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679;
+
 number distance(point a, point b) {
     point d = a - b;
-    
+
     return sqrt(d.x^2 + d.y^2 + d.z^2);
+};
+
+number distance2D(point a, point b) {
+    point d = a - b;
+
+    return sqrt(d.x^2 + d.y^2);
+};
+
+point normalize2DVector(point vector){
+    number x = 0;
+    number y = 0;
+    if (sqrt(vector.x^2 + vector.y^2) != 0){
+        x = vector.x / sqrt(vector.x^2 + vector.y^2);
+    };
+    if (sqrt(vector.x^2 + vector.y^2) != 0){
+        y = vector.y / sqrt(vector.x^2 + vector.y^2);
+    };
+    return [x, y, 0];
 };

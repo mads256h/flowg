@@ -67,6 +67,7 @@ public class ParserTests {
                             }, N, N
                     )
             ),
+            /* COmmented out because move does not exist
             new TextAstPair(
                     "move(1, 2, 3);",
                     new StatementListNode(
@@ -87,6 +88,8 @@ public class ParserTests {
                             }, N, N
                     )
             ),
+            */
+
             new TextAstPair(
                     "number x = 2;\n" +
                             "number y = x + 2;",
