@@ -1,0 +1,36 @@
+#include<stdlib.fg>;
+
+number layerHeight = 0.1;
+number nozzleDiameter = 0.4;
+number height = 10;
+number width = 10;
+number wallThickness = 3;
+number layerNum = 1 / layerHeight * height;
+
+void circle(point center, number radius) {
+    point yTop = center + [0, radius, 0];
+    point yBottom = center - [0, radius, 0];
+
+    move(yTop);
+    cWArc(center, yBottom);     // clockwise
+    cWArc(center, yTop);        // clockwise
+};
+
+setup(60, 200);
+setupParameters(2.85, 0.4, 0.1);
+
+for (number i = 0 to layerNum - 1) {
+    number arcSin = arcsin(i / layerNum);
+    number radiusUnit = cos(arcSin);
+
+    number zAxis = (i * layerHeight) + layerHeight;
+    point center = [20, 20, zAxis];
+
+    for (number j = 0 to wallThickness) {
+        number radius = radiusUnit * width;
+        number offset = nozzleDiameter * j;
+        circle(center, radius - offset);
+    };
+};
+
+cleanup();
