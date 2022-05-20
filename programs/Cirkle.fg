@@ -1,0 +1,12 @@
+#include<stdlib.fg>;
+
+void circle(point center, number radius) {
+    point yTop = center + [0, radius, 0];
+    point yBottom = center - [0, radius, 0];
+
+    move(yTop);
+    cWArc(center, yBottom);     // clockwise
+    cWArc(center, yTop);        // clockwise
+};
+
+circle([20,20, 0], 5);

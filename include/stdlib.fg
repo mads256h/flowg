@@ -45,6 +45,9 @@ point _arc(point center, point wantedEndpoint, bool is_cw){
     // Calculate the other sides and the C angle (in radians) with trigonometry
     number c = distance2D(_currentPosition, realEndpoint);
     number cosC = (2 *radius^2 - c^2) / (2 * radius^2);
+    if (cosC < -1 && cosC > -1.00000000000000001) {
+        cosC = -1;
+    };
     number C = arccos(cosC);
     // Calculate the circumference and multiply it by the percentage of the circle that is filled out
     number circumference = radius * 2 * pi;
@@ -150,12 +153,18 @@ void setup(number bedTemp, number hotendTemp) {
     waitBedTemperature(bedTemp);
     waitHotendTemperature(hotendTemp);
     gcode additional_setup() {
-        M82
-        G21
+        ; Absolute positioning is the default.
         G90
+        ; Put the E axis into relative mode independent of the other axes.
+        M83
+        ; Set units to millimeters.
+        G21
+        ; Home one or more axes.
         G28 X0 Y0 Z0
+        ; Add a linear move to the queue to be performed after all previous moves are completed.
         G1 X15 Y0 F4000
         G1 Z15.0 F9000
+        ; Set the current position to the values specified.
         G92 E0
         G1 Y50 F9000
         G92 E0
