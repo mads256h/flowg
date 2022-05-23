@@ -44,10 +44,16 @@ point _arc(point center, point wantedEndpoint, bool is_cw){
 
     // Calculate the other sides and the C angle (in radians) with trigonometry
     number c = distance2D(_currentPosition, realEndpoint);
-    number cosC = (2 *radius^2 - c^2) / (2 * radius^2);
+
+    number cosC = 0;
+    if (radius != 0){
+        cosC = (2 *radius^2 - c^2) / (2 * radius^2);
+    };
+
     if (cosC < -1 && cosC > -1.00000000000000001) {
         cosC = -1;
     };
+
     number C = arccos(cosC);
     // Calculate the circumference and multiply it by the percentage of the circle that is filled out
     number circumference = radius * 2 * pi;
@@ -68,11 +74,15 @@ point _arc(point center, point wantedEndpoint, bool is_cw){
 
     // If current position.x == center.x both lines will be the same length
     if (_currentPosition.x > center.x){
-        a = (_currentPosition.x - center.x) / (_currentPosition.y - center.y);
+        a = (_currentPosition.y - center.y) / (_currentPosition.x - center.x);
         b = _currentPosition.y - _currentPosition.x * a;
     }else{
-        a = (center.x - _currentPosition.x) / (center.y - _currentPosition.y);
-        b = center.y - center.x * a;
+        if (_currentPosition.x == center.x){
+            a = 0;
+        }else{
+            a = (center.y - _currentPosition.y) / (center.x - _currentPosition.x);
+        };
+        b = _currentPosition.y - _currentPosition.x * a;
     };
     if (a * wantedEndpoint.x + b < wantedEndpoint.y){
         clockwiseIsSmallest = true;
