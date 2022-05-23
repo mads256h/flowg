@@ -5,9 +5,8 @@ It is a high-level language that supports functions, for loops, if statements et
 ## Prerequisites
 
 ### Windows
-```
-God help you
-```
+Download and install java jdk 17 and maven version 3.8.5.
+
 
 ### Ubuntu
 ```
