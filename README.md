@@ -2,6 +2,30 @@
 FlowG is a language that greatly simplifies manual g-code programming.
 It is a high-level language that supports functions, for loops, if statements etc.
 
+## Prerequisites
+
+### Windows
+Download and install java jdk 17 and maven version 3.8.5.
+
+
+### Ubuntu
+```
+sudo apt-get install openjdk-17-jdk
+wget https://dlcdn.apache.org/maven/maven-3/3.8.5/binaries/apache-maven-3.8.5-bin.tar.gz -P /tmp
+sudo tar xzvf /tmp/apache-maven-3.8.5-bin.tar.gz -C /opt/
+sudo ln -s /opt/apache-maven-3.8.5/ /opt/maven
+sudo bash -c 'echo "export M2_HOME=/opt/maven" > /etc/profile.d/maven.sh'
+sudo bash -c 'echo "export MAVEN_HOME=/opt/maven" >> /etc/profile.d/maven.sh'
+sudo bash -c 'echo "export PATH=\${M2_HOME}/bin:\${PATH}" >> /etc/profile.d/maven.sh'
+sudo chmod +x /etc/profile.d/maven.sh
+source /etc/profile.d/maven.sh
+```
+
+### Arch Linux
+```
+sudo pacman -Suy maven
+```
+
 ## Building
 We use maven to build this project.
 To build this project run
