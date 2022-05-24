@@ -4,8 +4,8 @@ It is a high-level language that supports functions, for loops, if statements et
 
 ## Prerequisites
 
-### Windows
-Download and install java jdk 17 and maven version 3.8.5.
+### Windows 
+Download and install both "Java JDK 17" and "Maven version 3.8.5."
 
 
 ### Ubuntu
@@ -27,7 +27,7 @@ sudo pacman -Suy maven
 ```
 
 ## Building
-We use maven to build this project.
+We use Maven to build this project.
 To build this project run
 ```
 mvn package
@@ -39,5 +39,6 @@ To run the compiler use the following commandline:
 ```
 java -jar target/flowg-1.0-SNAPSHOT-jar-with-dependencies.jar <input file> <output file>
 ```
+
 The input file should contain the flowg source code you want to compile.
-The output file will contain the gcode that the flowg source compiles to, if no errors occured.
+The output file will contain the gcode, which the flowg source compiles to, if no errors occured.
